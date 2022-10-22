@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { Translation } from './components/Translation';
-import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
+import { TextGuidedImageGeneration, TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -34,6 +34,7 @@ function TabPanel(props: TabPanelProps) {
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState<Map<string, string[]>>(new Map<string, string[]>());
+  const [tgigResult, setTgigResult] = React.useState(new Array<TextGuidedImageGenerationInvocation>());
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -85,7 +86,7 @@ function App() {
           <Translation services={services} si={si} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <TextGuidedImageGeneration services={services} si={si} />
+          <TextGuidedImageGeneration results={tgigResult} setResults={setTgigResult} services={services} si={si} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           SpeechRecognition
@@ -98,7 +99,6 @@ function App() {
         <hr/>
         Copyright kcg.edu Future Lab.
       </footer>
-
     </div>
   );
 }

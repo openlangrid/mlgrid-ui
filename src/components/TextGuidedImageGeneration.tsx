@@ -13,7 +13,7 @@ const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set
         </div>
     );
 }
-const ServiceResultTag = ({sr}: {sr: ServiceResult})=>{
+const ServiceResultTag = ({sr}: {sr: TextGuidedImageGenerationResult})=>{
     let i = 0;
     return <div>{sr.serviceId}: {sr.images.length > 0 ? "done." : "processing"}<br/>
             {sr.images.map(r => {
@@ -22,7 +22,7 @@ const ServiceResultTag = ({sr}: {sr: ServiceResult})=>{
         })}
     </div>;
 };
-const ServiceInvocationTag = ({sis}: {sis: ServiceInvocation})=>{
+const ServiceInvocationTag = ({sis}: {sis: TextGuidedImageGenerationInvocation})=>{
     let i = 0;
     return (
         <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
@@ -35,23 +35,24 @@ const ServiceInvocationTag = ({sis}: {sis: ServiceInvocation})=>{
         </div>
     );
 };
-interface ServiceResult{
+export interface TextGuidedImageGenerationResult{
     serviceId: string;
     images: Image[];
 }
-interface ServiceInvocation{
+export interface TextGuidedImageGenerationInvocation{
     language: string;
     prompt: string;
     numOfGeneration: number;
-    results: ServiceResult[];
+    results: TextGuidedImageGenerationResult[];
 }
-export function TextGuidedImageGeneration({si, services}: {si: ServiceInvoker, services: Map<string, string[]>}){
+export function TextGuidedImageGeneration({si, services, results, setResults}:
+        {si: ServiceInvoker; services: Map<string, string[]>;
+        results: TextGuidedImageGenerationInvocation[]; setResults: React.Dispatch<React.SetStateAction<TextGuidedImageGenerationInvocation[]>>}){
     const language = React.useRef<HTMLInputElement>(null);
     const prompt = React.useRef<HTMLInputElement>(null);
     const numOfGenerations = React.useRef<HTMLInputElement>(null);
     const sids = services.get("TextGuidedImageGenerationService") || [];
     const validServices = new Set(sids);
-    const [serviceInvocations, setServiceInvocations] = React.useState(new Array<ServiceInvocation>());
     let i = 0;
     if(services.size === 0) return (<div />);
 
@@ -63,27 +64,27 @@ export function TextGuidedImageGeneration({si, services}: {si: ServiceInvoker, s
         const n = parseInt(numOfGenerations.current!.value);
         const invocations = [];
         let start = new Date().getTime();
-        const serviceResults : ServiceResult[] = [];
+        const serviceResults : TextGuidedImageGenerationResult[] = [];
         for(const sid of validServices){
             invocations.push({serviceId: sid});
-            const result: ServiceResult = {serviceId: sid, images: []};
+            const result: TextGuidedImageGenerationResult = {serviceId: sid, images: []};
             si.textGuidedImageGeneration(sid).generateMultiTimes(lang, ppt, n)
                 .then(r =>{
                     console.log("generated.");
                     result.images.push(...r);
-                    console.log(serviceInvocations);
-                    setServiceInvocations(serviceInvocations);
+                    console.log(results);
+                    setResults(results);
                 });
             serviceResults.push(result);
         }
-        const svi: ServiceInvocation = {
+        const svi: TextGuidedImageGenerationInvocation = {
             language: lang,
             prompt: ppt,
             numOfGeneration: n,
             results: serviceResults
         }
-        serviceInvocations.push(svi);
-        setServiceInvocations(serviceInvocations);
+        results.push(svi);
+        setResults(results);
     };
     return (<div className="tab-pane fade show active" id="trans" role="tabpanel" aria-labelledby="transTab">
 		<label>inputs:</label><br/>
@@ -99,7 +100,7 @@ export function TextGuidedImageGeneration({si, services}: {si: ServiceInvoker, s
         {sids.map(s => <ServiceComponent key={s} serviceId={s} checked={validServices} />)}
         <label>results:</label>
         <div>
-        {serviceInvocations.map(sis=><ServiceInvocationTag key={"si" + (i++)} sis={sis} />)}
+        {results.map(sis=><ServiceInvocationTag key={"si" + (i++)} sis={sis} />)}
         </div>
         <a href="https://github.com/borisdayma/dalle-mini">Dalle Mini</a> &nbsp;
         <a href="https://github.com/CompVis/stable-diffusion">Stable Diffusion</a> &nbsp;
