@@ -1,6 +1,9 @@
+import { Button, TextField } from "@mui/material";
 import React, { ChangeEventHandler, FormEventHandler } from "react";
 import * as ReactDOM from "react-dom/client";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Holder } from "../util/Holder";
 
 const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set<string>}) =>{
     const onChange: ChangeEventHandler<HTMLInputElement> = e=>{
@@ -13,66 +16,89 @@ const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set
             <span>{serviceId}</span></label>
         </div>
     );
-}
-const TransResult = ({sourceLang, targetLang, source, invocations}:
-        {sourceLang: string; targetLang: string; source: string; invocations: {serviceId: string}[]})=>{
-    return (
-        <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
-            input:<br/>
-	    	sourceLang: {sourceLang}&nbsp;, targetLang: {targetLang}&nbsp;, soruce: {source}<br/>
-            results:<br/>
-            {invocations.map(i=><div key={i.serviceId}>{i.serviceId}(<span data-id={i.serviceId + "Time"}></span>):
-                <span data-id={i.serviceId + "Result"}>processing..</span></div>)}
-        </div>
-    );
 };
-export function Translation({si, services}: {si: ServiceInvoker, services: Map<string, string[]>}){
-    const sourceLang = React.useRef<HTMLInputElement>(null);
-    const targetLang = React.useRef<HTMLInputElement>(null);
-    const source = React.useRef<HTMLInputElement>(null);
-    const results = React.useRef<HTMLDivElement>(null);
+
+export interface Input {
+    sourceLang: string;
+    targetLang: string;
+    source: string;
+}
+export interface Result{
+    serviceId: string;
+    result: string | null;
+    ellapsedMs: number;
+}
+export interface TranslationInvocation{
+    input: Input;
+    results: Result[];
+}
+export function Translation({services, si, state}:
+    {services: Map<string, string[]>; si: ServiceInvoker;
+        state: [Holder<TranslationInvocation[]>, React.Dispatch<React.SetStateAction<Holder<TranslationInvocation[]>>>]}){
+    const { register, handleSubmit } = useForm<Input>({defaultValues: {
+        "sourceLang": "en",
+        "targetLang": "ja",
+        "source": "hello world"
+    }});
     if(services.size === 0) return (<div />);
+    const [invocations, setInvocations] = state;
     const sids = services.get("TranslationService") || [];
     const validServices = new Set(sids);
-    const onSubmit: FormEventHandler = (e)=>{
-        e.preventDefault();
-        const sl = sourceLang.current!.value;
-        const tl = targetLang.current!.value;
-        const s = source.current!.value;
-        const invocations = [];
-        const invocation = document.createElement("div");
+    const onSubmit: SubmitHandler<Input> = (input)=>{
+        const sl = input.sourceLang;
+        const tl = input.targetLang;
+        const s = input.source;
         let start = new Date().getTime();
+        const results : Result[] = [];
         for(const sid of validServices){
+            const result: Result = {serviceId: sid, result: null, ellapsedMs: 0};
             si.translation(sid).translate(sl, tl, s)
                 .then(r=>{
-                    invocation.querySelector(`[data-id='${sid}Time']`)!.textContent = ((new Date().getTime()) - start) + "ms";
-                    invocation.querySelector(`[data-id='${sid}Result']`)!.textContent = r;
+                    result.result = r;
+                    result.ellapsedMs = (new Date().getTime()) - start
+                    setInvocations(invocations.clone());
                     start = new Date().getTime();
                 })
-                .catch(e=>{ console.error(e); invocation.querySelector(`[data-id='${sid}Result']`)!.textContent = e.error; });
-            invocations.push({serviceId: sid});
+                .catch(console.error);
+            results.push(result);
         }
-        ReactDOM.createRoot(invocation).render(<TransResult sourceLang={sl} targetLang={tl} source={s} invocations={invocations} />);
-        results.current!.append(invocation);
+        invocations.value.push({
+            input: input,
+            results: results
+        });
+        setInvocations(invocations.clone());
     };
     return (
     <div className="tab-pane fade show active" id="trans" role="tabpanel" aria-labelledby="transTab">
-		<label>inputs:</label><br/>
+		<label>inputs:</label><br/><br/>
 		<div data-id="inputs">
-            <form onSubmit={onSubmit}>
-                <label>sourceLang: <input ref={sourceLang} className="form-control" size={10} type="text" defaultValue={"en"} /></label>
-                <label>targetLang: <input ref={targetLang} className="form-control" size={10} type="text" defaultValue={"ja"} /></label>
-                <label>source: <input ref={source} className="form-control" size={80} type="text" defaultValue={"hello"} /></label>
-                <button className="btn btn-success">翻訳</button>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <TextField label="sourceLang" size="small" type="text" style={{width: "6em"}} {...register("sourceLang")} />
+                <TextField label="targetLang" size="small" type="text" style={{width: "6em"}} {...register("targetLang")} />
+                <TextField label="source" size="small" type="text" style={{width: "24em"}} {...register("source")} />
+                <Button type="submit" variant="contained" >翻訳</Button>
             </form>
 		</div>
+        <br/>
 		<label>services:</label>
         {sids.map(s => <ServiceComponent key={s} serviceId={s} checked={validServices} />)}
-        <label>results:</label>
-		<div ref={results}>
-		</div>
-		<a href="https://langrid.org">Language Grid</a>&nbsp;
+        <a href="https://langrid.org">Language Grid</a>&nbsp;
 		<a href="https://huggingface.co/Helsinki-NLP">Helsinki-NLP</a>
+        <br/> <br/>
+        <label>invocation histories:</label>
+        <div>
+        {invocations.value.map((inv, i)=>
+            <div key={i} style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
+                input:<br/>
+	    	      sourceLang: {inv.input.sourceLang}, targetLang: {inv.input.targetLang},
+                  source: {inv.input.source}<br/>
+                results:<br/>
+                  {inv.results.map((ir, i)=>
+                    <div key={i} >{ir.serviceId}{ir.result ? `(${ir.ellapsedMs}ms)` : ""}:
+                        {ir.result ? ir.result : "processing..."}</div>
+                  )}
+            </div>)}
+        </div>
     </div>
     );
 }

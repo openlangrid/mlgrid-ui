@@ -53,15 +53,15 @@ interface  FormInput {
     prompt: string;
     numOfGenerations: number;
 }
-export function TextGuidedImageGeneration({si, services, results, setResults}:
+export function TextGuidedImageGeneration({si, services, state}:
         {si: ServiceInvoker; services: Map<string, string[]>;
-        results: Holder<TextGuidedImageGenerationInvocation[]>;
-        setResults: React.Dispatch<React.SetStateAction<Holder<TextGuidedImageGenerationInvocation[]>>>}){
+        state: [Holder<TextGuidedImageGenerationInvocation[]>, React.Dispatch<React.SetStateAction<Holder<TextGuidedImageGenerationInvocation[]>>>]}){
     const { register, handleSubmit } = useForm<FormInput>({defaultValues: {
         "language": "en",
         "prompt": "sunset over a lake in the mountains",
         "numOfGenerations": 2
     }});
+    const [results, setResults] = state;
     const sids = services.get("TextGuidedImageGenerationService") || [];
     const validServices = new Set(sids);
     if(services.size === 0) return (<div />);

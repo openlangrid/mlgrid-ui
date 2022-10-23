@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 //import './App.css';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
-import { Translation } from './components/Translation';
+import { Translation, TranslationInvocation } from './components/Translation';
 import { TextGuidedImageGeneration, TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { TestArray1 } from './components/TestArray1';
 import { TestHolder } from './components/TestHolder';
@@ -38,17 +38,18 @@ function TabPanel(props: TabPanelProps) {
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState<Map<string, string[]>>(new Map<string, string[]>());
-  const [tgigResults, setTgigResults] = React.useState(new Holder<TextGuidedImageGenerationInvocation[]>([]));
-
+  const transState = React.useState(new Holder<TranslationInvocation[]>([]));
+  const tgigState = React.useState(new Holder<TextGuidedImageGenerationInvocation[]>([]));
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  console.log("render");
 
   const si = new WSServiceInvoker("wss://fungo.kcg.edu/mlgrid-services/ws");
-  const refFirstRef = React.useRef(true);
+  const refFirst = React.useRef(true);
   useEffect(()=>{
-    if (process.env.NODE_ENV === "development" && refFirstRef.current) {
-      refFirstRef.current = false;
+    if (process.env.NODE_ENV === "development" && refFirst.current) {
+      refFirst.current = false;
       return;
     }
     console.log("search");
@@ -89,10 +90,10 @@ function App() {
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
-          <Translation services={services} si={si} />
+          <Translation services={services} si={si} state={transState} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <TextGuidedImageGeneration results={tgigResults} setResults={setTgigResults} services={services} si={si} />
+          <TextGuidedImageGeneration services={services} si={si} state={tgigState} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           SpeechRecognition
