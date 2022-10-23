@@ -267,7 +267,7 @@ export class WSServiceInvoker extends ServiceInvoker{
 	}
 }
 
-class HTTPServiceInvoker extends ServiceInvoker{
+export class HTTPServiceInvoker extends ServiceInvoker{
 	constructor(private baseUrl: string){
         super();
 	}

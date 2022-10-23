@@ -1,21 +1,9 @@
 import { Button, TextField } from "@mui/material";
-import React, { ChangeEventHandler, memo } from "react";
+import React, { memo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
-
-const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set<string>}) =>{
-    const onChange: ChangeEventHandler<HTMLInputElement> = e=>{
-        if(e.target.checked) checked.add(serviceId);
-        else checked.delete(serviceId);
-    };
-    return (
-        <div>
-            <label><input onChange={onChange} type="checkbox" defaultChecked />&nbsp;
-            <span>{serviceId}</span></label>
-        </div>
-    );
-};
+import { Service, ServiceCheck } from "./Service";
 
 export interface Input {
     sourceLang: string;
@@ -31,20 +19,10 @@ export interface TranslationInvocation{
     input: Input;
     results: Result[];
 }
-const Invocation = memo(({inv: {value: {input, results}}}: {inv: Holder<TranslationInvocation>})=>
-    <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
-    input:<br/>
-    sourceLang: {input.sourceLang}, targetLang: {input.targetLang},
-    source: {input.source}<br/>
-    results:<br/>
-    {results.map((ir, i)=>
-        <div key={i} >{ir.serviceId}{ir.result ? `(${ir.ellapsedMs}ms)` : ""}:
-            {ir.result ? ir.result : "processing..."}</div>
-    )}
-    </div>);
 export function Translation({services, si, state}:
-    {services: Map<string, string[]>; si: ServiceInvoker;
-        state: [Holder<Holder<TranslationInvocation>[]>, React.Dispatch<React.SetStateAction<Holder<Holder<TranslationInvocation>[]>>>]}){
+    {services: Map<string, ServiceCheck[]>; si: ServiceInvoker;
+        state: [Holder<Holder<TranslationInvocation>[]>,
+            React.Dispatch<React.SetStateAction<Holder<Holder<TranslationInvocation>[]>>>]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "sourceLang": "en",
         "targetLang": "ja",
@@ -52,8 +30,7 @@ export function Translation({services, si, state}:
     }});
     if(services.size === 0) return (<div />);
     const [invocations, setInvocations] = state;
-    const sids = services.get("TranslationService") || [];
-    const validServices = new Set(sids);
+    const scs = services.get("TranslationService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const sl = input.sourceLang;
         const tl = input.targetLang;
@@ -63,9 +40,10 @@ export function Translation({services, si, state}:
         const length = invocations.value.push(new Holder<TranslationInvocation>({
             input: input, results: results
         }));
-        for(const sid of validServices){
-            const result: Result = {serviceId: sid, result: null, ellapsedMs: 0};
-            si.translation(sid).translate(sl, tl, s)
+        for(const sc of scs){
+            if(!sc.checked) continue;
+            const result: Result = {serviceId: sc.serviceId, result: null, ellapsedMs: 0};
+            si.translation(sc.serviceId).translate(sl, tl, s)
                 .then(r=>{
                     result.result = r;
                     result.ellapsedMs = (new Date().getTime()) - start
@@ -91,7 +69,7 @@ export function Translation({services, si, state}:
 		</div>
         <br/>
 		<label>services:</label>
-        {sids.map(s => <ServiceComponent key={s} serviceId={s} checked={validServices} />)}
+        {scs.map((sc, i) => <Service key={i} sc={sc} />)}
         <a href="https://langrid.org">Language Grid</a>&nbsp;
 		<a href="https://huggingface.co/Helsinki-NLP">Helsinki-NLP</a>
         <br/> <br/>
@@ -102,3 +80,14 @@ export function Translation({services, si, state}:
     </div>
     );
 }
+const Invocation = memo(({inv: {value: {input, results}}}: {inv: Holder<TranslationInvocation>})=>
+    <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
+    input:<br/>
+    sourceLang: {input.sourceLang}, targetLang: {input.targetLang},
+    source: {input.source}<br/>
+    results:<br/>
+    {results.map((ir, i)=>
+        <div key={i} >{ir.serviceId}{ir.result ? `(${ir.ellapsedMs}ms)` : ""}:
+            {ir.result ? ir.result : "processing..."}</div>
+    )}
+    </div>);

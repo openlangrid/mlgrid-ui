@@ -1,22 +1,9 @@
 import { Button, TextField } from "@mui/material";
-import React, { ChangeEventHandler } from "react";
-import { memo } from "react";
+import React, { memo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
-
-const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set<string>}) =>{
-    const onChange: ChangeEventHandler<HTMLInputElement> = e=>{
-        if(e.target.checked) checked.add(serviceId);
-        else checked.delete(serviceId);
-    };
-    return (
-        <div>
-            <label><input onChange={onChange} type="checkbox" defaultChecked />&nbsp;
-            <span>{serviceId}</span></label>
-        </div>
-    );
-}
+import { Service, ServiceCheck } from "./Service";
 
 export interface Input {
     language: string;
@@ -33,24 +20,8 @@ export interface TextGuidedImageGenerationInvocation{
     input: Input;
     results: Result[];
 }
-const Invocation = memo(({inv: {value: {input, results}}}: {inv: Holder<TextGuidedImageGenerationInvocation>})=>{
-    return (
-        <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
-            input:<br/>
-            language: {input.language}, prompt: {input.prompt}, numOfGeneration: {input.numOfGenerations}<br/>
-            results:<br/>
-            {results.map((ir, i)=>
-                <div key={i}>{ir.serviceId}{ir.images.length > 0 ? `(${ir.ellapsedMs}ms): done.` : ": processing..."}<br/>
-                    {ir.images.map((r, i) =>
-                        <img key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
-                    )}
-                </div>
-            )}
-        </div>
-    );
-});
 export function TextGuidedImageGeneration({si, services, state}:
-        {si: ServiceInvoker; services: Map<string, string[]>;
+        {si: ServiceInvoker; services: Map<string, ServiceCheck[]>;
         state: [Holder<Holder<TextGuidedImageGenerationInvocation>[]>,
             React.Dispatch<React.SetStateAction<Holder<Holder<TextGuidedImageGenerationInvocation>[]>>>]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
@@ -59,12 +30,10 @@ export function TextGuidedImageGeneration({si, services, state}:
         "numOfGenerations": 2
     }});
     const [invocations, setInvocations] = state;
-    const sids = services.get("TextGuidedImageGenerationService") || [];
-    const validServices = new Set(sids);
-    if(services.size === 0) return (<div />);
+    const scs = services.get("TextGuidedImageGenerationService") || [];
+    if(services.size === 0) return <div>no services found</div>;
 
     const onSubmit: SubmitHandler<Input> = (input)=>{
-        console.log("onsubmit");
         const lang = input.language;
         const ppt = input.prompt;
         const n = input.numOfGenerations;
@@ -73,9 +42,10 @@ export function TextGuidedImageGeneration({si, services, state}:
         const length = invocations.value.push(new Holder<TextGuidedImageGenerationInvocation>({
             input: input, results: serviceResults
         }));
-        for(const sid of validServices){
-            const result: Result = {serviceId: sid, images: [], ellapsedMs: 0};
-            si.textGuidedImageGeneration(sid).generateMultiTimes(lang, ppt, n)
+        for(const sc of scs){
+            if(!sc.checked) continue;
+            const result: Result = {serviceId: sc.serviceId, images: [], ellapsedMs: 0};
+            si.textGuidedImageGeneration(sc.serviceId).generateMultiTimes(lang, ppt, n)
                 .then(r =>{
                     result.images.push(...r);
                     result.ellapsedMs = (new Date().getTime()) - start; // si.lastResponse()?.headers["ellapsedMillis"];
@@ -88,7 +58,7 @@ export function TextGuidedImageGeneration({si, services, state}:
         setInvocations(invocations.clone());
     };
 
-    return (<div className="tab-pane fade show active" id="trans" role="tabpanel" aria-labelledby="transTab">
+    return <div>
 		<label>inputs:</label><br/><br/>
 		<div data-id="inputs">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -100,7 +70,7 @@ export function TextGuidedImageGeneration({si, services, state}:
 		</div>
         <br/>
 		<label>services:</label>
-        {sids.map(s => <ServiceComponent key={s} serviceId={s} checked={validServices} />)}
+        {scs.map((sc, i) => <Service key={i} sc={sc} />)}
         <label>results:</label>
         <div>
         {invocations.value.map((inv, i)=><Invocation key={i} inv={inv} />)}
@@ -112,6 +82,21 @@ export function TextGuidedImageGeneration({si, services, state}:
 		<a href="https://huggingface.co/naclbit/trinart_stable_diffusion_v2">trinart_stable_diffusion_v2</a> &nbsp;
 		<a href="https://huggingface.co/sd-dreambooth-library/disco-diffusion-style">disco-diffusion-style</a> &nbsp;
 		<a href="https://huggingface.co/doohickey/trinart-waifu-diffusion-50-50">trinart-waifu-diffusion-50-50</a>
-    </div>
-    );
+    </div>;
 }
+const Invocation = memo(({inv: {value: {input, results}}}: {inv: Holder<TextGuidedImageGenerationInvocation>})=>{
+    return (
+        <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
+            input:<br/>
+            language: {input.language}, prompt: {input.prompt}, numOfGeneration: {input.numOfGenerations}<br/>
+            results:<br/>
+            {results.map((ir, i)=>
+                <div key={i}>{ir.serviceId}{ir.images.length > 0 ? `(${ir.ellapsedMs}ms): done.` : ": processing..."}<br/>
+                    {ir.images.map((r, i) =>
+                        <img alt="" key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+});

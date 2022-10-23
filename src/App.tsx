@@ -8,6 +8,7 @@ import { TestArray1 } from './components/TestArray1';
 import { TestHolder } from './components/TestHolder';
 import { Holder } from './util/Holder';
 import { TestArray2 } from './components/TestArray2';
+import { ServiceCheck } from './components/Service';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -37,13 +38,12 @@ function TabPanel(props: TabPanelProps) {
 
 function App() {
   const [value, setValue] = React.useState(0);
-  const [services, setServices] = React.useState<Map<string, string[]>>(new Map<string, string[]>());
+  const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
   const transState = React.useState(new Holder<Holder<TranslationInvocation>[]>([]));
   const tgigState = React.useState(new Holder<Holder<TextGuidedImageGenerationInvocation>[]>([]));
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  console.log("render");
 
   const si = new WSServiceInvoker("wss://fungo.kcg.edu/mlgrid-services/ws");
   const refFirst = React.useRef(true);
@@ -52,15 +52,13 @@ function App() {
       refFirst.current = false;
       return;
     }
-    console.log("search");
     si.serviceManagement().searchServices(0, 100, [], [])
       .then(r => {
-        const s = new Map<string, string[]>();
-        console.log(r);
+        const s = new Map<string, ServiceCheck[]>();
         for(const e of r.entries){
           const st = e.serviceType;
           if(!s.has(st)) s.set(st, []);
-          s.get(st)!.push(e.serviceId);
+          s.get(st)!.push({serviceId: e.serviceId, checked: true});
         }
         setServices(s);
       }).catch(e =>{
