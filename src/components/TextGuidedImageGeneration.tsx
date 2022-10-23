@@ -1,4 +1,5 @@
-import React, { ChangeEventHandler, FormEventHandler } from "react";
+import { Button, TextField } from "@mui/material";
+import React, { ChangeEventHandler } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
@@ -56,7 +57,11 @@ export function TextGuidedImageGeneration({si, services, results, setResults}:
         {si: ServiceInvoker; services: Map<string, string[]>;
         results: Holder<TextGuidedImageGenerationInvocation[]>;
         setResults: React.Dispatch<React.SetStateAction<Holder<TextGuidedImageGenerationInvocation[]>>>}){
-    const { register, handleSubmit } = useForm<FormInput>();
+    const { register, handleSubmit } = useForm<FormInput>({defaultValues: {
+        "language": "en",
+        "prompt": "sunset over a lake in the mountains",
+        "numOfGenerations": 2
+    }});
     const sids = services.get("TextGuidedImageGenerationService") || [];
     const validServices = new Set(sids);
     if(services.size === 0) return (<div />);
@@ -89,15 +94,16 @@ export function TextGuidedImageGeneration({si, services, results, setResults}:
         setResults(results.clone());
     };
     return (<div className="tab-pane fade show active" id="trans" role="tabpanel" aria-labelledby="transTab">
-		<label>inputs:</label><br/>
+		<label>inputs:</label><br/><br/>
 		<div data-id="inputs">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <label>language: <input {...register("language")} className="form-control" size={4} type="text" defaultValue={"en"} /></label>
-                <label>prompt: <input {...register("prompt")} className="form-control" size={80} type="text" defaultValue={"sunset over a lake in the mountains"} /></label>
-                <label>samples: <input {...register("numOfGenerations")} className="form-control" size={2} type="number" defaultValue={2} /></label>
-                <input type="submit" value="生成" />
+                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("language")} />
+                <TextField label="prompt" size="small" type="text" style={{width: "32em"}}  {...register("prompt")} />
+                <TextField label="numOfGenerations" size="small" type="number" style={{width: "8em"}}  {...register("numOfGenerations")} />
+                <Button type="submit" variant="contained" >生成</Button>
             </form>
 		</div>
+        <br/>
 		<label>services:</label>
         {sids.map(s => <ServiceComponent key={s} serviceId={s} checked={validServices} />)}
         <label>results:</label>
