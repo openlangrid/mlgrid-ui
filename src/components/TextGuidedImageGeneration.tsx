@@ -1,5 +1,6 @@
 import React, { ChangeEventHandler, FormEventHandler } from "react";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Holder } from "../util/Holder";
 
 const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set<string>}) =>{
     const onChange: ChangeEventHandler<HTMLInputElement> = e=>{
@@ -47,13 +48,13 @@ export interface TextGuidedImageGenerationInvocation{
 }
 export function TextGuidedImageGeneration({si, services, results, setResults}:
         {si: ServiceInvoker; services: Map<string, string[]>;
-        results: TextGuidedImageGenerationInvocation[]; setResults: React.Dispatch<React.SetStateAction<TextGuidedImageGenerationInvocation[]>>}){
+        results: Holder<TextGuidedImageGenerationInvocation[]>;
+        setResults: React.Dispatch<React.SetStateAction<Holder<TextGuidedImageGenerationInvocation[]>>>}){
     const language = React.useRef<HTMLInputElement>(null);
     const prompt = React.useRef<HTMLInputElement>(null);
     const numOfGenerations = React.useRef<HTMLInputElement>(null);
     const sids = services.get("TextGuidedImageGenerationService") || [];
     const validServices = new Set(sids);
-    let i = 0;
     if(services.size === 0) return (<div />);
 
     const onSubmit: FormEventHandler = (e)=>{
@@ -70,10 +71,8 @@ export function TextGuidedImageGeneration({si, services, results, setResults}:
             const result: TextGuidedImageGenerationResult = {serviceId: sid, images: []};
             si.textGuidedImageGeneration(sid).generateMultiTimes(lang, ppt, n)
                 .then(r =>{
-                    console.log("generated.");
                     result.images.push(...r);
-                    console.log(results);
-                    setResults(results);
+                    setResults(results.clone());
                 });
             serviceResults.push(result);
         }
@@ -83,8 +82,8 @@ export function TextGuidedImageGeneration({si, services, results, setResults}:
             numOfGeneration: n,
             results: serviceResults
         }
-        results.push(svi);
-        setResults(results);
+        results.value.push(svi);
+        setResults(results.clone());
     };
     return (<div className="tab-pane fade show active" id="trans" role="tabpanel" aria-labelledby="transTab">
 		<label>inputs:</label><br/>
@@ -100,7 +99,7 @@ export function TextGuidedImageGeneration({si, services, results, setResults}:
         {sids.map(s => <ServiceComponent key={s} serviceId={s} checked={validServices} />)}
         <label>results:</label>
         <div>
-        {results.map(sis=><ServiceInvocationTag key={"si" + (i++)} sis={sis} />)}
+        {results.value.map((sis, i)=><ServiceInvocationTag key={i} sis={sis} />)}
         </div>
         <a href="https://github.com/borisdayma/dalle-mini">Dalle Mini</a> &nbsp;
         <a href="https://github.com/CompVis/stable-diffusion">Stable Diffusion</a> &nbsp;

@@ -4,6 +4,10 @@ import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { Translation } from './components/Translation';
 import { TextGuidedImageGeneration, TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
+import { TestArray1 } from './components/TestArray1';
+import { TestHolder } from './components/TestHolder';
+import { Holder } from './util/Holder';
+import { TestArray2 } from './components/TestArray2';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -34,7 +38,7 @@ function TabPanel(props: TabPanelProps) {
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState<Map<string, string[]>>(new Map<string, string[]>());
-  const [tgigResult, setTgigResult] = React.useState(new Array<TextGuidedImageGenerationInvocation>());
+  const [tgigResults, setTgigResults] = React.useState(new Holder<TextGuidedImageGenerationInvocation[]>([]));
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -79,20 +83,28 @@ function App() {
             <Tab label="Translation" />
             <Tab label="TextGuidedImageGeneration" />
             <Tab label="SpeechRecognition" />
-            <Tab label="Test" />
+            <Tab label="TestArray1" />
+            <Tab label="TestArray2" />
+            <Tab label="TestHolder" />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
           <Translation services={services} si={si} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <TextGuidedImageGeneration results={tgigResult} setResults={setTgigResult} services={services} si={si} />
+          <TextGuidedImageGeneration results={tgigResults} setResults={setTgigResults} services={services} si={si} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           SpeechRecognition
         </TabPanel>
         <TabPanel value={value} index={3}>
-
+          <TestArray1 />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <TestArray2 />
+        </TabPanel>
+        <TabPanel value={value} index={5}>
+          <TestHolder />
         </TabPanel>
       </main>
       <footer>
