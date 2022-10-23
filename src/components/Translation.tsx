@@ -1,6 +1,5 @@
 import { Button, TextField } from "@mui/material";
-import React, { ChangeEventHandler, FormEventHandler } from "react";
-import * as ReactDOM from "react-dom/client";
+import React, { ChangeEventHandler } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
