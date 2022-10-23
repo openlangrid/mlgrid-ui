@@ -38,8 +38,8 @@ function TabPanel(props: TabPanelProps) {
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState<Map<string, string[]>>(new Map<string, string[]>());
-  const transState = React.useState(new Holder<TranslationInvocation[]>([]));
-  const tgigState = React.useState(new Holder<TextGuidedImageGenerationInvocation[]>([]));
+  const transState = React.useState(new Holder<Holder<TranslationInvocation>[]>([]));
+  const tgigState = React.useState(new Holder<Holder<TextGuidedImageGenerationInvocation>[]>([]));
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };

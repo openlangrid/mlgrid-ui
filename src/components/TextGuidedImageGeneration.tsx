@@ -1,5 +1,6 @@
 import { Button, TextField } from "@mui/material";
 import React, { ChangeEventHandler } from "react";
+import { memo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
@@ -16,83 +17,81 @@ const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set
         </div>
     );
 }
-const ServiceResultTag = ({sr}: {sr: TextGuidedImageGenerationResult})=>{
-    let i = 0;
-    return <div>{sr.serviceId}: {sr.images.length > 0 ? "done." : "processing..."}<br/>
-            {sr.images.map(r => {
-            const src = URL.createObjectURL(new Blob([r.image.buffer]));
-            return <img key={"img" + (i++)} src={src}></img>;
-        })}
-    </div>;
-};
-const ServiceInvocationTag = ({sis}: {sis: TextGuidedImageGenerationInvocation})=>{
-    let i = 0;
-    return (
-        <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
-            input:<br/>
-	    	language: {sis.language}&nbsp;, prompt: {sis.prompt}&nbsp;, numOfGeneration: {sis.numOfGeneration}<br/>
-            results:<br/>
-            {sis.results.map(sr=>{
-                return <ServiceResultTag key={"si" + (i++)} sr={sr} />
-            })}
-        </div>
-    );
-};
-export interface TextGuidedImageGenerationResult{
-    serviceId: string;
-    images: Image[];
-}
-export interface TextGuidedImageGenerationInvocation{
-    language: string;
-    prompt: string;
-    numOfGeneration: number;
-    results: TextGuidedImageGenerationResult[];
-}
-interface  FormInput {
+
+export interface Input {
     language: string;
     prompt: string;
     numOfGenerations: number;
 }
+
+export interface Result{
+    serviceId: string;
+    images: Image[];
+    ellapsedMs: number;
+}
+export interface TextGuidedImageGenerationInvocation{
+    input: Input;
+    results: Result[];
+}
+const Invocation = memo(({inv: {value: {input, results}}}: {inv: Holder<TextGuidedImageGenerationInvocation>})=>{
+    return (
+        <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
+            input:<br/>
+            language: {input.language}, prompt: {input.prompt}, numOfGeneration: {input.numOfGenerations}<br/>
+            results:<br/>
+            {results.map((ir, i)=>
+                <div key={i}>{ir.serviceId}{ir.images.length > 0 ? `(${ir.ellapsedMs}ms): done.` : ": processing..."}<br/>
+                    {ir.images.map((r, i) =>
+                        <img key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+});
 export function TextGuidedImageGeneration({si, services, state}:
         {si: ServiceInvoker; services: Map<string, string[]>;
-        state: [Holder<TextGuidedImageGenerationInvocation[]>, React.Dispatch<React.SetStateAction<Holder<TextGuidedImageGenerationInvocation[]>>>]}){
-    const { register, handleSubmit } = useForm<FormInput>({defaultValues: {
+        state: [Holder<Holder<TextGuidedImageGenerationInvocation>[]>,
+            React.Dispatch<React.SetStateAction<Holder<Holder<TextGuidedImageGenerationInvocation>[]>>>]}){
+    const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "language": "en",
         "prompt": "sunset over a lake in the mountains",
         "numOfGenerations": 2
     }});
-    const [results, setResults] = state;
+    const [invocations, setInvocations] = state;
     const sids = services.get("TextGuidedImageGenerationService") || [];
     const validServices = new Set(sids);
     if(services.size === 0) return (<div />);
 
-    const onSubmit: SubmitHandler<FormInput> = (data)=>{
+    const onSubmit: SubmitHandler<Input> = (data)=>{
         console.log("onsubmit");
         const lang = data.language;
         const ppt = data.prompt;
         const n = data.numOfGenerations;
-        const invocations = [];
+        const results = [];
         let start = new Date().getTime();
-        const serviceResults : TextGuidedImageGenerationResult[] = [];
+        const serviceResults : Result[] = [];
+        const length = invocations.value.push(new Holder<TextGuidedImageGenerationInvocation>({
+            input: {
+                language: lang,
+                prompt: ppt,
+                numOfGenerations: n
+            }, results: serviceResults
+        }));
         for(const sid of validServices){
-            invocations.push({serviceId: sid});
-            const result: TextGuidedImageGenerationResult = {serviceId: sid, images: []};
+            results.push({serviceId: sid});
+            const result: Result = {serviceId: sid, images: [], ellapsedMs: 0};
             si.textGuidedImageGeneration(sid).generateMultiTimes(lang, ppt, n)
                 .then(r =>{
                     result.images.push(...r);
-                    setResults(results.clone());
+                    invocations.value[length - 1] = invocations.value[length - 1].clone();
+                    setInvocations(invocations.clone());
                 });
             serviceResults.push(result);
         }
-        const svi: TextGuidedImageGenerationInvocation = {
-            language: lang,
-            prompt: ppt,
-            numOfGeneration: n,
-            results: serviceResults
-        }
-        results.value.push(svi);
-        setResults(results.clone());
+        setInvocations(invocations.clone());
     };
+
     return (<div className="tab-pane fade show active" id="trans" role="tabpanel" aria-labelledby="transTab">
 		<label>inputs:</label><br/><br/>
 		<div data-id="inputs">
@@ -108,7 +107,7 @@ export function TextGuidedImageGeneration({si, services, state}:
         {sids.map(s => <ServiceComponent key={s} serviceId={s} checked={validServices} />)}
         <label>results:</label>
         <div>
-        {results.value.map((sis, i)=><ServiceInvocationTag key={i} sis={sis} />)}
+        {invocations.value.map((inv, i)=><Invocation key={i} inv={inv} />)}
         </div>
         <a href="https://github.com/borisdayma/dalle-mini">Dalle Mini</a> &nbsp;
         <a href="https://github.com/CompVis/stable-diffusion">Stable Diffusion</a> &nbsp;
