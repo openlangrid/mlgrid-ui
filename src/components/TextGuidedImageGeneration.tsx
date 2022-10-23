@@ -63,29 +63,25 @@ export function TextGuidedImageGeneration({si, services, state}:
     const validServices = new Set(sids);
     if(services.size === 0) return (<div />);
 
-    const onSubmit: SubmitHandler<Input> = (data)=>{
+    const onSubmit: SubmitHandler<Input> = (input)=>{
         console.log("onsubmit");
-        const lang = data.language;
-        const ppt = data.prompt;
-        const n = data.numOfGenerations;
-        const results = [];
+        const lang = input.language;
+        const ppt = input.prompt;
+        const n = input.numOfGenerations;
         let start = new Date().getTime();
         const serviceResults : Result[] = [];
         const length = invocations.value.push(new Holder<TextGuidedImageGenerationInvocation>({
-            input: {
-                language: lang,
-                prompt: ppt,
-                numOfGenerations: n
-            }, results: serviceResults
+            input: input, results: serviceResults
         }));
         for(const sid of validServices){
-            results.push({serviceId: sid});
             const result: Result = {serviceId: sid, images: [], ellapsedMs: 0};
             si.textGuidedImageGeneration(sid).generateMultiTimes(lang, ppt, n)
                 .then(r =>{
                     result.images.push(...r);
+                    result.ellapsedMs = (new Date().getTime()) - start; // si.lastResponse()?.headers["ellapsedMillis"];
                     invocations.value[length - 1] = invocations.value[length - 1].clone();
                     setInvocations(invocations.clone());
+                    start = new Date().getTime();
                 });
             serviceResults.push(result);
         }

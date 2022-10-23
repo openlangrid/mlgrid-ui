@@ -61,8 +61,7 @@ export function Translation({services, si, state}:
         let start = new Date().getTime();
         const results : Result[] = [];
         const length = invocations.value.push(new Holder<TranslationInvocation>({
-            input: input,
-            results: results
+            input: input, results: results
         }));
         for(const sid of validServices){
             const result: Result = {serviceId: sid, result: null, ellapsedMs: 0};
