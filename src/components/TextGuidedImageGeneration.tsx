@@ -1,4 +1,5 @@
 import React, { ChangeEventHandler, FormEventHandler } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 
@@ -16,7 +17,7 @@ const ServiceComponent = ({serviceId, checked}: {serviceId: string; checked: Set
 }
 const ServiceResultTag = ({sr}: {sr: TextGuidedImageGenerationResult})=>{
     let i = 0;
-    return <div>{sr.serviceId}: {sr.images.length > 0 ? "done." : "processing"}<br/>
+    return <div>{sr.serviceId}: {sr.images.length > 0 ? "done." : "processing..."}<br/>
             {sr.images.map(r => {
             const src = URL.createObjectURL(new Blob([r.image.buffer]));
             return <img key={"img" + (i++)} src={src}></img>;
@@ -46,23 +47,25 @@ export interface TextGuidedImageGenerationInvocation{
     numOfGeneration: number;
     results: TextGuidedImageGenerationResult[];
 }
+interface  FormInput {
+    language: string;
+    prompt: string;
+    numOfGenerations: number;
+}
 export function TextGuidedImageGeneration({si, services, results, setResults}:
         {si: ServiceInvoker; services: Map<string, string[]>;
         results: Holder<TextGuidedImageGenerationInvocation[]>;
         setResults: React.Dispatch<React.SetStateAction<Holder<TextGuidedImageGenerationInvocation[]>>>}){
-    const language = React.useRef<HTMLInputElement>(null);
-    const prompt = React.useRef<HTMLInputElement>(null);
-    const numOfGenerations = React.useRef<HTMLInputElement>(null);
+    const { register, handleSubmit } = useForm<FormInput>();
     const sids = services.get("TextGuidedImageGenerationService") || [];
     const validServices = new Set(sids);
     if(services.size === 0) return (<div />);
 
-    const onSubmit: FormEventHandler = (e)=>{
-        e.preventDefault();
+    const onSubmit: SubmitHandler<FormInput> = (data)=>{
         console.log("onsubmit");
-        const lang = language.current!.value;
-        const ppt = prompt.current!.value;
-        const n = parseInt(numOfGenerations.current!.value);
+        const lang = data.language;
+        const ppt = data.prompt;
+        const n = data.numOfGenerations;
         const invocations = [];
         let start = new Date().getTime();
         const serviceResults : TextGuidedImageGenerationResult[] = [];
@@ -88,11 +91,11 @@ export function TextGuidedImageGeneration({si, services, results, setResults}:
     return (<div className="tab-pane fade show active" id="trans" role="tabpanel" aria-labelledby="transTab">
 		<label>inputs:</label><br/>
 		<div data-id="inputs">
-            <form onSubmit={onSubmit}>
-                <label>language: <input ref={language} className="form-control" size={4} type="text" defaultValue={"en"} /></label>
-                <label>prompt: <input ref={prompt} className="form-control" size={80} type="text" defaultValue={"sunset over a lake in the mountains"} /></label>
-                <label>samples: <input ref={numOfGenerations} className="form-control" size={2} type="number" defaultValue={2} /></label>
-                <button className="btn btn-success">生成</button>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <label>language: <input {...register("language")} className="form-control" size={4} type="text" defaultValue={"en"} /></label>
+                <label>prompt: <input {...register("prompt")} className="form-control" size={80} type="text" defaultValue={"sunset over a lake in the mountains"} /></label>
+                <label>samples: <input {...register("numOfGenerations")} className="form-control" size={2} type="number" defaultValue={2} /></label>
+                <input type="submit" value="生成" />
             </form>
 		</div>
 		<label>services:</label>
