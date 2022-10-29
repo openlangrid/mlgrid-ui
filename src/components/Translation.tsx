@@ -1,5 +1,5 @@
 import { Button, TextField } from "@mui/material";
-import React, { memo, useEffect } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
@@ -26,7 +26,7 @@ export function Translation({services, si, invocations}:
         "targetLang": "ja",
         "source": "hello world"
     }});
-    const [invState, setInvState] = React.useState(new Holder(invocations));
+    const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
     const scs = services.get("TranslationService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
@@ -76,8 +76,8 @@ const TranslationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInv
 
 const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     console.log("InvocationRequest");
-    const [res, setRes] = React.useState(new Holder(result));
-    const refFirst = React.useRef(true);
+    const [res, setRes] = useState(new Holder(result));
+    const refFirst = useRef(true);
     useEffect(()=>{
         if (process.env.NODE_ENV === "development" && refFirst.current) {
             refFirst.current = false;
