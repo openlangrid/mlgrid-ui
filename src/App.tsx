@@ -9,6 +9,7 @@ import { TestHolder } from './components/TestHolder';
 import { Holder } from './util/Holder';
 import { TestArray2 } from './components/TestArray2';
 import { ServiceCheck } from './components/Service';
+import { SuspenceTest } from './components/SuspenseTest';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -85,6 +86,7 @@ function App() {
             <Tab label="TestArray1" />
             <Tab label="TestArray2" />
             <Tab label="TestHolder" />
+            <Tab label="TestSuspense" />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
@@ -104,6 +106,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={5}>
           <TestHolder />
+        </TabPanel>
+        <TabPanel value={value} index={6}>
+          <SuspenceTest />
         </TabPanel>
       </main>
       <footer>
