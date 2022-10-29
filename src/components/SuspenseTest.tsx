@@ -1,27 +1,5 @@
-import React, { Suspense } from "react";
-
-class AsyncProcessWrapper{
-    private result_: JSX.Element | undefined;
-    private resolve: ((value: any)=>void) | null = null;
-    private i: number = 0;
-    constructor(process: ()=>Promise<JSX.Element>){
-        console.log(`LongProcess.constructor(${this.i++})`);
-        process().then(result=>{
-            this.result_ = result;
-            console.error(`process().then. resolve: ${this.resolve}. result: ${result}`);
-            if(this.resolve != null) this.resolve(null);
-        });
-    }
-    result(){
-        console.log(`pollRequest`);
-        if(this.result_) return this.result_;
-        console.log("throw Promise");
-        throw new Promise(resolve=>{
-            console.log("promise body called.");
-            this.resolve = resolve;
-        });
-    }
-}
+import { Suspense } from "react";
+import { AsyncProcessWrapper } from "./AsyncProcessWrapper";
 
 function sleep(ms: number): Promise<void>{
     return new Promise(resolve=>{
@@ -29,10 +7,15 @@ function sleep(ms: number): Promise<void>{
     });
 }
 
-export function SuspenceTest(){
+export function SuspenseTest(){
     const process = new AsyncProcessWrapper(async ()=>{
-        await sleep(3000);
-        return <>hello</>;
+        return sleep(3000)
+            .then(()=>{
+                // Reactの仕様上ここは2回呼ばれる(renderWithHooksから呼ばれ、
+                // レンダリング中にそれをupdateFunctionComponent内の2ヶ所から呼んでいる)
+                console.trace("render");
+                return <>hello</>;
+            });
     });
     const Message = ()=>{
         return process.result();

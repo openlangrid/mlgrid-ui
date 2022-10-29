@@ -1,5 +1,5 @@
 import { Button, TextField } from "@mui/material";
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
@@ -15,45 +15,32 @@ export interface Result{
     result: string | null;
     ellapsedMs: number;
 }
-export interface TranslationInvocation{
+export interface Invocation{
     input: Input;
     results: Result[];
 }
-export function Translation({services, si, state}:
+export function Translation({services, si, serviceInvocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker;
-        state: [Holder<Holder<TranslationInvocation>[]>,
-            React.Dispatch<React.SetStateAction<Holder<Holder<TranslationInvocation>[]>>>]}){
+        serviceInvocations: Invocation[]}){
+    console.log("Translation", serviceInvocations);
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "sourceLang": "en",
         "targetLang": "ja",
         "source": "hello world"
     }});
+    const [invocations, setInvocations] = React.useState(new Holder(serviceInvocations));
     if(services.size === 0) return (<div />);
-    const [invocations, setInvocations] = state;
     const scs = services.get("TranslationService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
-        const sl = input.sourceLang;
-        const tl = input.targetLang;
-        const s = input.source;
-        let start = new Date().getTime();
-        const results : Result[] = [];
-        const length = invocations.value.push(new Holder<TranslationInvocation>({
-            input: input, results: results
-        }));
+        const inv: Invocation = {
+            input: input, results: []
+        };
         for(const sc of scs){
             if(!sc.checked) continue;
-            const result: Result = {serviceId: sc.serviceId, result: null, ellapsedMs: 0};
-            si.translation(sc.serviceId).translate(sl, tl, s)
-                .then(r=>{
-                    result.result = r;
-                    result.ellapsedMs = (new Date().getTime()) - start
-                    invocations.value[length - 1] = invocations.value[length - 1].clone();
-                    setInvocations(invocations.clone());
-                    start = new Date().getTime();
-                })
-                .catch(console.error);
-            results.push(result);
+            inv.results.push({serviceId: sc.serviceId, result: null, ellapsedMs: 0});
         }
+        serviceInvocations.push(inv);
+        console.log("translate", serviceInvocations);
         setInvocations(invocations.clone());
     };
     return (
@@ -75,19 +62,45 @@ export function Translation({services, si, state}:
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invocations.value.map((inv, i)=><Invocation key={i} inv={inv} />)}
+        {invocations.value.map((inv, i)=><TranslationInvocation key={i} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
-const Invocation = memo(({inv: {value: {input, results}}}: {inv: Holder<TranslationInvocation>})=>
+
+const TranslationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
     sourceLang: {input.sourceLang}, targetLang: {input.targetLang},
     source: {input.source}<br/>
     results:<br/>
-    {results.map((ir, i)=>
-        <div key={i} >{ir.serviceId}{ir.result ? `(${ir.ellapsedMs}ms)` : ""}:
-            {ir.result ? ir.result : "processing..."}</div>
-    )}
+    {results.map((r, i)=><TranslationInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
+
+const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+    console.log("InvocationRequest");
+    const [res, setRes] = React.useState(new Holder(result));
+    const refFirst = React.useRef(true);
+    useEffect(()=>{
+        if (process.env.NODE_ENV === "development" && refFirst.current) {
+            refFirst.current = false;
+            return;
+        }
+        if(res.value.result != null) return;
+
+        si.translation(result.serviceId).translate(input.sourceLang, input.targetLang, input.source)
+            .then(r=>{
+                result.result = r;
+                const hs = si.lastResponse()?.headers;
+                if(hs && "ellapsedMs" in hs){
+                    result.ellapsedMs = parseInt(hs["ellapsedMs"]);
+                }
+                console.log("call setRes");
+                setRes(res.clone());
+            })
+            .catch(console.error);
+    }, []);
+
+    return <div>{res.value.serviceId}{res.value.result ? `(${res.value.ellapsedMs}ms)` : ""}:
+        {res.value.result ? res.value.result : "processing..."}</div>;
+};
