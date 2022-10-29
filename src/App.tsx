@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
-import { TextGuidedImageGeneration, TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
+import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { TestArray1 } from './components/TestArray1';
 import { TestHolder } from './components/TestHolder';
 import { Holder } from './util/Holder';
@@ -38,11 +38,11 @@ function TabPanel(props: TabPanelProps) {
 }
 
 const transInvocations: TranslationInvocation[] = [];
+const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
 function App() {
   console.log("App");
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
-  const tgigState = React.useState(new Holder<Holder<TextGuidedImageGenerationInvocation>[]>([]));
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -94,7 +94,7 @@ function App() {
           <Translation services={services} si={si} invocations={transInvocations} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <TextGuidedImageGeneration services={services} si={si} state={tgigState} />
+          <TextGuidedImageGeneration services={services} si={si} invocations={tgigInvocations} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           SpeechRecognition

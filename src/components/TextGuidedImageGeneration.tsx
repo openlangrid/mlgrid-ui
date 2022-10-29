@@ -1,5 +1,5 @@
 import { Button, TextField } from "@mui/material";
-import React, { memo } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
@@ -16,46 +16,29 @@ export interface Result{
     images: Image[];
     ellapsedMs: number;
 }
-export interface TextGuidedImageGenerationInvocation{
+export interface Invocation{
     input: Input;
     results: Result[];
 }
-export function TextGuidedImageGeneration({si, services, state}:
-        {si: ServiceInvoker; services: Map<string, ServiceCheck[]>;
-        state: [Holder<Holder<TextGuidedImageGenerationInvocation>[]>,
-            React.Dispatch<React.SetStateAction<Holder<Holder<TextGuidedImageGenerationInvocation>[]>>>]}){
+export function TextGuidedImageGeneration({si, services, invocations}:
+        {si: ServiceInvoker; services: Map<string, ServiceCheck[]>; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "language": "en",
         "prompt": "sunset over a lake in the mountains",
         "numOfGenerations": 2
     }});
-    const [invocations, setInvocations] = state;
+    const [invState, setInvState] = useState(new Holder(invocations));
     const scs = services.get("TextGuidedImageGenerationService") || [];
     if(services.size === 0) return <div>no services found</div>;
 
     const onSubmit: SubmitHandler<Input> = (input)=>{
-        const lang = input.language;
-        const ppt = input.prompt;
-        const n = input.numOfGenerations;
-        let start = new Date().getTime();
-        const serviceResults : Result[] = [];
-        const length = invocations.value.push(new Holder<TextGuidedImageGenerationInvocation>({
-            input: input, results: serviceResults
-        }));
+        const inv: Invocation = { input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            const result: Result = {serviceId: sc.serviceId, images: [], ellapsedMs: 0};
-            si.textGuidedImageGeneration(sc.serviceId).generateMultiTimes(lang, ppt, n)
-                .then(r =>{
-                    result.images.push(...r);
-                    result.ellapsedMs = (new Date().getTime()) - start; // si.lastResponse()?.headers["ellapsedMillis"];
-                    invocations.value[length - 1] = invocations.value[length - 1].clone();
-                    setInvocations(invocations.clone());
-                    start = new Date().getTime();
-                });
-            serviceResults.push(result);
+            inv.results.push({serviceId: sc.serviceId, images: [], ellapsedMs: 0});
         }
-        setInvocations(invocations.clone());
+        invocations.push(inv);
+        setInvState(invState.clone());
     };
 
     return <div>
@@ -73,7 +56,7 @@ export function TextGuidedImageGeneration({si, services, state}:
         {scs.map((sc, i) => <Service key={i} sc={sc} />)}
         <label>results:</label>
         <div>
-        {invocations.value.map((inv, i)=><Invocation key={i} inv={inv} />)}
+        {invState.value.map((inv, i)=><TGIGInvocation key={i} si={si} inv={inv} />)}
         </div>
         <a href="https://github.com/borisdayma/dalle-mini">Dalle Mini</a> &nbsp;
         <a href="https://github.com/CompVis/stable-diffusion">Stable Diffusion</a> &nbsp;
@@ -84,19 +67,42 @@ export function TextGuidedImageGeneration({si, services, state}:
 		<a href="https://huggingface.co/doohickey/trinart-waifu-diffusion-50-50">trinart-waifu-diffusion-50-50</a>
     </div>;
 }
-const Invocation = memo(({inv: {value: {input, results}}}: {inv: Holder<TextGuidedImageGenerationInvocation>})=>{
+const TGIGInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
     return (
         <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
             input:<br/>
             language: {input.language}, prompt: {input.prompt}, numOfGeneration: {input.numOfGenerations}<br/>
             results:<br/>
-            {results.map((ir, i)=>
-                <div key={i}>{ir.serviceId}{ir.images.length > 0 ? `(${ir.ellapsedMs}ms): done.` : ": processing..."}<br/>
-                    {ir.images.map((r, i) =>
-                        <img alt="" key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
-                    )}
-                </div>
-            )}
+            {results.map((r, i)=><TGIGInvocationResult key={i} si={si} input={input} result={r} />)}
         </div>
     );
 });
+
+const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+    const [res, setRes] = useState(new Holder(result));
+    const refFirst = useRef(true);
+    useEffect(()=>{
+        if (process.env.NODE_ENV === "development" && refFirst.current) {
+            refFirst.current = false;
+            return;
+        }
+        if(res.value.images.length > 0) return;
+        si.textGuidedImageGeneration(result.serviceId)
+            .generateMultiTimes(input.language, input.prompt, input.numOfGenerations)
+            .then(r =>{
+            result.images.push(...r);
+            const hs = si.lastResponse()?.headers;
+            if(hs && "ellapsedMs" in hs){
+                result.ellapsedMs = parseInt(hs["ellapsedMs"]);
+            }
+            setRes(res.clone());
+        });
+    });
+    return <div>{res.value.serviceId}{res.value.images.length > 0 ?
+        `(${res.value.ellapsedMs}ms): done.` :
+        ": processing..."}<br/>
+            {res.value.images.map((r, i) =>
+                <img alt="" key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
+            )}
+        </div>;
+}
