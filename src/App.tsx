@@ -91,7 +91,7 @@ function App() {
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
-          <Translation services={services} si={si} serviceInvocations={transInvocations} />
+          <Translation services={services} si={si} invocations={transInvocations} />
         </TabPanel>
         <TabPanel value={value} index={1}>
           <TextGuidedImageGeneration services={services} si={si} state={tgigState} />

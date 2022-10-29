@@ -19,16 +19,14 @@ export interface Invocation{
     input: Input;
     results: Result[];
 }
-export function Translation({services, si, serviceInvocations}:
-    {services: Map<string, ServiceCheck[]>; si: ServiceInvoker;
-        serviceInvocations: Invocation[]}){
-    console.log("Translation", serviceInvocations);
+export function Translation({services, si, invocations}:
+    {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "sourceLang": "en",
         "targetLang": "ja",
         "source": "hello world"
     }});
-    const [invocations, setInvocations] = React.useState(new Holder(serviceInvocations));
+    const [invState, setInvState] = React.useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
     const scs = services.get("TranslationService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
@@ -39,9 +37,8 @@ export function Translation({services, si, serviceInvocations}:
             if(!sc.checked) continue;
             inv.results.push({serviceId: sc.serviceId, result: null, ellapsedMs: 0});
         }
-        serviceInvocations.push(inv);
-        console.log("translate", serviceInvocations);
-        setInvocations(invocations.clone());
+        invocations.push(inv);
+        setInvState(invState.clone());
     };
     return (
     <div>
@@ -62,7 +59,7 @@ export function Translation({services, si, serviceInvocations}:
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invocations.value.map((inv, i)=><TranslationInvocation key={i} si={si} inv={inv} />)}
+        {invState.value.map((inv, i)=><TranslationInvocation key={i} si={si} inv={inv} />)}
         </div>
     </div>
     );
