@@ -17,9 +17,11 @@ export interface Result{
     ellapsedMs: number;
 }
 export interface Invocation{
+    id: number;
     input: Input;
     results: Result[];
 }
+let invId = 0;
 export function TextGuidedImageGeneration({si, services, invocations}:
         {si: ServiceInvoker; services: Map<string, ServiceCheck[]>; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
@@ -32,7 +34,7 @@ export function TextGuidedImageGeneration({si, services, invocations}:
     if(services.size === 0) return <div>no services found</div>;
 
     const onSubmit: SubmitHandler<Input> = (input)=>{
-        const inv: Invocation = { input: input, results: []};
+        const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
             inv.results.push({serviceId: sc.serviceId, images: [], ellapsedMs: 0});
@@ -56,7 +58,7 @@ export function TextGuidedImageGeneration({si, services, invocations}:
         {scs.map((sc, i) => <Service key={i} sc={sc} />)}
         <label>results:</label>
         <div>
-        {invState.value.map((inv, i)=><TGIGInvocation key={i} si={si} inv={inv} />)}
+        {invState.value.map(inv=><TGIGInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
         <a href="https://github.com/borisdayma/dalle-mini">Dalle Mini</a> &nbsp;
         <a href="https://github.com/CompVis/stable-diffusion">Stable Diffusion</a> &nbsp;

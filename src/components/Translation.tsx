@@ -16,9 +16,11 @@ export interface Result{
     ellapsedMs: number;
 }
 export interface Invocation{
+    id: number;
     input: Input;
     results: Result[];
 }
+let invId = 0;
 export function Translation({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
@@ -31,7 +33,7 @@ export function Translation({services, si, invocations}:
     const scs = services.get("TranslationService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
-            input: input, results: []
+            id: invId++, input: input, results: []
         };
         for(const sc of scs){
             if(!sc.checked) continue;
@@ -59,7 +61,7 @@ export function Translation({services, si, invocations}:
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map((inv, i)=><TranslationInvocation key={i} si={si} inv={inv} />)}
+        {invState.value.map(inv=><TranslationInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
