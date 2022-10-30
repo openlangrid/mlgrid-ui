@@ -1,11 +1,11 @@
 import { Button, TextField, Input } from "@mui/material";
-import { DragEvent, EventHandler, memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { round } from "../mlgrid/formatUtil";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ImageDropButton } from "./lib/ImageDropButton";
-import { Service, ServiceCheck } from "./Service";
+import { Service, ServiceCheck } from "./lib/Service";
 
 export interface Input {
     format: string;
@@ -87,7 +87,7 @@ const ImageClassificationInvocation = ({si, inv: {input, results}}: {si: Service
 
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         input:<br/>
-        image: <img style={{"maxWidth": "256px", "maxHeight": "256px"}} src={URL.createObjectURL(new Blob([input.image]))} /><br/>
+        image: <img alt="" style={{"maxWidth": "256px", "maxHeight": "256px"}} src={URL.createObjectURL(new Blob([input.image]))} /><br/>
         labelLang: {input.labelLang}, maxResults: {input.maxResults}<br/>
         results:<br/>
         {results.map((r, i)=><ImageClassificationInvocationResult key={i} input={input} result={r} si={si} />)}

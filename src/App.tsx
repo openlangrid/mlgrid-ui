@@ -6,10 +6,9 @@ import { Translation, Invocation as TranslationInvocation } from './components/T
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { ImageClassification, Invocation as ImageClassificationInvocation } from './components/ImageClassification';
 import { TestArray1 } from './components/TestArray1';
-import { TestHolder } from './components/TestHolder';
-import { Holder } from './util/Holder';
 import { TestArray2 } from './components/TestArray2';
-import { ServiceCheck } from './components/Service';
+import { TestHolder } from './components/TestHolder';
+import { ServiceCheck } from './components/lib/Service';
 import { SuspenseTest } from './components/SuspenseTest';
 
 interface TabPanelProps {

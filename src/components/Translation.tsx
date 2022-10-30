@@ -3,7 +3,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
-import { Service, ServiceCheck } from "./Service";
+import { Service, ServiceCheck } from "./lib/Service";
 
 export interface Input {
     sourceLang: string;
