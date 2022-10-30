@@ -37,7 +37,7 @@ export function TextGuidedImageGeneration({si, services, invocations}:
             if(!sc.checked) continue;
             inv.results.push({serviceId: sc.serviceId, images: [], ellapsedMs: 0});
         }
-        invocations.push(inv);
+        invocations.unshift(inv);
         setInvState(invState.clone());
     };
 

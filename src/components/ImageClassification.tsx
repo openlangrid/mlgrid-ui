@@ -55,7 +55,7 @@ export function ImageClassification({services, si, invocations}:
             if(!sc.checked) continue;
             inv.results.push({serviceId: sc.serviceId, result: null, ellapsedMs: 0});
         }
-        invocations.push(inv);
+        invocations.unshift(inv);
         setInvState(invState.clone());
     };
     return (
