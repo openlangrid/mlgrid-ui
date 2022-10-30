@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { round } from "../mlgrid/formatUtil";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
+import { ImageDropButton } from "./lib/ImageDropButton";
 import { Service, ServiceCheck } from "./Service";
 
 export interface Input {
@@ -18,38 +19,28 @@ export interface Result{
     ellapsedMs: number;
 }
 export interface Invocation{
+    id: number;
     input: Input;
     results: Result[];
 }
+let invId = 0;
 export function ImageClassification({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
-    const { register, handleSubmit, setValue, trigger } = useForm<Input>({defaultValues: {
+    const { register, handleSubmit, setValue } = useForm<Input>({defaultValues: {
         "format": "image/jpeg",
         "labelLang": "en",
         "maxResults": 1
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
-    const [image, setImage] = useState<ArrayBuffer | null>(null);
     if(services.size === 0) return (<div />);
     const scs = services.get("ImageClassificationService") || [];
-    const onDragOver: EventHandler<DragEvent> = e=>{
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "link";
+    const onImage: (data: ArrayBuffer)=>void = data=>{
+        setValue("image", data);
     };
-    const onDrop: EventHandler<DragEvent> = e=>{
-        e.preventDefault();
-        console.log("dropped");
-        const fr = new FileReader();
-        fr.onload = ()=>{
-            const img = fr.result as ArrayBuffer;
-            setImage(img);
-            setValue("image", img);
-        };
-        fr.readAsArrayBuffer(e.dataTransfer.files[0]);   
-    }
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
-            input: input, results: []
+            id: invId++,
+            input: {...input}, results: []
         };
         for(const sc of scs){
             if(!sc.checked) continue;
@@ -63,9 +54,7 @@ export function ImageClassification({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <button id={"icButton"} onClick={e=>e.preventDefault()} onDragOver={onDragOver} onDrop={onDrop}
-                    className={"btn btn-outline-success form-control"}>
-                    {image ? <img style={{"maxHeight": "256px", "maxWidth": "256px"}} src={URL.createObjectURL(new Blob([image]))} /> : "ここに画像をドロップしてください"}</button>
+                <ImageDropButton onImage={onImage} />
                 <br/>
                 <br/>
                 <TextField label="labelLang" size="small" type="text" style={{width: "6em"}} {...register("labelLang")} />
@@ -80,13 +69,13 @@ export function ImageClassification({services, si, invocations}:
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map((inv, i)=><ImageClassificationInvocation key={i} si={si} inv={inv} />)}
+        {invState.value.map(inv=><ImageClassificationInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const ImageClassificationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
+const ImageClassificationInvocation = ({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
     const refFirst = useRef(true);
     useEffect(()=>{
         if (process.env.NODE_ENV === "development" && refFirst.current) {
@@ -103,7 +92,7 @@ const ImageClassificationInvocation = memo(({si, inv: {input, results}}: {si: Se
         results:<br/>
         {results.map((r, i)=><ImageClassificationInvocationResult key={i} input={input} result={r} si={si} />)}
         </div>;
-    });
+    };
 
 const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     console.log("ImageClassificationInvocationRequest");
@@ -133,7 +122,7 @@ const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceIn
         { res.value.result ? `(${res.value.ellapsedMs}ms)` : ""}
          :
         { res.value.result ?
-            res.value.result.map((v: any, i)=> <><span key={i}>{v.label}({round(v.accuracy, 2)})</span>&nbsp;</>) :
+            res.value.result.map((v: any, i)=> <span key={i}>{v.label}({round(v.accuracy, 2)})&nbsp;</span>) :
             "processing..."
         }
         </div>;
