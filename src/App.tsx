@@ -4,6 +4,7 @@ import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
+import { ImageClassification, Invocation as ImageClassificationInvocation } from './components/ImageClassification';
 import { TestArray1 } from './components/TestArray1';
 import { TestHolder } from './components/TestHolder';
 import { Holder } from './util/Holder';
@@ -39,6 +40,7 @@ function TabPanel(props: TabPanelProps) {
 
 const transInvocations: TranslationInvocation[] = [];
 const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
+const icInvocations: ImageClassificationInvocation[] = [];
 function App() {
   console.log("App");
   const [value, setValue] = React.useState(0);
@@ -83,6 +85,7 @@ function App() {
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
             <Tab label="Translation" />
             <Tab label="TextGuidedImageGeneration" />
+            <Tab label="ImageClassification" />
             <Tab label="SpeechRecognition" />
             <Tab label="TestArray1" />
             <Tab label="TestArray2" />
@@ -97,18 +100,20 @@ function App() {
           <TextGuidedImageGeneration services={services} si={si} invocations={tgigInvocations} />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          SpeechRecognition
+          <ImageClassification services={services} si={si} invocations={icInvocations} />
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <TestArray1 />
         </TabPanel>
         <TabPanel value={value} index={4}>
-          <TestArray2 />
+          <TestArray1 />
         </TabPanel>
         <TabPanel value={value} index={5}>
-          <TestHolder />
+          <TestArray2 />
         </TabPanel>
         <TabPanel value={value} index={6}>
+          <TestHolder />
+        </TabPanel>
+        <TabPanel value={value} index={7}>
           <SuspenseTest />
         </TabPanel>
       </main>

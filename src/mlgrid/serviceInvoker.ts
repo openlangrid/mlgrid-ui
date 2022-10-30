@@ -39,7 +39,7 @@ export class SpeechRecognition extends Service{
 	}
 }
 export class ImageClassificationService extends Service{
-    classify(format: string, image: Buffer, labelLang: string, maxResults: number){
+    classify(format: string, image: ArrayBufferLike, labelLang: string, maxResults: number): Promise<{label: string; accuracy: number}[]>{
 		return this.invoke("classify", Array.prototype.slice.call(arguments));
 	}
 }
@@ -208,9 +208,10 @@ export class WSServiceInvoker extends ServiceInvoker{
 				method: method, args: args
 			};
 			console.debug("req:", msg);
+			msg.args = msg.args.map(v=>
+				v instanceof ArrayBuffer ? Buffer.from(v) : v
+			);
 			const data = serialize(msg);
-//			const data = JSON.stringify(msg);			
-//			console.debug("req(encoded):", data);
 			this.send(data);
 			this.handlers[rid] = r=>{
 				resolve(r.result);
@@ -251,9 +252,8 @@ export class WSServiceInvoker extends ServiceInvoker{
 		this.ws.addEventListener("message", e=>{
 			if(e.data instanceof ArrayBuffer) {
 				// binary
-				const array = new Uint8Array(e.data);
-//				console.debug("res:", array);
-				const r = deserialize(Buffer.from(array));
+//				console.debug("res:", e.data);
+				const r = deserialize(e.data);
 				console.debug("res(decoded):", r);
 				this.handlers[r.reqId](r);
 			} else {
@@ -277,6 +277,7 @@ export class HTTPServiceInvoker extends ServiceInvoker{
 	}
 
 	invoke(serviceId: string, method: string, args: any[]){
+		args = args.map(v=>v instanceof ArrayBuffer ? Buffer.from(v).toString('base64') : v);
 		const body = JSON.stringify({
 			method: method,
 			args: args
