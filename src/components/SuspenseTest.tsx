@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { AsyncProcessWrapper } from "./AsyncProcessWrapper";
+import { AsyncProcessWrapper } from "../util/AsyncProcessWrapper";
 
 function sleep(ms: number): Promise<void>{
     return new Promise(resolve=>{
