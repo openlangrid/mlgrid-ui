@@ -98,7 +98,7 @@ const ImageClassificationInvocation = memo(({si, inv: {input, results}}: {si: Se
 
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         input:<br/>
-        image: <img src={URL.createObjectURL(new Blob([input.image]))} /><br/>
+        image: <img style={{"maxWidth": "256px", "maxHeight": "256px"}} src={URL.createObjectURL(new Blob([input.image]))} /><br/>
         labelLang: {input.labelLang}, maxResults: {input.maxResults}<br/>
         results:<br/>
         {results.map((r, i)=><ImageClassificationInvocationResult key={i} input={input} result={r} si={si} />)}
