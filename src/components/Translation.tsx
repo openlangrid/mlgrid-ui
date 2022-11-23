@@ -3,7 +3,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
-import { Service, ServiceCheck } from "./lib/Service";
+import { ServiceCheck, Services } from "./lib/Services";
 
 export interface Input {
     sourceLang: string;
@@ -54,8 +54,7 @@ export function Translation({services, si, invocations}:
             </form>
 		</div>
         <br/>
-		<label>services:</label>
-        {scs.map((sc, i) => <Service key={i} sc={sc} />)}
+		<Services serviceChecks={scs} />
         <a href="https://langrid.org">Language Grid</a>&nbsp;
 		<a href="https://huggingface.co/Helsinki-NLP">Helsinki-NLP</a>
         <br/> <br/>

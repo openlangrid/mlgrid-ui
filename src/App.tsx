@@ -8,7 +8,7 @@ import { ImageClassification, Invocation as ImageClassificationInvocation } from
 import { TestArray1 } from './components/TestArray1';
 import { TestArray2 } from './components/TestArray2';
 import { TestHolder } from './components/TestHolder';
-import { ServiceCheck } from './components/lib/Service';
+import { ServiceCheck } from './components/lib/Services';
 import { SuspenseTest } from './components/SuspenseTest';
 
 interface TabPanelProps {

@@ -5,7 +5,7 @@ import { round } from "../mlgrid/formatUtil";
 import { ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ImageDropButton } from "./lib/ImageDropButton";
-import { Service, ServiceCheck } from "./lib/Service";
+import { ServiceCheck, Services } from "./lib/Services";
 
 export interface Input {
     format: string;
@@ -63,8 +63,7 @@ export function ImageClassification({services, si, invocations}:
             </form>
 		</div>
         <br/>
-		<label>services:</label>
-        {scs.map((sc, i) => <Service key={i} sc={sc} />)}
+        <Services serviceChecks={scs} />
         <a href="https://www.tensorflow.org/api_docs/python/tf/keras">tf.keras</a>
         <br/> <br/>
         <label>invocation histories:</label>

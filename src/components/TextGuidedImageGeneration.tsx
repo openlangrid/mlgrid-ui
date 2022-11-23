@@ -1,9 +1,9 @@
 import { Button, TextField } from "@mui/material";
-import { memo, useEffect, useState, useRef } from "react";
+import { memo, useEffect, useState, useRef, MouseEventHandler } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
-import { Service, ServiceCheck } from "./lib/Service";
+import { ServiceCheck, Services } from "./lib/Services";
 
 export interface Input {
     language: string;
@@ -34,9 +34,12 @@ export function TextGuidedImageGeneration({si, services, invocations}:
     if(services.size === 0) return <div>no services found</div>;
 
     const onSubmit: SubmitHandler<Input> = (input)=>{
+        console.log("submit");
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
+            console.log(`${sc.serviceId}: ${sc.checked}`);
             if(!sc.checked) continue;
+            console.log(`go ${sc.serviceId}`);
             inv.results.push({serviceId: sc.serviceId, images: [], ellapsedMs: 0});
         }
         invocations.unshift(inv);
@@ -54,8 +57,7 @@ export function TextGuidedImageGeneration({si, services, invocations}:
             </form>
 		</div>
         <br/>
-		<label>services:</label>
-        {scs.map((sc, i) => <Service key={i} sc={sc} />)}
+        <Services serviceChecks={scs} />
         <label>results:</label>
         <div>
         {invState.value.map(inv=><TGIGInvocation key={inv.id} si={si} inv={inv} />)}
