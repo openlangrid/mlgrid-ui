@@ -34,12 +34,9 @@ export function TextGuidedImageGeneration({si, services, invocations}:
     if(services.size === 0) return <div>no services found</div>;
 
     const onSubmit: SubmitHandler<Input> = (input)=>{
-        console.log("submit");
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
-            console.log(`${sc.serviceId}: ${sc.checked}`);
             if(!sc.checked) continue;
-            console.log(`go ${sc.serviceId}`);
             inv.results.push({serviceId: sc.serviceId, images: [], ellapsedMs: 0});
         }
         invocations.unshift(inv);
