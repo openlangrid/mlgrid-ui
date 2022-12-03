@@ -72,7 +72,7 @@ export interface Image{
 	format: string;
 	image: Buffer;
 }
-export class TextGuildedImageGenerationService extends Service{
+export class TextGuidedImageGenerationService extends Service{
     generate(language: string, text: string): Image{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
     }
@@ -167,7 +167,7 @@ export abstract class ServiceInvoker{
 		return new TranslationService(this, serviceId);
 	}
 	textGuidedImageGeneration(serviceId: string){
-		return new TextGuildedImageGenerationService(this, serviceId);
+		return new TextGuidedImageGenerationService(this, serviceId);
 	}
 	textGuidedImageManipulation(serviceId: string){
 		return new TextGuidedImageManipulationService(this, serviceId);
