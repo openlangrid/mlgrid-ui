@@ -95,6 +95,8 @@ const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; i
             .catch(console.error);
     }, []);
 
-    return <div>{res.value.serviceId}{res.value.result ? `(${res.value.ellapsedMs}ms)` : ""}:
-        {res.value.result ? res.value.result : "processing..."}</div>;
+    return <div>{res.value.serviceId}{res.value.result ?
+        `(${res.value.ellapsedMs}ms): ${res.value.result}.` :
+        <span>: <span className="loader"></span></span>
+        }</div>;
 };

@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
+import "./common.css"
 
 export interface Input {
     language: string;
@@ -98,7 +99,7 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
     });
     return <div>{res.value.serviceId}{res.value.images.length > 0 ?
         `(${res.value.ellapsedMs.toLocaleString()}ms): done.` :
-        ": processing..."}<br/>
+        <span>: <span className="loader"></span></span>}<br/>
             {res.value.images.map((r, i) =>
                 <img alt="" key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
             )}
