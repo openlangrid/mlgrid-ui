@@ -128,7 +128,7 @@ export class ServiceManagementService extends Service{
 }
 
 export interface Response{
-	headers: {[key: string]: string};
+	headers: {[key: string]: any};
 	result: any;
 	error: {code: number; message: string};
 }
@@ -137,6 +137,7 @@ export interface Response{
 export abstract class ServiceInvoker{
     abstract invoke(serviceId: string, methodName: string, args: any[]): Promise<any>;
 	abstract lastResponse(): Response | null;
+	abstract lastMillis(): number;
 
     /** return {ContinuousSpeechRecognitionService} */
     continuousSpeechRecognition(serviceId: string){
@@ -197,6 +198,14 @@ export class WSServiceInvoker extends ServiceInvoker{
 
 	lastResponse(): Response | null {
 		return this.lastResponse_;
+	}
+
+	lastMillis(): number {
+		const hs = this.lastResponse()?.headers;
+		if(hs && "timer" in hs){
+			return hs["timer"]["children"][0]["millis"];
+		}
+		return 0;
 	}
 
 	invoke(serviceId: string, method: string, args: any[]){
@@ -274,6 +283,10 @@ export class HTTPServiceInvoker extends ServiceInvoker{
 
 	lastResponse(): Response | null {
 		return null;
+	}
+
+	lastMillis(): number {
+		return -1;
 	}
 
 	invoke(serviceId: string, method: string, args: any[]){

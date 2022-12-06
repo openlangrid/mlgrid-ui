@@ -92,15 +92,12 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
             .generateMultiTimes(input.language, input.prompt, input.numOfGenerations)
             .then(r =>{
             result.images.push(...r);
-            const hs = si.lastResponse()?.headers;
-            if(hs && "ellapsedMs" in hs){
-                result.ellapsedMs = parseInt(hs["ellapsedMs"]);
-            }
+            result.ellapsedMs = si.lastMillis();
             setRes(res.clone());
         });
     });
     return <div>{res.value.serviceId}{res.value.images.length > 0 ?
-        `(${res.value.ellapsedMs}ms): done.` :
+        `(${res.value.ellapsedMs.toLocaleString()}ms): done.` :
         ": processing..."}<br/>
             {res.value.images.map((r, i) =>
                 <img alt="" key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>

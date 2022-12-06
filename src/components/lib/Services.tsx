@@ -14,7 +14,7 @@ export function Services({serviceChecks}: {serviceChecks: ServiceCheck[]}){
         setServices(services.clone());
     };
 
-    services.value.forEach(s=>console.log(`${s.serviceId}: ${s.checked}`));
+//    services.value.forEach(s=>console.log(`${s.serviceId}: ${s.checked}`));
 
     return <div>
         <label><input type="checkbox" onClick={toggleAllCheck} defaultChecked={true}></input>&nbsp; services:</label>

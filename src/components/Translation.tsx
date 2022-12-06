@@ -89,11 +89,7 @@ const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; i
         si.translation(result.serviceId).translate(input.sourceLang, input.targetLang, input.source)
             .then(r=>{
                 result.result = r;
-                const hs = si.lastResponse()?.headers;
-                if(hs && "ellapsedMs" in hs){
-                    result.ellapsedMs = parseInt(hs["ellapsedMs"]);
-                }
-                console.log("call setRes");
+                result.ellapsedMs = si.lastMillis();
                 setRes(res.clone());
             })
             .catch(console.error);
