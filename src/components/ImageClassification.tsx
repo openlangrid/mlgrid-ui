@@ -94,7 +94,6 @@ const ImageClassificationInvocation = ({si, inv: {input, results}}: {si: Service
     };
 
 const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
-    console.log("ImageClassificationInvocationRequest");
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -107,22 +106,19 @@ const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceIn
         si.imageClassification(result.serviceId).classify(input.format, input.image, input.labelLang, input.maxResults)
             .then(r=>{
                 result.result = r;
-                const hs = si.lastResponse()?.headers;
-                if(hs && "ellapsedMs" in hs){
-                    result.ellapsedMs = parseInt(hs["ellapsedMs"]);
-                }
-                console.log("call setRes");
+                result.ellapsedMs = si.lastMillis();
                 setRes(res.clone());
             })
             .catch(console.error);
     }, []);
 
     return <div>{res.value.serviceId}
-        { res.value.result ? `(${res.value.ellapsedMs}ms)` : ""}
-         :
         { res.value.result ?
-            res.value.result.map((v: any, i)=> <span key={i}>{v.label}({round(v.accuracy, 2)})&nbsp;</span>) :
-            "processing..."
+            <span>
+                <span>({res.value.ellapsedMs.toLocaleString()}ms): </span>
+                <span>{res.value.result.map((v: any, i)=> <span key={i}>{v.label}({round(v.accuracy, 2)})&nbsp; </span>)}</span>
+            </span> :
+            <span>: <span className="loader"></span></span>
         }
         </div>;
 };
