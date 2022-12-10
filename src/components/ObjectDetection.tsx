@@ -48,7 +48,6 @@ export function ObjectDetection({si, services, invocations}:
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            console.log("invoke " + sc.serviceId);
             inv.results.push({serviceId: sc.serviceId, result: null,
                 ellapsedMs: 0, scale: 1});
         }
@@ -99,7 +98,6 @@ const ObjectDetectionInvocation = ({si, inv: {input, results}}: {si: ServiceInvo
 
 let rectKey = 0;
 const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
-    console.log("ObjectDetectionInvocationRequest");
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{

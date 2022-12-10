@@ -74,7 +74,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Alert severity="warning">
+        <Alert severity="error">
           アップロードされたデータはオープンソースソフトウェアで処理されたり，
           Google翻訳を含む外部サービスに送信されるとともに，研究目的で使用されます。 
           データそのものが直接外部に公開されることはありませんが，
