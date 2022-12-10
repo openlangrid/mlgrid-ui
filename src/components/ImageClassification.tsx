@@ -91,7 +91,7 @@ const ImageClassificationInvocation = ({si, inv: {input, results}}: {si: Service
         results:<br/>
         {results.map((r, i)=><ImageClassificationInvocationResult key={i} input={input} result={r} si={si} />)}
         </div>;
-    };
+};
 
 const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     console.log("ImageClassificationInvocationRequest");
@@ -107,11 +107,7 @@ const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceIn
         si.imageClassification(result.serviceId).classify(input.format, input.image, input.labelLang, input.maxResults)
             .then(r=>{
                 result.result = r;
-                const hs = si.lastResponse()?.headers;
-                if(hs && "ellapsedMs" in hs){
-                    result.ellapsedMs = parseInt(hs["ellapsedMs"]);
-                }
-                console.log("call setRes");
+                result.ellapsedMs = si.lastMillis();
                 setRes(res.clone());
             })
             .catch(console.error);
