@@ -1,4 +1,12 @@
+import { Box2d } from "./serviceInvoker";
+
 export interface Point{ x: number, y: number, z: number}
+
+export function calcAspectRatioAwareSacle(sw: number, sh: number, tw: number, th: number){
+    let s = tw / sw;
+    return s * sh <= th ? s : th / sh;
+}
+
 export function drawPose(ctx: CanvasRenderingContext2D, scale: number,
         pose: {[key: string]: Point}){
     const valid = (p: Point)=>{

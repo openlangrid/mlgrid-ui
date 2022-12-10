@@ -5,6 +5,7 @@ import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { ImageClassification, Invocation as ImageClassificationInvocation } from './components/ImageClassification';
+import { ObjectDetection, Invocation as ObjectDetectionInvocation } from './components/ObjectDetection';
 import { TestArray1 } from './components/TestArray1';
 import { TestArray2 } from './components/TestArray2';
 import { TestHolder } from './components/TestHolder';
@@ -40,6 +41,7 @@ function TabPanel(props: TabPanelProps) {
 const transInvocations: TranslationInvocation[] = [];
 const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
 const icInvocations: ImageClassificationInvocation[] = [];
+const odInvocations: ObjectDetectionInvocation[] = [];
 function App() {
   console.log("App");
   const [value, setValue] = React.useState(0);
@@ -82,9 +84,10 @@ function App() {
       <main>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-            <Tab label="Translation" />
-            <Tab label="TextGuidedImageGeneration" />
-            <Tab label="ImageClassification" />
+            <Tab label="翻訳" />
+            <Tab label="画像生成" />
+            <Tab label="画像分類" />
+            <Tab label="物体検出" />
             <Tab label="SpeechRecognition" />
             <Tab label="TestArray1" />
             <Tab label="TestArray2" />
@@ -102,6 +105,7 @@ function App() {
           <ImageClassification services={services} si={si} invocations={icInvocations} />
         </TabPanel>
         <TabPanel value={value} index={3}>
+          <ObjectDetection services={services} si={si} invocations={odInvocations} />
         </TabPanel>
         <TabPanel value={value} index={4}>
           <TestArray1 />

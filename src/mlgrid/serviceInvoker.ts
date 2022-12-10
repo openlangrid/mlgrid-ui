@@ -5,6 +5,8 @@
 import { deserialize, serialize } from "bson";
 import { Buffer } from "buffer";
 
+export interface Box2d{ x: number, y: number, width: number, height: number}
+
 // このクラスと各サービス呼び出し用のクラスを作っている。
 export class Service{
     constructor(private serviceInvoker: ServiceInvoker, private serviceId: string){
@@ -39,12 +41,20 @@ export class SpeechRecognition extends Service{
 	}
 }
 export class ImageClassificationService extends Service{
-    classify(format: string, image: ArrayBufferLike, labelLang: string, maxResults: number): Promise<{label: string; accuracy: number}[]>{
+    classify(format: string, image: ArrayBufferLike, labelLang: string, maxResults: number):
+		Promise<{label: string; accuracy: number}[]>{
 		return this.invoke("classify", Array.prototype.slice.call(arguments));
 	}
 }
+
+export interface ObjectDetectionResult{
+	label: string;
+	accuracy: number;
+	boundingBox: Box2d;
+}
 export class ObjectDetectionService extends Service{
-    detect(format: string, image: Buffer, labelLang: string, maxResults: number){
+    detect(format: string, image: ArrayBufferLike, labelLang: string, maxResults: number):
+		Promise<ObjectDetectionResult[]>{
 		return this.invoke("detect", Array.prototype.slice.call(arguments));
 	}
 }
