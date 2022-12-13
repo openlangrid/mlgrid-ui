@@ -133,8 +133,8 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
             <>
                 ({res.value.ellapsedMs}ms): {res.value.result.length} objects.<br/>
                 <div style={{position: "relative"}}>
-                    <img style={{width: 512, height: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
-                    <svg style={{position: "absolute", left: 0, top: 0, width: 512, height: 512}}>
+                    <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
+                    <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
                         {res.value.result.map(v =>
                             <Rect key={rectKey++} result={v} scale={res.value.scale} />)}
                     </svg>
