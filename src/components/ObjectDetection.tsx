@@ -73,7 +73,8 @@ export function ObjectDetection({si, services, invocations}:
         <div>
         {invState.value.map(inv=><ObjectDetectionInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
-        <a href="https://github.com/ultralytics/yolov5">YoloV5</a>
+        <a href="https://github.com/ultralytics/yolov5">YoloV5</a> &nbsp;
+        <a href="https://github.com/WongKinYiu/yolov7">YoloV7</a>
     </div>;
 }
 
