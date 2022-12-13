@@ -5,6 +5,7 @@ import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
+import "./TextGuidedImageGeneration.css"
 
 export interface Input {
     language: string;
@@ -66,7 +67,8 @@ export function TextGuidedImageGeneration({si, services, invocations}:
 		<a href="https://github.com/rinnakk/japanese-stable-diffusion">Rinna Japanese Stable Diffusion</a> &nbsp;
 		<a href="https://huggingface.co/naclbit/trinart_stable_diffusion_v2">trinart_stable_diffusion_v2</a> &nbsp;
 		<a href="https://huggingface.co/sd-dreambooth-library/disco-diffusion-style">disco-diffusion-style</a> &nbsp;
-		<a href="https://huggingface.co/doohickey/trinart-waifu-diffusion-50-50">trinart-waifu-diffusion-50-50</a>
+		<a href="https://huggingface.co/doohickey/trinart-waifu-diffusion-50-50">trinart-waifu-diffusion-50-50</a> &nbsp;
+        <a href="https://huggingface.co/alfredplpl/cool-japan-diffusion-for-learning-2-0">Cool Japan Diffusion</a> &nbsp;
     </div>;
 }
 const TGIGInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
@@ -101,7 +103,7 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
         `(${res.value.ellapsedMs.toLocaleString()}ms): done.` :
         <span>: <span className="loader"></span></span>}<br/>
             {res.value.images.map((r, i) =>
-                <img alt="" key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
+                <img alt="" className="tgigResultImage" key={i} src={URL.createObjectURL(new Blob([r.image.buffer]))}></img>
             )}
         </div>;
 }
