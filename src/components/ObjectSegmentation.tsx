@@ -1,13 +1,13 @@
 import { Button, TextField } from "@mui/material";
-import { useEffect, useState, useRef, PropsWithChildren, ReactNode } from "react";
+import { useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Box2d, ObjectDetectionResult, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { ObjectSegmentation as Segmentation, ObjectSegmentationResult, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
-import "./ObjectDetection.css"
+import "./ObjectSegmentation.css"
 import { ImageDropButton } from "./lib/ImageDropButton";
-import { round, roundBox } from "../mlgrid/formatUtil";
+import { round } from "../mlgrid/formatUtil";
 import { calcAspectRatioAwareSacle } from "../mlgrid/drawUtil";
 import { RawResult } from "./lib/RawResult";
 
@@ -20,7 +20,7 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    result: ObjectDetectionResult[] | null;
+    result: ObjectSegmentationResult | null;
     ellapsedMs: number;
     scale: number;
 }
@@ -30,15 +30,14 @@ export interface Invocation{
     results: Result[];
 }
 let invId = 0;
-export function ObjectDetection({si, services, invocations}:
+export function ObjectSegmentation({si, services, invocations}:
         {si: ServiceInvoker; services: Map<string, ServiceCheck[]>; invocations: Invocation[]}){
     const { register, handleSubmit, setValue } = useForm<Input>({defaultValues: {
         "format": "image/jpeg",
-        "labelLang": "en",
-        "maxResults": 1
+        "labelLang": "en"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
-    const scs = services.get("ObjectDetectionService") || [];
+    const scs = services.get("ObjectSegmentationService") || [];
     if(services.size === 0) return <div>no services found</div>;
 
     const onImage: (data: ArrayBuffer)=>void = data=>{
@@ -71,14 +70,13 @@ export function ObjectDetection({si, services, invocations}:
         <Services serviceChecks={scs} />
         <label>results:</label>
         <div>
-        {invState.value.map(inv=><ObjectDetectionInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><ObjectSegmentationInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
-        <a href="https://github.com/ultralytics/yolov5">YoloV5</a> &nbsp;
-        <a href="https://github.com/WongKinYiu/yolov7">YoloV7</a>
+        <a href="https://github.com/facebookresearch/detectron2">Detectron2</a> &nbsp;
     </div>;
 }
 
-const ObjectDetectionInvocation = ({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
+const ObjectSegmentationInvocation = ({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
     const refFirst = useRef(true);
     useEffect(()=>{
         if (process.env.NODE_ENV === "development" && refFirst.current) {
@@ -93,12 +91,12 @@ const ObjectDetectionInvocation = ({si, inv: {input, results}}: {si: ServiceInvo
         image: <img alt="" style={{maxWidth: "256px", maxHeight: "256px", objectFit: "scale-down"}} src={URL.createObjectURL(new Blob([input.image]))} /><br/>
         labelLang: {input.labelLang}, maxResults: {input.maxResults}<br/>
         results:<br/>
-        {results.map((r, i)=><ObjectDetectionInvocationResult key={i} input={input} result={r} si={si} />)}
+        {results.map((r, i)=><ObjectSegmentationInvocationResult key={i} input={input} result={r} si={si} />)}
         </div>;
 };
 
 let rectKey = 0;
-const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -108,22 +106,18 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
         }
         if(res.value.result != null) return;
 
-        const img = new Image();
-        img.onload = () => {
-            si.objectDetection(result.serviceId).detect(input.format, input.image, input.labelLang, input.maxResults)
+        si.objectSegmentation(result.serviceId).segment(input.image, input.format, input.labelLang)
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
-                result.scale = calcAspectRatioAwareSacle(img.width, img.height, 512, 512);
+                result.scale = calcAspectRatioAwareSacle(r.width, r.height, 512, 512);
                 setRes(res.clone());
             })
             .catch(console.error);
-        };
-        img.src = URL.createObjectURL(new Blob([input.image]));
     }, []);
 
-    const Rect = ({className, result, scale}: {className: string; result: ObjectDetectionResult; scale: number})=>{
-        const b = result.boundingBox;
+    const Rect = ({className, result, scale}: {className: string; result: Segmentation; scale: number})=>{
+        const b = result.box;
         return <rect className={className} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></rect>
     };
@@ -131,12 +125,12 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
     return <div>{res.value.serviceId}
         { res.value.result ?
             <>
-                ({res.value.ellapsedMs}ms): {res.value.result.length} objects.<br/>
+                ({res.value.ellapsedMs}ms): {res.value.result.segmentations.length} objects.<br/>
                 <div style={{position: "relative"}}>
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
-                        {res.value.result.map(v =>
-                            <Rect key={rectKey++} className="od" result={v} scale={res.value.scale} />)}
+                        {res.value.result.segmentations.map(v =>
+                            <Rect className="os" key={rectKey++} result={v} scale={res.value.scale} />)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />

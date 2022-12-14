@@ -58,6 +58,24 @@ export class ObjectDetectionService extends Service{
 		return this.invoke("detect", Array.prototype.slice.call(arguments));
 	}
 }
+export interface ObjectSegmentation{
+	label: string;
+	accuracy: number;
+	box: Box2d;
+	mask: Buffer;
+}
+export interface ObjectSegmentationResult{
+	width: number;
+	height: number;
+	segmentations: ObjectSegmentation[];
+}
+export class ObjectSegmentationService extends Service{
+    segment(image: ArrayBufferLike, format: string, labelLang: string):
+		Promise<ObjectSegmentationResult>{
+		return this.invoke("segment", Array.prototype.slice.call(arguments));
+	}
+}
+
 export class HumanPoseEstimationService extends Service{
 	estimate(format: string, image: Buffer, maxResults: number){
 		return this.invoke("estimate", Array.prototype.slice.call(arguments));
@@ -162,6 +180,9 @@ export abstract class ServiceInvoker{
     objectDetection(serviceId: string){
         return new ObjectDetectionService(this, serviceId);
     }
+	objectSegmentation(serviceId: string){
+		return new ObjectSegmentationService(this, serviceId);
+	}
 	humanPoseEstimation(serviceId: string){
 		return new HumanPoseEstimationService(this, serviceId);
 	}
