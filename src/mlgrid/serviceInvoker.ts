@@ -62,7 +62,8 @@ export interface ObjectSegmentation{
 	label: string;
 	accuracy: number;
 	box: Box2d;
-	mask: Buffer;
+	maskImage: Buffer;
+	maskImageFormat: string;
 }
 export interface ObjectSegmentationResult{
 	width: number;

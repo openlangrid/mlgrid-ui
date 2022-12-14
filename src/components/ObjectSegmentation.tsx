@@ -15,7 +15,6 @@ export interface Input {
     format: string;
     image: ArrayBuffer;
     labelLang: string;
-    maxResults: number;
 }
 
 export interface Result{
@@ -62,7 +61,6 @@ export function ObjectSegmentation({si, services, invocations}:
                 <br/>
                 <br/>
                 <TextField label="labelLang" size="small" type="text" style={{width: "6em"}} {...register("labelLang")} />
-                <TextField label="maxResults" size="small" type="number" style={{width: "6em"}} {...register("maxResults")} />
                 <Button type="submit" variant="contained" >検出</Button>
             </form>
 		</div>
@@ -89,7 +87,7 @@ const ObjectSegmentationInvocation = ({si, inv: {input, results}}: {si: ServiceI
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         input:<br/>
         image: <img alt="" style={{maxWidth: "256px", maxHeight: "256px", objectFit: "scale-down"}} src={URL.createObjectURL(new Blob([input.image]))} /><br/>
-        labelLang: {input.labelLang}, maxResults: {input.maxResults}<br/>
+        labelLang: {input.labelLang}<br/>
         results:<br/>
         {results.map((r, i)=><ObjectSegmentationInvocationResult key={i} input={input} result={r} si={si} />)}
         </div>;
@@ -121,6 +119,12 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
         return <rect className={className} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></rect>
     };
+    const Mask = ({className, result, scale}: {className: string; result: Segmentation; scale: number})=>{
+        const b = result.box;
+        const url = URL.createObjectURL(new Blob([result.maskImage.buffer]));
+        return <image style={{mixBlendMode: "difference", opacity: "30%"}} className={className} href={url} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
+            ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></image>;
+    };
 
     return <div>{res.value.serviceId}
         { res.value.result ?
@@ -130,7 +134,8 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
                         {res.value.result.segmentations.map(v =>
-                            <Rect className="os" key={rectKey++} result={v} scale={res.value.scale} />)}
+                            <><Rect className="os" key={rectKey++} result={v} scale={res.value.scale} />
+                            <Mask className="os" key={rectKey++} result={v} scale={res.value.scale} /></>)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />
