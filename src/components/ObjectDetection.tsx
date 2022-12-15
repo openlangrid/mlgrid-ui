@@ -1,13 +1,13 @@
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState, useRef, PropsWithChildren, ReactNode } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Box2d, ObjectDetectionResult, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { ObjectDetection as Detection, ObjectDetectionResult, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
 import "./ObjectDetection.css"
 import { ImageDropButton } from "./lib/ImageDropButton";
-import { round, roundBox } from "../mlgrid/formatUtil";
+import { round } from "../mlgrid/formatUtil";
 import { calcAspectRatioAwareSacle } from "../mlgrid/drawUtil";
 import { RawResult } from "./lib/RawResult";
 
@@ -20,7 +20,7 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    result: ObjectDetectionResult[] | null;
+    result: ObjectDetectionResult | null;
     ellapsedMs: number;
     scale: number;
 }
@@ -108,22 +108,18 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
         }
         if(res.value.result != null) return;
 
-        const img = new Image();
-        img.onload = () => {
-            si.objectDetection(result.serviceId).detect(input.format, input.image, input.labelLang, input.maxResults)
+        si.objectDetection(result.serviceId).detect(input.image, input.format, input.labelLang)
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
-                result.scale = calcAspectRatioAwareSacle(img.width, img.height, 512, 512);
+                result.scale = calcAspectRatioAwareSacle(r.width, r.height, 512, 512);
                 setRes(res.clone());
             })
             .catch(console.error);
-        };
-        img.src = URL.createObjectURL(new Blob([input.image]));
     }, []);
 
-    const Rect = ({className, result, scale}: {className: string; result: ObjectDetectionResult; scale: number})=>{
-        const b = result.boundingBox;
+    const Rect = ({className, result, scale}: {className: string; result: Detection; scale: number})=>{
+        const b = result.box;
         return <rect className={className} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></rect>
     };
@@ -131,18 +127,18 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
     return <div>{res.value.serviceId}
         { res.value.result ?
             <>
-                ({res.value.ellapsedMs}ms): {res.value.result.length} objects.<br/>
+                ({res.value.ellapsedMs}ms): {res.value.result.detections.length} objects.<br/>
                 <div style={{position: "relative"}}>
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
-                        {res.value.result.map(v =>
+                        {res.value.result.detections.map(v =>
                             <Rect key={rectKey++} className="od" result={v} scale={res.value.scale} />)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />
                 <br/>
             </> :
-            ": processing..."
+            <span>: processing...<span className="loader"></span></span>
         }
         </div>;
 };
