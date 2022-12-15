@@ -47,14 +47,19 @@ export class ImageClassificationService extends Service{
 	}
 }
 
-export interface ObjectDetectionResult{
+export interface ObjectDetection{
 	label: string;
 	accuracy: number;
-	boundingBox: Box2d;
+	box: Box2d;
+}
+export interface ObjectDetectionResult{
+	width: number;
+	height: number;
+	detections: ObjectDetection[];
 }
 export class ObjectDetectionService extends Service{
-    detect(format: string, image: ArrayBufferLike, labelLang: string, maxResults: number):
-		Promise<ObjectDetectionResult[]>{
+    detect(image: ArrayBufferLike, format: string, labelLang: string):
+		Promise<ObjectDetectionResult>{
 		return this.invoke("detect", Array.prototype.slice.call(arguments));
 	}
 }
