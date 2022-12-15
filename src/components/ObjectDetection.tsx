@@ -121,6 +121,7 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></rect>
     };
 
+    const s = res.value.scale;
     return <div>{res.value.serviceId}
         { res.value.result ?
             <>
@@ -129,7 +130,11 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
                         {res.value.result.detections.map(v =>
-                            <Rect key={rectKey++} className="od" result={v} scale={res.value.scale} />)}
+                            <g key={rectKey++}>
+                                <text x={v.box.x * s} y={(v.box.y - 6) * s}
+                                    font-size={8} fill="red">{v.label}({round(v.accuracy, 2)})</text>
+                                <Rect key={rectKey++} className="od" result={v} scale={s} />
+                            </g>)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />
