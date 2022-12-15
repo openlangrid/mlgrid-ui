@@ -1,4 +1,9 @@
 rect.od {
     stroke: red;
     fill: rgba(0,0,0,0);
+    opacity: 0.6;
+}
+rect.od:hover {
+    opacity: 0.4;
+    fill: rgba(128, 0, 0, 162);
 }

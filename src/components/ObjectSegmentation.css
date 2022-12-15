@@ -1,4 +1,16 @@
 rect.os {
     stroke: red;
     fill: rgba(0,0,0,0);
+    opacity: 0.6;
+}
+rect.os:hover {
+    opacity: 0.3;
+    fill: rgba(96, 0, 0, 128);
+}
+image.os {
+    mix-blend-mode: "difference";
+    opacity: 0.2;
+}
+image.os:hover{
+    opacity: 0.4;
 }

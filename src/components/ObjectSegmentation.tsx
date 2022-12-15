@@ -138,7 +138,7 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
             // 紫
             "sepia(71%) saturate(5170%) hue-rotate(293deg) brightness(87%) contrast(111%)",
         ];
-        return <image style={{mixBlendMode: "difference", filter: filters[index % filters.length], opacity: "30%"}} className={className} href={url} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
+        return <image style={{filter: filters[index % filters.length]}} className={className} href={url} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></image>;
     };
 
