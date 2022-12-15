@@ -121,7 +121,7 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
     };
     const Mask = ({index, className, result, scale}: {index: number; className: string; result: Segmentation; scale: number})=>{
         const b = result.box;
-        const url = URL.createObjectURL(new Blob([result.maskImage.buffer]));
+        const url = URL.createObjectURL(new Blob([result.maskImage]));
         const filters = [
             // 赤
             "sepia(95%) saturate(6932%) hue-rotate(358deg) brightness(95%) contrast(112%)",
@@ -150,8 +150,8 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
                         {res.value.result.segmentations.map(v =>
-                            <><Rect className="os" key={rectKey++} result={v} scale={res.value.scale} />
-                            <Mask className="os" key={rectKey++} index={rectKey} result={v} scale={res.value.scale} /></>)}
+                            <g key={rectKey++}><Rect className="os" result={v} scale={res.value.scale} />
+                            <Mask className="os" index={rectKey} result={v} scale={res.value.scale} /></g>)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />

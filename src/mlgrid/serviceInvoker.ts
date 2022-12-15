@@ -264,6 +264,25 @@ export class WSServiceInvoker extends ServiceInvoker{
 		return 0;
 	}
 
+	private unboxBuffer<T>(value: T): T{
+		if(Array.isArray(value)){
+			let array = value as [];
+			for(let i = 0; i < array.length; i++){
+				array[i] = this.unboxBuffer(array[i]);
+			}
+		} else if(typeof value === "object"){
+			let obj = value as {[key: string]: any};
+			if(Object.hasOwn(obj, "buffer") && Object.hasOwn(obj, "position") &&
+				Object.hasOwn(obj, "sub_type")){
+				return obj.buffer;
+			}
+			for(let key of Object.keys(obj)){
+				obj[key] = this.unboxBuffer(obj[key]);
+			}
+		}
+		return value;
+	}
+
 	invoke(serviceId: string, method: string, args: any[]){
 		this.lastResponse_ = null;
 		return new Promise((resolve, reject)=>{
@@ -279,6 +298,9 @@ export class WSServiceInvoker extends ServiceInvoker{
 			const data = serialize(msg);
 			this.send(data);
 			this.handlers[rid] = r=>{
+				if(r.result !== null){
+					r.result = this.unboxBuffer(r.result);
+				}
 				resolve(r.result);
 				this.lastResponse_ = r;
 				delete this.handlers[rid];
