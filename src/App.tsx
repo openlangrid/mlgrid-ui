@@ -86,7 +86,7 @@ function App() {
       <main>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
-              variant="scrollable"　scrollButtons="auto">
+              variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
             <Tab label="画像生成" />
             <Tab label="画像分類" />
