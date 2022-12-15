@@ -15,7 +15,6 @@ export interface Input {
     format: string;
     image: ArrayBuffer;
     labelLang: string;
-    maxResults: number;
 }
 
 export interface Result{
@@ -34,8 +33,7 @@ export function ObjectDetection({si, services, invocations}:
         {si: ServiceInvoker; services: Map<string, ServiceCheck[]>; invocations: Invocation[]}){
     const { register, handleSubmit, setValue } = useForm<Input>({defaultValues: {
         "format": "image/jpeg",
-        "labelLang": "en",
-        "maxResults": 1
+        "labelLang": "en"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     const scs = services.get("ObjectDetectionService") || [];
@@ -63,7 +61,6 @@ export function ObjectDetection({si, services, invocations}:
                 <br/>
                 <br/>
                 <TextField label="labelLang" size="small" type="text" style={{width: "6em"}} {...register("labelLang")} />
-                <TextField label="maxResults" size="small" type="number" style={{width: "6em"}} {...register("maxResults")} />
                 <Button type="submit" variant="contained" >検出</Button>
             </form>
 		</div>
@@ -91,7 +88,7 @@ const ObjectDetectionInvocation = ({si, inv: {input, results}}: {si: ServiceInvo
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         input:<br/>
         image: <img alt="" style={{maxWidth: "256px", maxHeight: "256px", objectFit: "scale-down"}} src={URL.createObjectURL(new Blob([input.image]))} /><br/>
-        labelLang: {input.labelLang}, maxResults: {input.maxResults}<br/>
+        labelLang: {input.labelLang}<br/>
         results:<br/>
         {results.map((r, i)=><ObjectDetectionInvocationResult key={i} input={input} result={r} si={si} />)}
         </div>;
