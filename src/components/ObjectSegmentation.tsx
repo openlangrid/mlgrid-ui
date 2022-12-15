@@ -119,10 +119,26 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
         return <rect className={className} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></rect>
     };
-    const Mask = ({className, result, scale}: {className: string; result: Segmentation; scale: number})=>{
+    const Mask = ({index, className, result, scale}: {index: number; className: string; result: Segmentation; scale: number})=>{
         const b = result.box;
         const url = URL.createObjectURL(new Blob([result.maskImage.buffer]));
-        return <image style={{mixBlendMode: "difference", opacity: "30%"}} className={className} href={url} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
+        const filters = [
+            // 赤
+            "sepia(95%) saturate(6932%) hue-rotate(358deg) brightness(95%) contrast(112%)",
+            // 緑
+            "sepia(91%) saturate(7085%) hue-rotate(128deg) brightness(100%) contrast(106%)",
+            // 青
+            "sepia(99%) saturate(7044%) hue-rotate(247deg) brightness(100%) contrast(145%)",
+            // 黄色
+            "sepia(81%) saturate(633%) hue-rotate(359deg) brightness(106%) contrast(105%)",
+            // オレンジ
+            "sepia(26%) saturate(6428%) hue-rotate(1deg) brightness(105%) contrast(102%)",
+            // 水色
+            "sepia(100%) saturate(2929%) hue-rotate(104deg) brightness(99%) contrast(104%)",
+            // 紫
+            "sepia(71%) saturate(5170%) hue-rotate(293deg) brightness(87%) contrast(111%)",
+        ];
+        return <image style={{mixBlendMode: "difference", filter: filters[index % filters.length], opacity: "30%"}} className={className} href={url} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></image>;
     };
 
@@ -135,7 +151,7 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
                         {res.value.result.segmentations.map(v =>
                             <><Rect className="os" key={rectKey++} result={v} scale={res.value.scale} />
-                            <Mask className="os" key={rectKey++} result={v} scale={res.value.scale} /></>)}
+                            <Mask className="os" key={rectKey++} index={rectKey} result={v} scale={res.value.scale} /></>)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />
