@@ -82,8 +82,18 @@ export class ObjectSegmentationService extends Service{
 	}
 }
 
+export interface Point3d{
+	x: number;
+	y: number;
+	z: number;
+}
+export interface HumanPoseEstimationResult{
+	width: number;
+	height: number;
+	poses: {[key: string]: Point3d}[];
+}
 export class HumanPoseEstimationService extends Service{
-	estimate(format: string, image: Buffer, maxResults: number){
+	estimate(image: ArrayBufferLike, imageFormat: string): Promise<HumanPoseEstimationResult>{
 		return this.invoke("estimate", Array.prototype.slice.call(arguments));
 	}
 }
