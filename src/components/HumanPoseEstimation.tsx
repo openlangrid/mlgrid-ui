@@ -148,7 +148,7 @@ const HumanPoseEstimationInvocationResult = ({si, input, result}: {si: ServiceIn
                 if(valid(p1) && valid(p2)){
                     return <line style={{}} className={className} x1={p1.x * scale} y1={p1.y * scale}
                         x2={p2.x * scale} y2={p2.y * scale}
-                        stroke={`rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.6)`}
+                        stroke={`rgba(${c[0]}, ${c[1]}, ${c[2]})`}
                         strokeWidth={4}><title>{names[i1]} to {names[i2]}</title></line>;
                 } else{
                     return <></>;
@@ -160,7 +160,7 @@ const HumanPoseEstimationInvocationResult = ({si, input, result}: {si: ServiceIn
                 if(valid(p)){
                     return <circle className={className} cx={p.x * scale} cy={p.y * scale}
                         r={3 * p.z}
-                        fill={`rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.7)`}>
+                        fill={`rgba(${c[0]}, ${c[1]}, ${c[2]})`}>
                             <title>{name}</title></circle>;
                 } else{
                     return <></>;

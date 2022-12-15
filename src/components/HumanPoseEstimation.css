@@ -1,11 +1,11 @@
 line.hpe {
-    opacity: 0.6;
+    opacity: 0.4;
 }
 line.hpe:hover{
     opacity: 1
 }
 circle.hpe{
-    opacity: 0.6;
+    opacity: 0.5;
 }
 circle.hpe:hover{
     opacity: 1;
