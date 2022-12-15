@@ -53,7 +53,7 @@ export interface ObjectDetectionResult{
 	boundingBox: Box2d;
 }
 export class ObjectDetectionService extends Service{
-    detect(format: string, image: ArrayBufferLike, labelLang: string, maxResults: number):
+    detect(image: ArrayBufferLike, format: string, labelLang: string):
 		Promise<ObjectDetectionResult[]>{
 		return this.invoke("detect", Array.prototype.slice.call(arguments));
 	}
