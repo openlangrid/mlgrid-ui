@@ -138,8 +138,11 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
             // 紫
             "sepia(71%) saturate(5170%) hue-rotate(293deg) brightness(87%) contrast(111%)",
         ];
-        return <image style={{filter: filters[index % filters.length]}} className={className} href={url} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
-            ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></image>;
+        return <image style={{filter: filters[index % filters.length]}}
+                className={className} href={url} x={b.x * scale} y={b.y * scale}
+                width={b.width * scale} height={b.height * scale}>
+                    <title>{`${result.label}(${round(result.accuracy, 2)})`}</title>
+            </image>;
     };
 
     return <div>{res.value.serviceId}
@@ -150,8 +153,10 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
                         {res.value.result.segmentations.map(v =>
-                            <g key={rectKey++}><Rect className="os" result={v} scale={res.value.scale} />
-                            <Mask className="os" index={rectKey} result={v} scale={res.value.scale} /></g>)}
+                            <g key={rectKey++}>
+                                <Rect className="os" result={v} scale={res.value.scale} />
+                                <Mask className="os" index={rectKey} result={v} scale={res.value.scale} />
+                            </g>)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />
