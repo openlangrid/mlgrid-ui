@@ -68,10 +68,7 @@ export function TextGuidedImageManipulation({si, services, invocations}:
 		</div>
         <br/>
         <Services serviceChecks={scs} />
-        <label>results:</label>
-        <div>
-        {invState.value.map(inv=><TGIMInvocation key={inv.id} si={si} inv={inv} />)}
-        </div>
+        <br/>
         <a href="https://github.com/CompVis/stable-diffusion">Stable Diffusion</a> &nbsp;
         <a href="https://github.com/harubaru/waifu-diffusion">Waifu Diffusion</a> &nbsp;
 		<a href="https://github.com/rinnakk/japanese-stable-diffusion">Rinna Japanese Stable Diffusion</a> &nbsp;
@@ -79,6 +76,11 @@ export function TextGuidedImageManipulation({si, services, invocations}:
 		<a href="https://huggingface.co/sd-dreambooth-library/disco-diffusion-style">disco-diffusion-style</a> &nbsp;
 		<a href="https://huggingface.co/doohickey/trinart-waifu-diffusion-50-50">trinart-waifu-diffusion-50-50</a> &nbsp;
         <a href="https://huggingface.co/alfredplpl/cool-japan-diffusion-for-learning-2-0">Cool Japan Diffusion</a> &nbsp;
+        <br/>
+        <label>results:</label>
+        <div>
+        {invState.value.map(inv=><TGIMInvocation key={inv.id} si={si} inv={inv} />)}
+        </div>
     </div>;
 }
 const TGIMInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
