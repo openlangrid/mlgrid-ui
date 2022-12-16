@@ -82,9 +82,11 @@ export function TextGuidedImageManipulation({si, services, invocations}:
     </div>;
 }
 const TGIMInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>{
+    const url = URL.createObjectURL(new Blob([input.image]));
     return (
         <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
             input:<br/>
+            image: <img src={url} style={{maxWidth: 512, maxHeight: 512, objectFit: "scale-down"}} /><br/>
             language: {input.language}, prompt: {input.prompt}, numOfGeneration: {input.numOfGenerations}<br/>
             results:<br/>
             {results.map((r, i)=><TGIMInvocationResult key={i} si={si} input={input} result={r} />)}
