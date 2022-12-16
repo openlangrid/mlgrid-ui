@@ -130,7 +130,10 @@ export class TextGuidedImageGenerationService extends Service{
     }
 }
 export class TextGuidedImageManipulationService extends Service{
-	manipulate(language: string, prompt: string, format: string, image: Buffer){
+	manipulate(
+		image: ArrayBuffer, imageFormat: string,
+		language: string, prompt: string,
+		numOfTimes: number): Promise<Image[]>{
 		return this.invoke("manipulate", Array.prototype.slice.call(arguments));
 	}
 }

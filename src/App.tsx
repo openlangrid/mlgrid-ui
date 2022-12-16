@@ -9,6 +9,7 @@ import { ObjectDetection, Invocation as ObjectDetectionInvocation } from './comp
 import { ObjectSegmentation, Invocation as ObjectSegmentationInvocation } from './components/ObjectSegmentation';
 import { SpeechRecognition, Invocation as SpeechRecognitionInvocation} from './components/SpeechRecognition';
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
+import { TextGuidedImageManipulation, Invocation as TextGuidedImageManipulationInvocation } from './components/TextGuidedImageManipulation';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
 
 import { TestHolder } from './components/TestHolder';
@@ -46,6 +47,7 @@ const icInvocations: ImageClassificationInvocation[] = [];
 const odInvocations: ObjectDetectionInvocation[] = [];
 const osInvocations: ObjectSegmentationInvocation[] = [];
 const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
+const tgimInvocations: TextGuidedImageManipulationInvocation[] = [];
 const transInvocations: TranslationInvocation[] = [];
 const srInvocations: SpeechRecognitionInvocation[] = [];
 function App() {
@@ -77,6 +79,7 @@ function App() {
       });
   }, []);
 
+  let index = 0;
   return (
     <div className="App">
       <header className="App-header">
@@ -93,6 +96,7 @@ function App() {
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
             <Tab label="画像生成" />
+            <Tab label="テキスト画像編集" />
             <Tab label="画像分類" />
             <Tab label="物体検出" />
             <Tab label="セグメンテーション" />
@@ -103,31 +107,34 @@ function App() {
             <Tab label="TestSuspense" />
           </Tabs>
         </Box>
-        <TabPanel value={value} index={0}>
+        <TabPanel value={value} index={index++}>
           <Translation services={services} si={si} invocations={transInvocations} />
         </TabPanel>
-        <TabPanel value={value} index={1}>
+        <TabPanel value={value} index={index++}>
           <TextGuidedImageGeneration services={services} si={si} invocations={tgigInvocations} />
         </TabPanel>
-        <TabPanel value={value} index={2}>
+        <TabPanel value={value} index={index++}>
+          <TextGuidedImageManipulation services={services} si={si} invocations={tgimInvocations} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
           <ImageClassification services={services} si={si} invocations={icInvocations} />
         </TabPanel>
-        <TabPanel value={value} index={3}>
+        <TabPanel value={value} index={index++}>
           <ObjectDetection services={services} si={si} invocations={odInvocations} />
         </TabPanel>
-        <TabPanel value={value} index={4}>
+        <TabPanel value={value} index={index++}>
           <ObjectSegmentation services={services} si={si} invocations={osInvocations} />
         </TabPanel>
-        <TabPanel value={value} index={5}>
+        <TabPanel value={value} index={index++}>
           <HumanPoseEstimation services={services} si={si} invocations={hpeInvocations} />
         </TabPanel>
-        <TabPanel value={value} index={6}>
+        <TabPanel value={value} index={index++}>
           <SpeechRecognition services={services} si={si} invocations={srInvocations} />
         </TabPanel>
-        <TabPanel value={value} index={7}>
+        <TabPanel value={value} index={index++}>
           <TestHolder />
         </TabPanel>
-        <TabPanel value={value} index={8}>
+        <TabPanel value={value} index={index++}>
           <SuspenseTest />
         </TabPanel>
       </main>
