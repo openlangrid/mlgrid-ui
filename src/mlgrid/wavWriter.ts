@@ -4,7 +4,7 @@ export class WavWriter{
     /**
      * @param {Object} config {channels: 1, sampleSizeInBits: 16, sampleRate: 16000}
      */
-    constructor(private config: {[key: string]: any}){
+    constructor(private config: {[key: string]: any} = {}){
         this.config = {channels: 1, sampleSizeInBits: 16, sampleRate: 16000, ...config};
         this.audioData = [];
     }

@@ -55,7 +55,7 @@ export function SpeechRecognition({si, services, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div data-id="inputs">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <AudioDropButton onAudio={onAudio} />
+                <AudioDropButton onAudio={onAudio} recordingEnabled={true} />
                 <br/>
                 <br/>
                 <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("language")} />
@@ -86,15 +86,16 @@ const SpeechRecognitionInvocation = ({si, inv: {input, results}}: {si: ServiceIn
 
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         input:<br/>
-        audio: <img alt="" style={{maxWidth: "256px", maxHeight: "256px", objectFit: "scale-down"}}
+        audio: <audio controls style={{maxWidth: "256px", maxHeight: "256px", objectFit: "scale-down"}}
             src={URL.createObjectURL(new Blob([input.audio]))} /><br/>
-        labelLang: {input.language}<br/>
+        language: {input.language}<br/>
+        <br/>
         results:<br/>
         {results.map((r, i)=><SpeechRecognitionInvocationResult key={i} input={input} result={r} si={si} />)}
         </div>;
 };
 
-let rectKey = 0;
+let key = 0;
 const SpeechRecognitionInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
@@ -119,11 +120,10 @@ const SpeechRecognitionInvocationResult = ({si, input, result}: {si: ServiceInvo
             <>
                 ({res.value.ellapsedMs}ms): {res.value.result.length} transcripts.<br/>
                 <div>
-                    <audio style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.audio]))} />
                     {res.value.result.map(v =>
-                        <p>
+                        <span key={key++}><span>
                             [{v.startMillis}-{v.endMillis}] {v.transcript}
-                        </p> 
+                        </span><br/></span>
                     )}
                 </div>
                 <RawResult result={res.value.result} />

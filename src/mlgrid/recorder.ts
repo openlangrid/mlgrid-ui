@@ -6,8 +6,8 @@ export class Recorder{
     private audioContext: AudioContext | null = null;
     private stream: MediaStream | null = null;
 
-	constructor(sampleRate: number){
-		this.sampleRate = sampleRate ? sampleRate : 16000;
+	constructor(){
+		this.sampleRate = 16000;
 	}
 	getAudioContext(){
 		return this.audioContext;
@@ -27,8 +27,8 @@ export class Recorder{
 
 	onStopRecording(){}
 
-	start(sampleRate: number){
-		if(sampleRate) this.sampleRate = sampleRate;
+	start(sampleRate: number = 16000){
+		this.sampleRate = sampleRate;
 		this.recording = true;
 		navigator.mediaDevices
 			.getUserMedia({audio: true, video: false})
@@ -109,10 +109,9 @@ export class Recorder{
  * @param {number} outSampleRate
  * @return {ArrayBuffer}
  */
-export function downsampleBuffer(buffer: Buffer, sampleRate: number, outSampleRate: number){
+export function downsampleBuffer(buffer: Float32Array, sampleRate: number, outSampleRate: number): ArrayBuffer{
 	if (outSampleRate > sampleRate) {
-		console.error('down-sampling rate should be smaller than the original one');
-        return null;
+		throw new Error('down-sampling rate should be smaller than the original one');
 	}
 	const scale = sampleRate / outSampleRate;
 	const newLength = Math.round(buffer.length / scale);
