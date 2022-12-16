@@ -35,8 +35,13 @@ export class ContinuousSpeechRecognitionService extends Service{
         return this.invoke("stopRecognition", Array.prototype.slice.call(arguments));
     }
 }
+export interface SpeechRecognitionResult{
+	startMillis: number;
+	endMillis: number;
+	transcript: string;
+}
 export class SpeechRecognition extends Service{
-	recognize(language: string, format: string, audio: Buffer){
+	recognize(audio: ArrayBuffer, audioFormat: string, language: string): Promise<SpeechRecognitionResult[]>{
 		return this.invoke("recognize", Array.prototype.slice.call(arguments));
 	}
 }
@@ -93,7 +98,7 @@ export interface HumanPoseEstimationResult{
 	poses: {[key: string]: Point3d}[];
 }
 export class HumanPoseEstimationService extends Service{
-	estimate(image: ArrayBufferLike, imageFormat: string): Promise<HumanPoseEstimationResult>{
+	estimate(image: ArrayBuffer, imageFormat: string): Promise<HumanPoseEstimationResult>{
 		return this.invoke("estimate", Array.prototype.slice.call(arguments));
 	}
 }
@@ -108,7 +113,7 @@ export class ImageToTextGenerationService extends Service{
 	}
 }
 export class SpeechEmotionRecognition extends Service{
-	recognize(language: string, audioFormat: string, audio: Buffer){
+	recognize(audio: ArrayBuffer, audioFormat: string, language: string){
 		return this.invoke("recognize", Array.prototype.slice.call(arguments));
 	}
 }
@@ -187,29 +192,29 @@ export abstract class ServiceInvoker{
     continuousSpeechRecognition(serviceId: string){
         return new ContinuousSpeechRecognitionService(this, serviceId);
     }
-	speechRecognition(serviceId: string){
-		return new SpeechEmotionRecognition(this, serviceId);
+	humanPoseEstimation(serviceId: string){
+		return new HumanPoseEstimationService(this, serviceId);
 	}
     imageClassification(serviceId: string){
         return new ImageClassificationService(this, serviceId);
     }
-    objectDetection(serviceId: string){
-        return new ObjectDetectionService(this, serviceId);
-    }
-	objectSegmentation(serviceId: string){
-		return new ObjectSegmentationService(this, serviceId);
-	}
-	humanPoseEstimation(serviceId: string){
-		return new HumanPoseEstimationService(this, serviceId);
-	}
 	imageToImageConversion(serviceId: string){
 		return new ImageToImageConversionService(this, serviceId);
 	}
 	imageToTextGeneration(serviceId: string){
 		return new ImageToTextGenerationService(this, serviceId);
 	}
+    objectDetection(serviceId: string){
+        return new ObjectDetectionService(this, serviceId);
+    }
+	objectSegmentation(serviceId: string){
+		return new ObjectSegmentationService(this, serviceId);
+	}
 	speechEmotionRecognition(serviceId: string){
 		return new SpeechEmotionRecognition(this, serviceId);
+	}
+	speechRecognition(serviceId: string){
+		return new SpeechRecognition(this, serviceId);
 	}
 	translation(serviceId: string){
 		return new TranslationService(this, serviceId);
@@ -226,7 +231,8 @@ export abstract class ServiceInvoker{
 	textToSpeech(serviceId: string){
 		return new TextToSpeechService(this, serviceId);
 	}
-    serviceManagement(){
+
+	serviceManagement(){
         return new ServiceManagementService(this, "ServiceManagement");
     }
 } 

@@ -7,11 +7,10 @@ import { HumanPoseEstimation, Invocation as HumanPoseEstimationInvocation } from
 import { ImageClassification, Invocation as ImageClassificationInvocation } from './components/ImageClassification';
 import { ObjectDetection, Invocation as ObjectDetectionInvocation } from './components/ObjectDetection';
 import { ObjectSegmentation, Invocation as ObjectSegmentationInvocation } from './components/ObjectSegmentation';
+import { SpeechRecognition, Invocation as SpeechRecognitionInvocation} from './components/SpeechRecognition';
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
 
-import { TestArray1 } from './components/TestArray1';
-import { TestArray2 } from './components/TestArray2';
 import { TestHolder } from './components/TestHolder';
 import { ServiceCheck } from './components/lib/Services';
 import { SuspenseTest } from './components/SuspenseTest';
@@ -48,6 +47,7 @@ const odInvocations: ObjectDetectionInvocation[] = [];
 const osInvocations: ObjectSegmentationInvocation[] = [];
 const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
 const transInvocations: TranslationInvocation[] = [];
+const srInvocations: SpeechRecognitionInvocation[] = [];
 function App() {
   console.log("App");
   const [value, setValue] = React.useState(0);
@@ -97,7 +97,7 @@ function App() {
             <Tab label="物体検出" />
             <Tab label="セグメンテーション" />
             <Tab label="姿勢推定" />
-            <Tab label="TestArray1" />
+            <Tab label="音声認識" />
             <Tab label="TestArray2" />
             <Tab label="TestHolder" />
             <Tab label="TestSuspense" />
@@ -122,7 +122,7 @@ function App() {
           <HumanPoseEstimation services={services} si={si} invocations={hpeInvocations} />
         </TabPanel>
         <TabPanel value={value} index={6}>
-          <TestArray2 />
+          <SpeechRecognition services={services} si={si} invocations={srInvocations} />
         </TabPanel>
         <TabPanel value={value} index={7}>
           <TestHolder />
