@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 //import './App.css';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
+import { ServiceCheck } from './components/lib/Services';
 
 import { HumanPoseEstimation, Invocation as HumanPoseEstimationInvocation } from './components/HumanPoseEstimation';
 import { ImageClassification, Invocation as ImageClassificationInvocation } from './components/ImageClassification';
@@ -12,19 +13,13 @@ import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvoc
 import { TextGuidedImageManipulation, Invocation as TextGuidedImageManipulationInvocation } from './components/TextGuidedImageManipulation';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
 
-import { TestHolder } from './components/TestHolder';
-import { ServiceCheck } from './components/lib/Services';
-import { SuspenseTest } from './components/SuspenseTest';
-
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
+function TabPanel({ children, value, index, ...other }: TabPanelProps) {
   return (
     <div
       role="tabpanel"
@@ -51,7 +46,6 @@ const tgimInvocations: TextGuidedImageManipulationInvocation[] = [];
 const transInvocations: TranslationInvocation[] = [];
 const srInvocations: SpeechRecognitionInvocation[] = [];
 function App() {
-  console.log("App");
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -102,9 +96,6 @@ function App() {
             <Tab label="セグメンテーション" />
             <Tab label="姿勢推定" />
             <Tab label="音声認識" />
-            <Tab label="TestArray2" />
-            <Tab label="TestHolder" />
-            <Tab label="TestSuspense" />
           </Tabs>
         </Box>
         <TabPanel value={value} index={index++}>
@@ -130,12 +121,6 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <SpeechRecognition services={services} si={si} invocations={srInvocations} />
-        </TabPanel>
-        <TabPanel value={value} index={index++}>
-          <TestHolder />
-        </TabPanel>
-        <TabPanel value={value} index={index++}>
-          <SuspenseTest />
         </TabPanel>
       </main>
       <footer>
