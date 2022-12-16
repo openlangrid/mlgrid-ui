@@ -118,7 +118,7 @@ const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceIn
                 <span>({res.value.ellapsedMs.toLocaleString()}ms): </span>
                 <span>{res.value.result.map((v: any, i)=> <span key={i}>{v.label}({round(v.accuracy, 2)})&nbsp; </span>)}</span>
             </span> :
-            <span>: <span className="loader"></span></span>
+            <>: <span className="loader" /></>
         }
         </div>;
 };

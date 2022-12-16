@@ -129,7 +129,7 @@ const SpeechRecognitionInvocationResult = ({si, input, result}: {si: ServiceInvo
                 <RawResult result={res.value.result} />
                 <br/>
             </> :
-            <span>: processing...<span className="loader"></span></span>
+            <>: processing...<span className="loader" /></>
         }
         </div>;
 };

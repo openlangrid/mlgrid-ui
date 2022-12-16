@@ -140,7 +140,7 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
                 <RawResult result={res.value.result} />
                 <br/>
             </> :
-            <span>: processing...<span className="loader"></span></span>
+            <>: processing...<span className="loader" /></>
         }
         </div>;
 };

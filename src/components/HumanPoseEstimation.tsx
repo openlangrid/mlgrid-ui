@@ -183,7 +183,7 @@ const HumanPoseEstimationInvocationResult = ({si, input, result}: {si: ServiceIn
                 <RawResult result={res.value.result} />
                 <br/>
             </> :
-            <span>: processing...<span className="loader"></span></span>
+            <>: processing...<span className="loader" /></>
         }
         </div>;
 };

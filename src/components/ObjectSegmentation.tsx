@@ -165,7 +165,7 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
                 <RawResult result={res.value.result} />
                 <br/>
             </> :
-            ": processing..."
+            <>: processing...<span className="loader"></span></>
         }
         </div>;
 };

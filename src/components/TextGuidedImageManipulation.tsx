@@ -114,7 +114,7 @@ const TGIMInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
     });
     return <div>{res.value.serviceId}{res.value.images.length > 0 ?
         `(${res.value.ellapsedMs.toLocaleString()}ms): done.` :
-        <span>: <span className="loader"></span></span>}<br/>
+        <>: <span className="loader" /></>}<br/>
             {res.value.images.map((r, i) =>
                 <img alt="" className="tgigResultImage" key={i} src={URL.createObjectURL(new Blob([r.image]))}></img>
             )}
