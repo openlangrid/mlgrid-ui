@@ -97,6 +97,6 @@ const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; i
 
     return <div>{res.value.serviceId}{res.value.result ?
         `(${res.value.ellapsedMs}ms): ${res.value.result}.` :
-        <span>: <span className="loader"></span></span>
+        <>: <span className="loader" /></>
         }</div>;
 };
