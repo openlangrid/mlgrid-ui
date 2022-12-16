@@ -71,11 +71,10 @@ export function TextGuidedImageManipulation({si, services, invocations}:
         <br/>
         <a href="https://github.com/CompVis/stable-diffusion">Stable Diffusion</a> &nbsp;
         <a href="https://github.com/harubaru/waifu-diffusion">Waifu Diffusion</a> &nbsp;
-		<a href="https://github.com/rinnakk/japanese-stable-diffusion">Rinna Japanese Stable Diffusion</a> &nbsp;
 		<a href="https://huggingface.co/naclbit/trinart_stable_diffusion_v2">trinart_stable_diffusion_v2</a> &nbsp;
 		<a href="https://huggingface.co/sd-dreambooth-library/disco-diffusion-style">disco-diffusion-style</a> &nbsp;
 		<a href="https://huggingface.co/doohickey/trinart-waifu-diffusion-50-50">trinart-waifu-diffusion-50-50</a> &nbsp;
-        <a href="https://huggingface.co/alfredplpl/cool-japan-diffusion-for-learning-2-0">Cool Japan Diffusion</a> &nbsp;
+        <br/>
         <br/>
         <label>results:</label>
         <div>

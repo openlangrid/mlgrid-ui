@@ -156,7 +156,7 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
                         {res.value.result.segmentations.map(v =>
                             <g key={rectKey++}>
                                 <text x={v.box.x * s} y={(v.box.y - 6) * s}
-                                    font-size={8} fill="red">{v.label}({round(v.accuracy, 2)})</text>
+                                    fontSize={8} fill="red">{v.label}({round(v.accuracy, 2)})</text>
                                 <Rect className="os" result={v} scale={s} />
                                 <Mask className="os" index={rectKey} result={v} scale={s} />
                             </g>)}
