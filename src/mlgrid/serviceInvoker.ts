@@ -137,8 +137,12 @@ export class TextGuidedImageManipulationService extends Service{
 		return this.invoke("manipulate", Array.prototype.slice.call(arguments));
 	}
 }
+export interface TextSentimentAnalysisResult{
+	label: string;
+	accuracy: number;
+}
 export class TextSentimentAnalysisService extends Service{
-	analyze(language: string, text: string){
+	analyze(language: string, text: string): Promise<TextSentimentAnalysisResult>{
 		return this.invoke("analyze", Array.prototype.slice.call(arguments));
 	}
 }

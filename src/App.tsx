@@ -13,6 +13,7 @@ import { ObjectSegmentation, Invocation as ObjectSegmentationInvocation } from '
 import { SpeechRecognition, Invocation as SpeechRecognitionInvocation} from './components/SpeechRecognition';
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation, Invocation as TextGuidedImageManipulationInvocation } from './components/TextGuidedImageManipulation';
+import { TextSentimentAnalysis, Invocation as TextSentimentAnalysisInvocation } from './components/TextSentimentAnalysis';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
 
 interface TabPanelProps {
@@ -47,6 +48,7 @@ const odInvocations: ObjectDetectionInvocation[] = [];
 const osInvocations: ObjectSegmentationInvocation[] = [];
 const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
 const tgimInvocations: TextGuidedImageManipulationInvocation[] = [];
+const tsaInvocations: TextSentimentAnalysisInvocation[] = [];
 const transInvocations: TranslationInvocation[] = [];
 const srInvocations: SpeechRecognitionInvocation[] = [];
 function App() {
@@ -93,6 +95,7 @@ function App() {
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
+            <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
             <Tab label="画像変換" />
@@ -106,6 +109,9 @@ function App() {
         </Box>
         <TabPanel value={value} index={index++}>
           <Translation services={services} si={si} invocations={transInvocations} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextSentimentAnalysis services={services} si={si} invocations={tsaInvocations} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGuidedImageGeneration services={services} si={si} invocations={tgigInvocations} />
