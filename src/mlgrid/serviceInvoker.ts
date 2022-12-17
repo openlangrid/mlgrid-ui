@@ -102,14 +102,14 @@ export class HumanPoseEstimationService extends Service{
 		return this.invoke("estimate", Array.prototype.slice.call(arguments));
 	}
 }
-export class ImageToImageConversionService extends Service{
-	convert(format: string, image: Buffer){
+export class ImageConversionService extends Service{
+	convert(image: ArrayBuffer, imageFormat: string): Promise<Image>{
 		return this.invoke("convert", Array.prototype.slice.call(arguments));
 	}
 }
-export class ImageToTextGenerationService extends Service{
-	generate(format: string, image: Buffer){
-		return this.invoke("generate", Array.prototype.slice.call(arguments));
+export class ImageToTextConversionService extends Service{
+	convert(image: ArrayBuffer, imageFormat: string, textLang: string): Promise<string>{
+		return this.invoke("convert", Array.prototype.slice.call(arguments));
 	}
 }
 export class SpeechEmotionRecognition extends Service{
@@ -201,11 +201,11 @@ export abstract class ServiceInvoker{
     imageClassification(serviceId: string){
         return new ImageClassificationService(this, serviceId);
     }
-	imageToImageConversion(serviceId: string){
-		return new ImageToImageConversionService(this, serviceId);
+	imageConversion(serviceId: string){
+		return new ImageConversionService(this, serviceId);
 	}
-	imageToTextGeneration(serviceId: string){
-		return new ImageToTextGenerationService(this, serviceId);
+	imageToTextConversion(serviceId: string){
+		return new ImageToTextConversionService(this, serviceId);
 	}
     objectDetection(serviceId: string){
         return new ObjectDetectionService(this, serviceId);

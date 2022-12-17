@@ -6,6 +6,8 @@ import { ServiceCheck } from './components/lib/Services';
 
 import { HumanPoseEstimation, Invocation as HumanPoseEstimationInvocation } from './components/HumanPoseEstimation';
 import { ImageClassification, Invocation as ImageClassificationInvocation } from './components/ImageClassification';
+import { ImageConversion, Invocation as ImageConversionInvocation } from './components/ImageConversion';
+import { ImageToTextConversion, Invocation as ImageToTextConversionInvocation } from './components/ImageToTextConversion';
 import { ObjectDetection, Invocation as ObjectDetectionInvocation } from './components/ObjectDetection';
 import { ObjectSegmentation, Invocation as ObjectSegmentationInvocation } from './components/ObjectSegmentation';
 import { SpeechRecognition, Invocation as SpeechRecognitionInvocation} from './components/SpeechRecognition';
@@ -39,6 +41,8 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
 
 const hpeInvocations: HumanPoseEstimationInvocation[] = [];
 const icInvocations: ImageClassificationInvocation[] = [];
+const icvInvocations: ImageConversionInvocation[] = [];
+const ittcInvocations: ImageToTextConversionInvocation[] = [];
 const odInvocations: ObjectDetectionInvocation[] = [];
 const osInvocations: ObjectSegmentationInvocation[] = [];
 const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
@@ -91,6 +95,8 @@ function App() {
             <Tab label="翻訳" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
+            <Tab label="画像変換" />
+            <Tab label="画像テキスト化" />
             <Tab label="画像分類" />
             <Tab label="物体検出" />
             <Tab label="セグメンテーション" />
@@ -106,6 +112,12 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGuidedImageManipulation services={services} si={si} invocations={tgimInvocations} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <ImageConversion services={services} si={si} invocations={icvInvocations} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <ImageToTextConversion services={services} si={si} invocations={ittcInvocations} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ImageClassification services={services} si={si} invocations={icInvocations} />
