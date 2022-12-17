@@ -41,7 +41,7 @@ export interface SpeechRecognitionResult{
 	transcript: string;
 }
 export class SpeechRecognition extends Service{
-	recognize(audio: ArrayBuffer, audioFormat: string, language: string): Promise<SpeechRecognitionResult[]>{
+	recognize(audio: ArrayBuffer, audioFormat: string, audioLanguage: string): Promise<SpeechRecognitionResult[]>{
 		return this.invoke("recognize", Array.prototype.slice.call(arguments));
 	}
 }
@@ -112,8 +112,13 @@ export class ImageToTextConversionService extends Service{
 		return this.invoke("convert", Array.prototype.slice.call(arguments));
 	}
 }
+export interface SpeechEmotionRecognitionResult{
+	label: string;
+	degree: number;
+}
 export class SpeechEmotionRecognition extends Service{
-	recognize(audio: ArrayBuffer, audioFormat: string, language: string){
+	recognize(audio: ArrayBuffer, audioFormat: string, audioLanguage: string):
+		Promise<SpeechEmotionRecognitionResult[]>{
 		return this.invoke("recognize", Array.prototype.slice.call(arguments));
 	}
 }

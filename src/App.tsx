@@ -11,6 +11,7 @@ import { ImageToTextConversion, Invocation as ImageToTextConversionInvocation } 
 import { ObjectDetection, Invocation as ObjectDetectionInvocation } from './components/ObjectDetection';
 import { ObjectSegmentation, Invocation as ObjectSegmentationInvocation } from './components/ObjectSegmentation';
 import { SpeechRecognition, Invocation as SpeechRecognitionInvocation} from './components/SpeechRecognition';
+import { SpeechEmotionRecognition, Invocation as SpeechEmotionRecognitionInvocation } from './components/SpeechEmotionRecognition';
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation, Invocation as TextGuidedImageManipulationInvocation } from './components/TextGuidedImageManipulation';
 import { TextSentimentAnalysis, Invocation as TextSentimentAnalysisInvocation } from './components/TextSentimentAnalysis';
@@ -52,6 +53,7 @@ const tgimInvocations: TextGuidedImageManipulationInvocation[] = [];
 const tsaInvocations: TextSentimentAnalysisInvocation[] = [];
 const transInvocations: TranslationInvocation[] = [];
 const ttsInvocations: TextToSpeechInvocation[] = [];
+const serInvocations: SpeechEmotionRecognitionInvocation[] = [];
 const srInvocations: SpeechRecognitionInvocation[] = [];
 function App() {
   const [value, setValue] = React.useState(0);
@@ -107,6 +109,7 @@ function App() {
             <Tab label="セグメンテーション" />
             <Tab label="姿勢推定" />
             <Tab label="音声認識" />
+            <Tab label="音声感情認識" />
             <Tab label="音声合成" />
           </Tabs>
         </Box>
@@ -142,6 +145,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <SpeechRecognition services={services} si={si} invocations={srInvocations} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <SpeechEmotionRecognition services={services} si={si} invocations={serInvocations} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextToSpeech services={services} si={si} invocations={ttsInvocations} />
