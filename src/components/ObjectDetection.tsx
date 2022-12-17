@@ -132,7 +132,7 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
                         {res.value.result.detections.map(v =>
                             <g key={rectKey++}>
                                 <text x={v.box.x * s} y={(v.box.y - 6) * s}
-                                    font-size={8} fill="red">{v.label}({round(v.accuracy, 2)})</text>
+                                    fontSize={8} fill="red">{v.label}({round(v.accuracy, 2)})</text>
                                 <Rect key={rectKey++} className="od" result={v} scale={s} />
                             </g>)}
                     </svg>
