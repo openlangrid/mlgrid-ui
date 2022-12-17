@@ -118,8 +118,8 @@ export class SpeechEmotionRecognition extends Service{
 	}
 }
 export interface Image{
+	image: ArrayBuffer;
 	format: string;
-	image: Buffer;
 }
 export class TextGuidedImageGenerationService extends Service{
     generate(language: string, text: string): Image{
@@ -146,8 +146,13 @@ export class TextSentimentAnalysisService extends Service{
 		return this.invoke("analyze", Array.prototype.slice.call(arguments));
 	}
 }
+export interface Speech{
+	audio: ArrayBuffer;
+	voiceType: string;
+	audioType: string;
+}
 export class TextToSpeechService extends Service{
-	speak(language: string, text: string, voiceType: string, audioType: string){
+	speak(language: string, text: string, voiceType: string, audioType: string): Promise<Speech>{
         return this.invoke("speak", Array.prototype.slice.call(arguments));
 	}
 }

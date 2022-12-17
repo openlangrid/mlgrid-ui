@@ -14,6 +14,7 @@ import { SpeechRecognition, Invocation as SpeechRecognitionInvocation} from './c
 import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation, Invocation as TextGuidedImageManipulationInvocation } from './components/TextGuidedImageManipulation';
 import { TextSentimentAnalysis, Invocation as TextSentimentAnalysisInvocation } from './components/TextSentimentAnalysis';
+import { TextToSpeech, Invocation as TextToSpeechInvocation } from './components/TextToSpeech';
 import { Translation, Invocation as TranslationInvocation } from './components/Translation';
 
 interface TabPanelProps {
@@ -50,6 +51,7 @@ const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
 const tgimInvocations: TextGuidedImageManipulationInvocation[] = [];
 const tsaInvocations: TextSentimentAnalysisInvocation[] = [];
 const transInvocations: TranslationInvocation[] = [];
+const ttsInvocations: TextToSpeechInvocation[] = [];
 const srInvocations: SpeechRecognitionInvocation[] = [];
 function App() {
   const [value, setValue] = React.useState(0);
@@ -105,6 +107,7 @@ function App() {
             <Tab label="セグメンテーション" />
             <Tab label="姿勢推定" />
             <Tab label="音声認識" />
+            <Tab label="音声合成" />
           </Tabs>
         </Box>
         <TabPanel value={value} index={index++}>
@@ -139,6 +142,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <SpeechRecognition services={services} si={si} invocations={srInvocations} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextToSpeech services={services} si={si} invocations={ttsInvocations} />
         </TabPanel>
       </main>
       <footer>
