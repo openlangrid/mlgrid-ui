@@ -109,7 +109,9 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
-                result.scale = calcAspectRatioAwareSacle(r.width, r.height, 512, 512);
+                result.scale = (r.width >= 512 || r.height >= 512) ?
+                    calcAspectRatioAwareSacle(r.width, r.height, 512, 512) :
+                    1;
                 setRes(res.clone());
             })
             .catch(console.error);
@@ -133,7 +135,8 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
                         {res.value.result.detections.map(v =>
                             <g key={rectKey++}>
                                 <text x={v.box.x * s} y={(v.box.y - 6) * s}
-                                    fontSize={8} fill="red">{v.label}({round(v.accuracy, 2)})</text>
+                                    fontSize={8} fill="red">{v.label}({round(v.accuracy, 2)})
+                                </text>
                                 <Rect key={rectKey++} className="od" result={v} scale={s} />
                             </g>)}
                     </svg>
