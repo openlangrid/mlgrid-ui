@@ -2,7 +2,8 @@ import { round } from "./formatUtil";
 
 export interface Point{ x: number, y: number, z: number}
 
-export function calcAspectRatioAwareSacle(sw: number, sh: number, tw: number, th: number){
+export function calcAspectRatioAwareDownSacle(sw: number, sh: number, tw: number, th: number){
+    if(sw <= tw && sh <= th) return 1;
     let s = tw / sw;
     return s * sh <= th ? s : th / sh;
 }

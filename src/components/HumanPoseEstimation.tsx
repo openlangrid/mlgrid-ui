@@ -7,7 +7,7 @@ import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
 import "./HumanPoseEstimation.css"
 import { ImageDropButton } from "./lib/ImageDropButton";
-import { calcAspectRatioAwareSacle } from "../mlgrid/drawUtil";
+import { calcAspectRatioAwareDownSacle } from "../mlgrid/drawUtil";
 import { RawResult } from "./lib/RawResult";
 
 export interface Input {
@@ -105,7 +105,7 @@ const HumanPoseEstimationInvocationResult = ({si, input, result}: {si: ServiceIn
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
-                result.scale = calcAspectRatioAwareSacle(r.width, r.height, 512, 512);
+                result.scale = calcAspectRatioAwareDownSacle(r.width, r.height, 512, 512);
                 setRes(res.clone());
             })
             .catch(console.error);

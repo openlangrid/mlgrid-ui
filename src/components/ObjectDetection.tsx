@@ -8,7 +8,7 @@ import "./common.css"
 import "./ObjectDetection.css"
 import { ImageDropButton } from "./lib/ImageDropButton";
 import { round } from "../mlgrid/formatUtil";
-import { calcAspectRatioAwareSacle } from "../mlgrid/drawUtil";
+import { calcAspectRatioAwareDownSacle } from "../mlgrid/drawUtil";
 import { RawResult } from "./lib/RawResult";
 
 export interface Input {
@@ -109,9 +109,7 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
-                result.scale = (r.width >= 512 || r.height >= 512) ?
-                    calcAspectRatioAwareSacle(r.width, r.height, 512, 512) :
-                    1;
+                result.scale = calcAspectRatioAwareDownSacle(r.width, r.height, 512, 512);
                 setRes(res.clone());
             })
             .catch(console.error);

@@ -8,7 +8,7 @@ import "./common.css"
 import "./ObjectSegmentation.css"
 import { ImageDropButton } from "./lib/ImageDropButton";
 import { round } from "../mlgrid/formatUtil";
-import { calcAspectRatioAwareSacle } from "../mlgrid/drawUtil";
+import { calcAspectRatioAwareDownSacle } from "../mlgrid/drawUtil";
 import { RawResult } from "./lib/RawResult";
 
 export interface Input {
@@ -108,7 +108,7 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
-                result.scale = calcAspectRatioAwareSacle(r.width, r.height, 512, 512);
+                result.scale = calcAspectRatioAwareDownSacle(r.width, r.height, 512, 512);
                 setRes(res.clone());
             })
             .catch(console.error);
