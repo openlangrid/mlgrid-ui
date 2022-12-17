@@ -117,7 +117,8 @@ const ObjectDetectionInvocationResult = ({si, input, result}: {si: ServiceInvoke
 
     const Rect = ({className, result, scale}: {className: string; result: Detection; scale: number})=>{
         const b = result.box;
-        return <rect className={className} x={b.x * scale} y={b.y * scale} width={b.width * scale} height={b.height * scale}
+        return <rect className={className} x={b.x * scale} y={b.y * scale}
+                width={b.width * scale} height={b.height * scale}
             ><title>{`${result.label}(${round(result.accuracy, 2)})`}</title></rect>
     };
 
