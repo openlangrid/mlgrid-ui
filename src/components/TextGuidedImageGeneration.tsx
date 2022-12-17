@@ -99,11 +99,15 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
             setRes(res.clone());
         });
     });
-    return <div>{res.value.serviceId}{res.value.images.length > 0 ?
-        `(${res.value.ellapsedMs.toLocaleString()}ms): done.` :
-        <>: <span className="loader" /></>}<br/>
-            {res.value.images.map((r, i) =>
-                <img alt="" className="tgigResultImage" key={i} src={URL.createObjectURL(new Blob([r.image]))}></img>
+    const {value} = res;
+    return <div>{value.serviceId}{value.images.length > 0 ?
+        <>
+            ({value.ellapsedMs.toLocaleString()}ms): done.<br/>
+            {value.images.map((r, i) =>
+                <img key={i} alt="" className="tgigResultImage"
+                    src={URL.createObjectURL(new Blob([r.image]))}></img>
             )}
+        </> :
+        <>: <span className="loader" /></>}
         </div>;
 }
