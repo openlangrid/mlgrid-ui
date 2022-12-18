@@ -3,20 +3,21 @@ import React, { useEffect } from 'react';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { ServiceCheck } from './components/lib/Services';
+import { Invocations } from './components/Invocations';
 
-import { HumanPoseEstimation, Invocation as HumanPoseEstimationInvocation } from './components/HumanPoseEstimation';
-import { ImageClassification, Invocation as ImageClassificationInvocation } from './components/ImageClassification';
-import { ImageConversion, Invocation as ImageConversionInvocation } from './components/ImageConversion';
-import { ImageToTextConversion, Invocation as ImageToTextConversionInvocation } from './components/ImageToTextConversion';
-import { ObjectDetection, Invocation as ObjectDetectionInvocation } from './components/ObjectDetection';
-import { ObjectSegmentation, Invocation as ObjectSegmentationInvocation } from './components/ObjectSegmentation';
-import { SpeechRecognition, Invocation as SpeechRecognitionInvocation} from './components/SpeechRecognition';
-import { SpeechEmotionRecognition, Invocation as SpeechEmotionRecognitionInvocation } from './components/SpeechEmotionRecognition';
-import { TextGuidedImageGeneration, Invocation as TextGuidedImageGenerationInvocation } from './components/TextGuidedImageGeneration';
-import { TextGuidedImageManipulation, Invocation as TextGuidedImageManipulationInvocation } from './components/TextGuidedImageManipulation';
-import { TextSentimentAnalysis, Invocation as TextSentimentAnalysisInvocation } from './components/TextSentimentAnalysis';
-import { TextToSpeech, Invocation as TextToSpeechInvocation } from './components/TextToSpeech';
-import { Translation, Invocation as TranslationInvocation } from './components/Translation';
+import { HumanPoseEstimation } from './components/HumanPoseEstimation';
+import { ImageClassification } from './components/ImageClassification';
+import { ImageConversion } from './components/ImageConversion';
+import { ImageToTextConversion } from './components/ImageToTextConversion';
+import { ObjectDetection } from './components/ObjectDetection';
+import { ObjectSegmentation } from './components/ObjectSegmentation';
+import { SpeechRecognition } from './components/SpeechRecognition';
+import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition';
+import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
+import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
+import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
+import { TextToSpeech } from './components/TextToSpeech';
+import { Translation } from './components/Translation';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -42,19 +43,7 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
   );
 }
 
-const hpeInvocations: HumanPoseEstimationInvocation[] = [];
-const icInvocations: ImageClassificationInvocation[] = [];
-const icvInvocations: ImageConversionInvocation[] = [];
-const ittcInvocations: ImageToTextConversionInvocation[] = [];
-const odInvocations: ObjectDetectionInvocation[] = [];
-const osInvocations: ObjectSegmentationInvocation[] = [];
-const tgigInvocations: TextGuidedImageGenerationInvocation[] = [];
-const tgimInvocations: TextGuidedImageManipulationInvocation[] = [];
-const tsaInvocations: TextSentimentAnalysisInvocation[] = [];
-const transInvocations: TranslationInvocation[] = [];
-const ttsInvocations: TextToSpeechInvocation[] = [];
-const serInvocations: SpeechEmotionRecognitionInvocation[] = [];
-const srInvocations: SpeechRecognitionInvocation[] = [];
+const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
@@ -114,43 +103,43 @@ function App() {
           </Tabs>
         </Box>
         <TabPanel value={value} index={index++}>
-          <Translation services={services} si={si} invocations={transInvocations} />
+          <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextSentimentAnalysis services={services} si={si} invocations={tsaInvocations} />
+          <TextSentimentAnalysis services={services} si={si} invocations={invocations.tsa} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextGuidedImageGeneration services={services} si={si} invocations={tgigInvocations} />
+          <TextGuidedImageGeneration services={services} si={si} invocations={invocations.tgig} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextGuidedImageManipulation services={services} si={si} invocations={tgimInvocations} />
+          <TextGuidedImageManipulation services={services} si={si} invocations={invocations.tgim} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <ImageConversion services={services} si={si} invocations={icvInvocations} />
+          <ImageConversion services={services} si={si} invocations={invocations.ico} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <ImageToTextConversion services={services} si={si} invocations={ittcInvocations} />
+          <ImageToTextConversion services={services} si={si} invocations={invocations.ittc} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <ImageClassification services={services} si={si} invocations={icInvocations} />
+          <ImageClassification services={services} si={si} invocations={invocations.icl} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <ObjectDetection services={services} si={si} invocations={odInvocations} />
+          <ObjectDetection services={services} si={si} invocations={invocations.od} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <ObjectSegmentation services={services} si={si} invocations={osInvocations} />
+          <ObjectSegmentation services={services} si={si} invocations={invocations.os} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <HumanPoseEstimation services={services} si={si} invocations={hpeInvocations} />
+          <HumanPoseEstimation services={services} si={si} invocations={invocations.hpe} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <SpeechRecognition services={services} si={si} invocations={srInvocations} />
+          <SpeechRecognition services={services} si={si} invocations={invocations.sr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <SpeechEmotionRecognition services={services} si={si} invocations={serInvocations} />
+          <SpeechEmotionRecognition services={services} si={si} invocations={invocations.ser} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextToSpeech services={services} si={si} invocations={ttsInvocations} />
+          <TextToSpeech services={services} si={si} invocations={invocations.tts} />
         </TabPanel>
       </main>
       <footer>
