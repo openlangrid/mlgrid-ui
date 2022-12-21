@@ -72,16 +72,17 @@ export function AudioDropButton({onAudio, recordingEnabled} :
             onClick={e=>e.preventDefault()} onDragOver={onDragOver} onDrop={onDrop}
         className={"btn btn-outline-success form-control"}>
         ここに音声ファイルをドロップしてください。{ recordingEnabled ?
-            <span>または録音<a href="#" onClick={onRecordingClick}>
-                <span style={{display: context ? "inline" : "none"}}>終了</span>
+            <span>または録音
+                <span style={{display: context ? "inline" : "none"}}>
+                    <a href="#" onClick={onRecordingClick}>終了</a>
+                </span>
                 <span style={{display: context ? "none" : "inline"}}>
-                    開始
+                    <a href="#" onClick={onRecordingClick}>開始</a>
                     <select ref={samplingRateSelect}>
                         <option value="11025">11025Hz</option>
                         <option value="16000">16000Hz</option>
                     </select>
                 </span>
-                </a>
             </span> :
             ""}<br/>
         {audio ?
