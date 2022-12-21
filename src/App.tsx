@@ -89,8 +89,6 @@ function App() {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
-            <Tab label="継続音声認識" />
-            <Tab label="ブラウザ音声認識" />
             <Tab label="翻訳" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
@@ -102,6 +100,8 @@ function App() {
             <Tab label="セグメンテーション" />
             <Tab label="姿勢推定" />
             <Tab label="音声認識" />
+            <Tab label="リアルタイム音声認識" />
+            <Tab label="ブラウザ音声認識" />
             <Tab label="音声感情認識" />
             <Tab label="音声合成" />
           </Tabs>
