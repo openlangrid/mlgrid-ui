@@ -1,12 +1,14 @@
+import EventEmitter from "events";
 import { Stream } from "stream";
 
-export class Recorder{
+export class Recorder extends EventEmitter{
     private sampleRate: number;
     private recording = false;
     private audioContext: AudioContext | null = null;
     private stream: MediaStream | null = null;
 
 	constructor(){
+		super();
 		this.sampleRate = 16000;
 	}
 	getAudioContext(){
@@ -18,13 +20,11 @@ export class Recorder{
 	}
 
 	onStartRecording(stream: MediaStream, autioContext: AudioContext){}
-
 	/**
 	 * 
 	 * @param {Float32Array} channelData 
 	 */
     onProcessRecording(channelData: Float32Array){}
-
 	onStopRecording(){}
 
 	start(sampleRate: number = 16000){
@@ -38,41 +38,17 @@ export class Recorder{
 					sampleRate: this.sampleRate,
 				});
 				this.stream = stream;
-                this.onStartRecording(stream, this.audioContext);
+				this.fireStart(stream, this.audioContext);
 				const sp = this.audioContext.createScriptProcessor(1024, 1, 1);
 				sp.onaudioprocess = e=>{
-					if(this.recording) this.onProcessRecording(e.inputBuffer.getChannelData(0));
+					if(!this.recording) return;
+					const data = e.inputBuffer.getChannelData(0);
+					this.fireProcess(data);
 				};
 				this.audioContext.createMediaStreamSource(stream).connect(sp);
 				sp.connect(this.audioContext.destination);
 				console.debug(`recording started. required sample rate: ${sampleRate ? sampleRate : "none"}, `
 					+ `actual sample rate: ${this.audioContext.sampleRate}`);
-/*
-				window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-				if(window.SpeechRecognition){
-					this.sr = new window.SpeechRecognition();
-					this.sr.continuous = true;
-					this.sr.lang = 'ja-JP';
-					this.sr.interimResults = false;
-					this.sr.maxAlternatives = 1;
-					this.sr.onresult = e=>{
-						this.ws.send(JSON.stringify({
-							"type": "asrResult",
-							"body": e.results[e.results.length - 1][0].transcript
-						}));
-					};
-					this.sr.onend = e=>{
-						console.log("asr stopped.")
-						this.sr = null;
-						if(this.recording){
-							this.finish();
-						} else{
-							this.startClosing();
-						}
-					}
-					this.sr.start();
-				}
-*/
 			});
 	}
 	stop() {
@@ -81,26 +57,24 @@ export class Recorder{
 		if(this.stream){
 			this.stream.getTracks().forEach(t=>t.stop());
 		}
-		console.debug("recording stopped.");
+		console.log("recording stopped.");
+		this.fireStop();
+	}
+
+	private fireStart(stream: MediaStream, context: AudioContext){
+		this.onStartRecording(stream, context);
+		this.emit("startRecording", stream, context);
+	}
+
+	private fireProcess(data: Float32Array){
+		this.onProcessRecording(data);
+		this.emit("processRecording", data);
+	}
+
+	private fireStop(){
         this.onStopRecording();
-/*		if(this.sr){
-			this.sr.stop();
-		} else{
-			this.startClosing();
-		}
-*/
-    }
-	startClosing(){
-/*		if(this.onending) this.onending();
-		this.ws.send(JSON.stringify({"type": "recordingFinished"}));
-		if(this.audioContext){
-			this.audioContext.close().then(()=>{
-				console.log("audioContext closed.");
-				this.audioContext = null;
-			});
-		}
-*/
-   	}
+		this.emit("stopRecording");
+	}
 }
 
 /**

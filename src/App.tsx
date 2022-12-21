@@ -18,6 +18,8 @@ import { TextGuidedImageManipulation } from './components/TextGuidedImageManipul
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
+import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
+import { BrowserSR } from './components/BrowserSR';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -87,6 +89,8 @@ function App() {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
+            <Tab label="継続音声認識" />
+            <Tab label="ブラウザ音声認識" />
             <Tab label="翻訳" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
@@ -102,6 +106,12 @@ function App() {
             <Tab label="音声合成" />
           </Tabs>
         </Box>
+        <TabPanel value={value} index={index++}>
+          <ContinuousSpeechRecognition services={services} si={si} invocations={invocations.csr} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <BrowserSR />
+        </TabPanel>
         <TabPanel value={value} index={index++}>
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>

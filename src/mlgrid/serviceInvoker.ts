@@ -19,19 +19,33 @@ export class Service{
 
 // 各サービス呼び出しクラス。サービスの種類毎に用意する。
 // サービス毎にどんなメソッド名があるかを明示するために設けている。
+export interface ContinuousSpeechRecognitionStartRecognitionConfig{
+	channels: number;
+	sampleSizeInBits: number;
+	sampleRate: number;  // hertz. 8000, 16000, 44100.
+}
+export interface ContinuousSpeechRecognitionTranscript{
+	sentenceId: number;
+	startMillis: number;
+	endMillis: number;
+	sentence: string;
+	fixed: boolean;
+	accuracy: number;
+}
 export class ContinuousSpeechRecognitionService extends Service{
     /**
      * @param {string} language 
      * @param {{channels: number; sampleSizeInBits: number, frameRate: number}} config 
      * @returns {Promise<{sentenceId: number; sentence: string; fixed: boolean; accuracy: number}[]>}
      */
-	startRecognition(language: string, config: {[key: string]: any}){
+	startRecognition(language: string,
+		config: {channels: number; sampleSizeInBits: number; sampleRate: number}): Promise<string>{
         return this.invoke("startRecognition", Array.prototype.slice.call(arguments));
     }
-	processRecognition(sessionId: string, audio: Buffer){
+	processRecognition(sessionId: string, audio: ArrayBuffer): Promise<ContinuousSpeechRecognitionTranscript[]>{
         return this.invoke("processRecognition", Array.prototype.slice.call(arguments));
     }
-	stopRecognition(sessionId: string){
+	stopRecognition(sessionId: string): Promise<ContinuousSpeechRecognitionTranscript[]>{
         return this.invoke("stopRecognition", Array.prototype.slice.call(arguments));
     }
 }
