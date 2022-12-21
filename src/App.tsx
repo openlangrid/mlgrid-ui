@@ -107,12 +107,6 @@ function App() {
           </Tabs>
         </Box>
         <TabPanel value={value} index={index++}>
-          <ContinuousSpeechRecognition services={services} si={si} invocations={invocations.csr} />
-        </TabPanel>
-        <TabPanel value={value} index={index++}>
-          <BrowserSR />
-        </TabPanel>
-        <TabPanel value={value} index={index++}>
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
@@ -144,6 +138,12 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <SpeechRecognition services={services} si={si} invocations={invocations.sr} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <ContinuousSpeechRecognition services={services} si={si} invocations={invocations.csr} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <BrowserSR />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <SpeechEmotionRecognition services={services} si={si} invocations={invocations.ser} />
