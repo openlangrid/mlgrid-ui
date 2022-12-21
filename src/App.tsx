@@ -143,7 +143,7 @@ function App() {
           <ContinuousSpeechRecognition services={services} si={si} invocations={invocations.csr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <BrowserSR />
+          <BrowserSR services={services} si={si} invocations={invocations.bsr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <SpeechEmotionRecognition services={services} si={si} invocations={invocations.ser} />
