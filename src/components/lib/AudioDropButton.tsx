@@ -7,7 +7,7 @@ class Context {
     wavWriter: WavWriter;
     constructor(sampleRate: number = 16000){
         this.recorder = new Recorder();
-        this.wavWriter = new WavWriter({sampleRate: sampleRate});
+        this.wavWriter = new WavWriter({sampleRate: 16000});
         this.recorder.onProcessRecording = channelData=>{
             const uint8buff = downsampleBuffer(
                 channelData,
@@ -47,7 +47,6 @@ export function AudioDropButton({onAudio, recordingEnabled} :
             const content = fr.result as ArrayBuffer;
             onAudio(content);
             setAudio(content);
-            console.log(`audio ${content.byteLength} bytes.`)
         };
         fr.readAsArrayBuffer(e.dataTransfer.files[0]);   
     }
@@ -58,7 +57,6 @@ export function AudioDropButton({onAudio, recordingEnabled} :
             setContext(null);
         } else{
             const sampleRate = parseFloat(samplingRateSelect.current!.value);
-            console.log(`sampleRate: ${sampleRate}`);
 			const ctx = new Context(sampleRate);
             ctx.onAudio = content =>{
                 onAudio(content);
@@ -70,23 +68,27 @@ export function AudioDropButton({onAudio, recordingEnabled} :
 
     return <div style={{"minHeight": "4em", border: "solid 1pt", borderRadius: "4px", backgroundColor: "#2b70e229"}}
             onClick={e=>e.preventDefault()} onDragOver={onDragOver} onDrop={onDrop}
-        className={"btn btn-outline-success form-control"}>
-        ここに音声ファイルをドロップしてください。{ recordingEnabled ?
-            <span>または録音
-                <span style={{display: context ? "inline" : "none"}}>
-                    <a href="#" onClick={onRecordingClick}>終了</a>
-                </span>
-                <span style={{display: context ? "none" : "inline"}}>
-                    <a href="#" onClick={onRecordingClick}>開始</a>
-                    <select ref={samplingRateSelect}>
-                        <option value="11025">11025Hz</option>
-                        <option value="16000">16000Hz</option>
-                    </select>
-                </span>
-            </span> :
-            ""}<br/>
-        {audio ?
-            <audio controls style={{"maxHeight": "256px", "maxWidth": "256px"}} src={URL.createObjectURL(new Blob([audio]))} /> :
-            ""}
-        </div>;
+            className={"btn btn-outline-success form-control"}>
+            ここに音声ファイルをドロップしてください。
+            { recordingEnabled ?
+                <span>または録音
+                    <span style={{display: context ? "inline" : "none"}}>
+                        <a href="#" onClick={onRecordingClick}>終了</a>
+                    </span>
+                    <span style={{display: context ? "none" : "inline"}}>
+                        <a href="#" onClick={onRecordingClick}>開始</a>
+                        <select ref={samplingRateSelect}>
+                            <option value="11025">11025Hz</option>
+                            <option value="16000">16000Hz</option>
+                        </select>
+                    </span>
+                </span> :
+                ""
+            }
+            <br/>
+            { audio ?
+                <audio controls src={URL.createObjectURL(new Blob([audio]))} /> :
+                ""
+            }
+            </div>;
 }

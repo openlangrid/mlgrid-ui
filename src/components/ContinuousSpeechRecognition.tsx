@@ -47,7 +47,7 @@ export function ContinuousSpeechRecognition({si, services, invocations}:
             console.log("add invocation");
             // start rec
             const rec = new Recorder();
-            const writer = new WavWriter({channels: 1, sampleSizeInBits: 16, sampleRate: 16000})
+            const writer = new WavWriter({channels: 1, sampleSizeInBits: 16, sampleRate: 16000});
             rec.on("processRecording", (data: Float32Array)=>{
                 writer.addData(downsampleBuffer(
                     data, rec.getAudioContext()!.sampleRate, 16000));
@@ -108,8 +108,7 @@ const CSRInvocation = ({si, inv}: {si: ServiceInvoker; inv: Invocation})=>{
         -- invocation:{id} --<br/>
         input:<br/>
         audio: {audio != null ?
-            <audio controls style={{maxWidth: "256px", maxHeight: "256px", objectFit: "scale-down"}}
-            src={URL.createObjectURL(new Blob([audio]))} /> :
+            <audio controls src={URL.createObjectURL(new Blob([audio]))} /> :
             "recording..."}
             <br/>
         language: {input.language}<br/>
