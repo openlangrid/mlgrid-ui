@@ -1,4 +1,4 @@
-import { DragEvent, EventHandler, useRef, useState } from "react";
+import { DragEvent, EventHandler, MouseEvent, useRef, useState } from "react";
 import { downsampleBuffer, Recorder } from "../../mlgrid/recorder";
 import { WavWriter } from "../../mlgrid/wavWriter";
 
@@ -51,7 +51,8 @@ export function AudioDropButton({onAudio, recordingEnabled} :
         fr.readAsArrayBuffer(e.dataTransfer.files[0]);   
     }
 
-    const onRecordingClick = ()=>{
+    const onRecordingClick = (e: MouseEvent)=>{
+        e.preventDefault();
         if(context){
             context.finish();
             setContext(null);
@@ -73,10 +74,10 @@ export function AudioDropButton({onAudio, recordingEnabled} :
             { recordingEnabled ?
                 <span>または録音
                     <span style={{display: context ? "inline" : "none"}}>
-                        <a href="#" onClick={onRecordingClick}>終了</a>
+                        <button onClick={onRecordingClick}>終了</button>
                     </span>
                     <span style={{display: context ? "none" : "inline"}}>
-                        <a href="#" onClick={onRecordingClick}>開始</a>
+                    <button onClick={onRecordingClick}>開始</button>
                         <select ref={samplingRateSelect}>
                             <option value="11025">11025Hz</option>
                             <option value="16000">16000Hz</option>

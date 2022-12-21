@@ -1,5 +1,3 @@
-import { round } from "./formatUtil";
-
 export interface Point{ x: number, y: number, z: number}
 
 export function calcAspectRatioAwareDownSacle(sw: number, sh: number, tw: number, th: number){
@@ -11,7 +9,7 @@ export function calcAspectRatioAwareDownSacle(sw: number, sh: number, tw: number
 export function drawPose(ctx: CanvasRenderingContext2D, scale: number,
         pose: {[key: string]: Point}){
     const valid = (p: Point)=>{
-        return p.x != 0 && p.y != 0;
+        return p.x !== 0 && p.y !== 0;
     };
     const line = (ctx: CanvasRenderingContext2D, color: string | CanvasGradient | CanvasPattern,
             points: Point[], scale: number)=>{
