@@ -52,6 +52,9 @@ function App() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  const handleChange2 = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue + 6);
+  };
 
   const si = new WSServiceInvoker("wss://fungo.kcg.edu/mlgrid-services/ws");
   const refFirst = React.useRef(true);
@@ -95,6 +98,9 @@ function App() {
             <Tab label="テキスト画像編集" />
             <Tab label="画像変換" />
             <Tab label="画像テキスト化" />
+          </Tabs>
+          <Tabs value={value - 6} onChange={handleChange2} aria-label="サービス種別"
+              variant="scrollable" scrollButtons="auto">
             <Tab label="画像分類" />
             <Tab label="物体検出" />
             <Tab label="セグメンテーション" />
