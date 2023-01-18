@@ -93,9 +93,9 @@ const TSAInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
             .catch(console.error);
     }, []);
 
-    const {label, accuracy} = res.value.result!;
-    return <div>{res.value.serviceId}{res.value.result ?
-        <>({res.value.ellapsedMs}ms): {label}({round(accuracy, 2)}).</> :
+    const {value} = res;
+    return <div>{value.serviceId}{value.result ?
+        <>({value.ellapsedMs}ms): {value.result.label}({round(value.result.accuracy, 2)}).</> :
         <>: <span className="loader" /></>
         }</div>;
 };
