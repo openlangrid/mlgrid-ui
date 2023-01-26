@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Speech, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Audio, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -16,7 +16,7 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    result: Speech | null;
+    result: Audio | null;
     ellapsedMs: number;
 }
 export interface Invocation{
@@ -28,10 +28,8 @@ let invId = 0;
 export function TextToSpeech({si, services, invocations}:
         {si: ServiceInvoker; services: Map<string, ServiceCheck[]>; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
-        "language": "ja",
         "text": "今日もいい天気ですね",
-        "voiceType": "FEMALE",
-        "audioType": "audio/x-wav"
+        "language": "ja",
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     const scs = services.get("TextToSpeechService") || [];
@@ -72,8 +70,7 @@ const TTSInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; in
     return (
         <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
             input:<br/>
-            language: {input.language}, text: {input.text}, 
-                voiceType: {input.voiceType}, audioType: {input.audioType}<br/>
+            language: {input.language}, text: {input.text}<br/>
             results:<br/>
             {results.map((r, i)=><TTSInvocationResult key={i} si={si} input={input} result={r} />)}
         </div>
@@ -90,7 +87,7 @@ const TTSInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
         }
         if(res.value.result != null) return;
         si.textToSpeech(result.serviceId)
-            .speak(input.language, input.text, input.voiceType, input.audioType)
+            .speak(input.text, input.language)
             .then(r =>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
@@ -100,7 +97,8 @@ const TTSInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
     const {value} = res;
     return <div>{res.value.serviceId}{value.result != null ?
         <>({value.ellapsedMs.toLocaleString()}ms): done.<br/>
-            <audio controls src={URL.createObjectURL(new Blob([value.result.audio]))} />
+            <audio controls src={URL.createObjectURL(new Blob([value.result.audio]))} /><br/>
+            <span>format: {value.result.format}</span>
         </>:
         <>: <span className="loader" /></>}
         </div>;

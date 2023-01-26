@@ -165,13 +165,22 @@ export class TextSentimentAnalysisService extends Service{
 		return this.invoke("analyze", Array.prototype.slice.call(arguments));
 	}
 }
-export interface Speech{
+export interface Audio {
+	audio: ArrayBuffer;
+	format: string;
+}
+export class TextToSpeechService extends Service{
+	speak(text: string, language: string): Promise<Audio>{
+        return this.invoke("speak", Array.prototype.slice.call(arguments));
+	}
+}
+export interface LGSpeech{
 	audio: ArrayBuffer;
 	voiceType: string;
 	audioType: string;
 }
-export class TextToSpeechService extends Service{
-	speak(language: string, text: string, voiceType: string, audioType: string): Promise<Speech>{
+export class LGTextToSpeechService extends Service{
+	speak(text: string, voiceType: string, audioType: string): Promise<LGSpeech>{
         return this.invoke("speak", Array.prototype.slice.call(arguments));
 	}
 }
