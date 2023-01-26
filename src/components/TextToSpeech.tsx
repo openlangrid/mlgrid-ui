@@ -58,6 +58,7 @@ export function TextToSpeech({si, services, invocations}:
         <Services serviceChecks={scs} />
         <br/>
         <a href="https://cloud.google.com/text-to-speech">Google Cloud Text-to-Speech</a> &nbsp;
+        <a href="https://github.com/VOICEVOX/voicevox_core/">VoiceVox</a> &nbsp;
         <br/>
         <br/>
         <label>results:</label>
