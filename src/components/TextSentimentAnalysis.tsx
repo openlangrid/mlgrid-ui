@@ -84,7 +84,7 @@ const TSAInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
         }
         if(res.value.result != null) return;
 
-        si.textSentimentAnalysis(result.serviceId).analyze(input.language, input.text)
+        si.textSentimentAnalysis(result.serviceId).analyze(input.text, input.language)
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();

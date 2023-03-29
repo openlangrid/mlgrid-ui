@@ -92,7 +92,7 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
         }
         if(res.value.images.length > 0) return;
         si.textGuidedImageGeneration(result.serviceId)
-            .generateMultiTimes(input.language, input.prompt, input.numOfGenerations)
+            .generateMultiTimes(input.prompt, input.language, input.numOfGenerations)
             .then(r =>{
             result.images.push(...r);
             result.ellapsedMs = si.lastMillis();

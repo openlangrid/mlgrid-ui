@@ -103,7 +103,7 @@ const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceIn
         }
         if(res.value.result != null) return;
 
-        si.imageClassification(result.serviceId).classify(input.format, input.image, input.labelLang, input.maxResults)
+        si.imageClassification(result.serviceId).classify(input.image, input.format, input.labelLang, input.maxResults)
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();

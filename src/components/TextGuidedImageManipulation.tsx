@@ -105,7 +105,7 @@ const TGIMInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
         }
         if(res.value.images.length > 0) return;
         si.textGuidedImageManipulation(result.serviceId)
-            .manipulate(input.image, input.imageFormat, input.language, input.prompt, input.numOfGenerations)
+            .manipulate(input.image, input.imageFormat, input.prompt, input.language, input.numOfGenerations)
             .then(r =>{
             result.images.push(...r);
             result.ellapsedMs = si.lastMillis();

@@ -113,7 +113,7 @@ const HumanPoseEstimationInvocationResult = ({si, input, result}: {si: ServiceIn
 
     const Pose = ({className, pose, scale}: {className: string; pose: {[key: string]: Point3d}; scale: number})=>{
         const valid = (p: Point3d)=>{
-            return p.x != 0 && p.y != 0;
+            return p.x !== 0 && p.y !== 0;
         };
         const colors = [
             [255,   0,  85], [255,   0,   0], [255,  85,   0], [255, 170,   0], [255, 255,   0],

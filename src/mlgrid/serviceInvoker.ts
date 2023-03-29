@@ -60,7 +60,7 @@ export class SpeechRecognition extends Service{
 	}
 }
 export class ImageClassificationService extends Service{
-    classify(format: string, image: ArrayBufferLike, labelLang: string, maxResults: number):
+    classify(image: ArrayBufferLike, imageFormat: string, labelLang: string, maxResults: number):
 		Promise<{label: string; accuracy: number}[]>{
 		return this.invoke("classify", Array.prototype.slice.call(arguments));
 	}
@@ -77,7 +77,7 @@ export interface ObjectDetectionResult{
 	detections: ObjectDetection[];
 }
 export class ObjectDetectionService extends Service{
-    detect(image: ArrayBufferLike, format: string, labelLang: string):
+    detect(image: ArrayBufferLike, imageFormat: string, labelLang: string):
 		Promise<ObjectDetectionResult>{
 		return this.invoke("detect", Array.prototype.slice.call(arguments));
 	}
@@ -95,7 +95,7 @@ export interface ObjectSegmentationResult{
 	segmentations: ObjectSegmentation[];
 }
 export class ObjectSegmentationService extends Service{
-    segment(image: ArrayBufferLike, format: string, labelLang: string):
+    segment(image: ArrayBufferLike, imageFormat: string, labelLang: string):
 		Promise<ObjectSegmentationResult>{
 		return this.invoke("segment", Array.prototype.slice.call(arguments));
 	}
@@ -141,17 +141,17 @@ export interface Image{
 	format: string;
 }
 export class TextGuidedImageGenerationService extends Service{
-    generate(language: string, text: string): Image{
+    generate(text: string, textLanguage: string): Image{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
     }
-    generateMultiTimes(language: string, text: string, numberOfTimes: number): Promise<Image[]>{
+    generateMultiTimes(text: string, textLanguage: string, numberOfTimes: number): Promise<Image[]>{
         return this.invoke("generateMultiTimes", Array.prototype.slice.call(arguments));
     }
 }
 export class TextGuidedImageManipulationService extends Service{
 	manipulate(
 		image: ArrayBuffer, imageFormat: string,
-		language: string, prompt: string,
+		text: string, textLanguage: string,
 		numOfTimes: number): Promise<Image[]>{
 		return this.invoke("manipulate", Array.prototype.slice.call(arguments));
 	}
@@ -161,7 +161,7 @@ export interface TextSentimentAnalysisResult{
 	accuracy: number;
 }
 export class TextSentimentAnalysisService extends Service{
-	analyze(language: string, text: string): Promise<TextSentimentAnalysisResult>{
+	analyze(text: string, textLanguage: string): Promise<TextSentimentAnalysisResult>{
 		return this.invoke("analyze", Array.prototype.slice.call(arguments));
 	}
 }
@@ -170,7 +170,7 @@ export interface Audio {
 	format: string;
 }
 export class TextToSpeechService extends Service{
-	speak(text: string, language: string): Promise<Audio>{
+	speak(text: string, textLanguage: string): Promise<Audio>{
         return this.invoke("speak", Array.prototype.slice.call(arguments));
 	}
 }
