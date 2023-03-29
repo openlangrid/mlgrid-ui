@@ -185,7 +185,7 @@ export class LGTextToSpeechService extends Service{
 	}
 }
 export class TranslationService extends Service{
-	translate(sourceLang: string, targetLang: string, source: string): Promise<string>{
+	translate(text: string, textLanguage: string, targetLanguage: string): Promise<string>{
         return this.invoke("translate", Array.prototype.slice.call(arguments));
     }
 }

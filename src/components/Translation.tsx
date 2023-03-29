@@ -86,7 +86,7 @@ const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; i
         }
         if(res.value.result != null) return;
 
-        si.translation(result.serviceId).translate(input.sourceLang, input.targetLang, input.source)
+        si.translation(result.serviceId).translate(input.source, input.sourceLang, input.targetLang)
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
