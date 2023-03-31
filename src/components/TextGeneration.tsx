@@ -47,10 +47,10 @@ export function TextGeneration({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="instruction" size="small" type="text" style={{width: "32em"}} {...register("instruction")} />
-                <TextField label="input" size="small" type="text" style={{width: "32em"}} {...register("input")} />
+                <TextField label="instruction" size="small" type="text" style={{width: "24em"}} {...register("instruction")} />
+                <TextField label="input" size="small" type="text" style={{width: "24em"}} {...register("input")} />
                 <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("language")} />
-                <Button type="submit" variant="contained" >翻訳</Button>
+                <Button type="submit" variant="contained" >生成</Button>
             </form>
 		</div>
         <br/>
