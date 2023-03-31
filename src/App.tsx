@@ -13,6 +13,7 @@ import { ObjectDetection } from './components/ObjectDetection';
 import { ObjectSegmentation } from './components/ObjectSegmentation';
 import { SpeechRecognition } from './components/SpeechRecognition';
 import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition';
+import { TextGeneration } from './components/TextGeneration';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
@@ -93,6 +94,7 @@ function App() {
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
+            <Tab label="テキスト生成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
@@ -114,6 +116,9 @@ function App() {
         </Box>
         <TabPanel value={value} index={index++}>
           <Translation services={services} si={si} invocations={invocations.tr} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextGeneration services={services} si={si} invocations={invocations.tg} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextSentimentAnalysis services={services} si={si} invocations={invocations.tsa} />

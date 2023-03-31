@@ -140,8 +140,13 @@ export interface Image{
 	image: ArrayBuffer;
 	format: string;
 }
+export class TextGenerationService extends Service{
+    generate(instruction: string, input: string, language: string): Promise<string>{
+        return this.invoke("generate", Array.prototype.slice.call(arguments));
+    }
+}
 export class TextGuidedImageGenerationService extends Service{
-    generate(text: string, textLanguage: string): Image{
+    generate(text: string, textLanguage: string): Promise<Image>{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
     }
     generateMultiTimes(text: string, textLanguage: string, numberOfTimes: number): Promise<Image[]>{
@@ -258,6 +263,9 @@ export abstract class ServiceInvoker{
 	}
 	translation(serviceId: string){
 		return new TranslationService(this, serviceId);
+	}
+	textGeneration(serviceId: string){
+		return new TextGenerationService(this, serviceId);
 	}
 	textGuidedImageGeneration(serviceId: string){
 		return new TextGuidedImageGenerationService(this, serviceId);
