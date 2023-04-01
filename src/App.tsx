@@ -13,6 +13,7 @@ import { ObjectDetection } from './components/ObjectDetection';
 import { ObjectSegmentation } from './components/ObjectSegmentation';
 import { SpeechRecognition } from './components/SpeechRecognition';
 import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition';
+import { Test } from './components/Test';
 import { TextGeneration } from './components/TextGeneration';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
@@ -50,11 +51,12 @@ const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
+  const firstGroupNum = 8;
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
   const handleChange2 = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue + 6);
+    setValue(newValue + firstGroupNum);
   };
 
   const si = new WSServiceInvoker("wss://fungo.kcg.edu/mlgrid-services/ws");
@@ -100,8 +102,9 @@ function App() {
             <Tab label="テキスト画像編集" />
             <Tab label="画像変換" />
             <Tab label="画像テキスト化" />
+            <Tab label="テスト" />
           </Tabs>
-          <Tabs value={value - 6} onChange={handleChange2} aria-label="サービス種別"
+          <Tabs value={value - firstGroupNum} onChange={handleChange2} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
             <Tab label="画像分類" />
             <Tab label="物体検出" />
@@ -134,6 +137,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ImageToTextConversion services={services} si={si} invocations={invocations.ittc} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <Test services={services} si={si} invocations={invocations.test} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ImageClassification services={services} si={si} invocations={invocations.icl} />

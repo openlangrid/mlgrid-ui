@@ -8,6 +8,7 @@ import { Invocation as ODInvocation } from './ObjectDetection';
 import { Invocation as OSInvocation } from './ObjectSegmentation';
 import { Invocation as SRInvocation} from './SpeechRecognition';
 import { Invocation as SERInvocation } from './SpeechEmotionRecognition';
+import { Invocation as TestInvocation } from './Test';
 import { Invocation as TGInvocation } from './TextGeneration';
 import { Invocation as TGIGInvocation } from './TextGuidedImageGeneration';
 import { Invocation as TGIMInvocation } from './TextGuidedImageManipulation';
@@ -26,6 +27,7 @@ export class Invocations {
     os: OSInvocation[] = [];
     ser: SERInvocation[] = [];
     sr: SRInvocation[] = [];
+    test: TestInvocation[] = [];
     tg: TGInvocation[] = [];
     tgig: TGIGInvocation[] = [];
     tgim: TGIMInvocation[] = [];

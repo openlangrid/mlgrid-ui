@@ -140,6 +140,11 @@ export interface Image{
 	image: ArrayBuffer;
 	format: string;
 }
+export class TestService extends Service{
+    test(arg: any): Promise<any>{
+        return this.invoke("test", Array.prototype.slice.call(arguments));
+    }
+}
 export class TextGenerationService extends Service{
     generate(instruction: string, input: string, language: string): Promise<string>{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
@@ -263,6 +268,9 @@ export abstract class ServiceInvoker{
 	}
 	translation(serviceId: string){
 		return new TranslationService(this, serviceId);
+	}
+	test(serviceId: string){
+		return new TestService(this, serviceId);
 	}
 	textGeneration(serviceId: string){
 		return new TextGenerationService(this, serviceId);
