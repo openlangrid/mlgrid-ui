@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Audio, Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
@@ -13,7 +13,7 @@ export interface Input {
 export interface Result{
     serviceId: string;
     ellapsedMs: number;
-    result: string | null;
+    result: Audio | null;
     error: Error | null;
 }
 export interface Invocation{
@@ -22,16 +22,16 @@ export interface Invocation{
     results: Result[];
 }
 let invId = 0;
-export function TextGeneration({services, si, invocations}:
+export function TextGenerationWithTextToSpeech({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "instruction": "",
-        "input": "Tell me about alpacas.",
-        "language": "en"
+        "input": "アルパカについて教えてください。",
+        "language": "ja"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("TextGenerationService") || [];
+    const scs = services.get("TextGenerationWithTextToSpeechService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
             id: invId++, input: input, results: []
@@ -57,28 +57,26 @@ export function TextGeneration({services, si, invocations}:
 		</div>
         <br/>
 		<Services serviceChecks={scs} />
-        <a href="https://github.com/kunishou/Japanese-Alpaca-LoRA">Japalese Alpaca LoRA</a>
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><TextGenerationInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><TextGenerationWithTextToSpeechInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const TextGenerationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const TextGenerationWithTextToSpeechInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
     instruction: {input.instruction}<br/>
     input: {input.input}<br/>
     language: {input.language}<br/>
     results:<br/>
-    {results.map((r, i)=><TextGenerationInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><TextGenerationWithTextToSpeechInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
-    console.log("InvocationRequest");
+const TextGenerationWithTextToSpeechInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -88,7 +86,7 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
         }
         if(res.value.result || res.value.error) return;
 
-        si.textGeneration(result.serviceId).generate(input.instruction, input.input, input.language)
+        si.textGenerationWithTextToSpeech(result.serviceId).generate(input.instruction, input.input, input.language)
             .then(r=>result.result=r)
             .catch(e=>result.error=e)
             .finally(()=>{
@@ -100,7 +98,10 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
     const r = res.value;
     return <div>{r.serviceId}{ r.result || r.error ?
         <>({r.ellapsedMs}ms): { r.result ?
-            <>{r.result}.</> :
+            <>done.<br/>
+                <audio controls src={URL.createObjectURL(new Blob([r.result.audio]))} /><br/>
+                <span>format: {r.result.format}</span>
+            </> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
         }</div>;

@@ -155,6 +155,11 @@ export class TextGenerationService extends Service{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
     }
 }
+export class TextGenerationWithTextToSpeechService extends Service{
+    generate(instruction: string, input: string, language: string): Promise<Audio>{
+        return this.invoke("generate", Array.prototype.slice.call(arguments));
+    }
+}
 export class TextGuidedImageGenerationService extends Service{
     generate(text: string, textLanguage: string): Promise<Image>{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
@@ -279,6 +284,9 @@ export abstract class ServiceInvoker{
 	}
 	textGeneration(serviceId: string){
 		return new TextGenerationService(this, serviceId);
+	}
+	textGenerationWithTextToSpeech(serviceId: string){
+		return new TextGenerationWithTextToSpeechService(this, serviceId);
 	}
 	textGuidedImageGeneration(serviceId: string){
 		return new TextGuidedImageGenerationService(this, serviceId);

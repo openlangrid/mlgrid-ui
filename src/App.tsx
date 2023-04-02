@@ -15,6 +15,7 @@ import { SpeechRecognition } from './components/SpeechRecognition';
 import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition';
 import { Test } from './components/Test';
 import { TextGeneration } from './components/TextGeneration';
+import { TextGenerationWithTextToSpeech } from './components/TextGenerationWithTextToSpeech';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
@@ -51,7 +52,7 @@ const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
-  const firstGroupNum = 8;
+  const firstGroupNum = 9;
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -97,6 +98,7 @@ function App() {
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
             <Tab label="テキスト生成" />
+            <Tab label="発話生成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
@@ -122,6 +124,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGeneration services={services} si={si} invocations={invocations.tg} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextGenerationWithTextToSpeech services={services} si={si} invocations={invocations.tgwtts} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextSentimentAnalysis services={services} si={si} invocations={invocations.tsa} />

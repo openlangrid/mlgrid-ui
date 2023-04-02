@@ -10,6 +10,7 @@ import { Invocation as SRInvocation} from './SpeechRecognition';
 import { Invocation as SERInvocation } from './SpeechEmotionRecognition';
 import { Invocation as TestInvocation } from './Test';
 import { Invocation as TGInvocation } from './TextGeneration';
+import { Invocation as TGWTTSInvocation } from './TextGenerationWithTextToSpeech';
 import { Invocation as TGIGInvocation } from './TextGuidedImageGeneration';
 import { Invocation as TGIMInvocation } from './TextGuidedImageManipulation';
 import { Invocation as TSAInvocation } from './TextSentimentAnalysis';
@@ -29,6 +30,7 @@ export class Invocations {
     sr: SRInvocation[] = [];
     test: TestInvocation[] = [];
     tg: TGInvocation[] = [];
+    tgwtts: TGWTTSInvocation[] = [];
     tgig: TGIGInvocation[] = [];
     tgim: TGIMInvocation[] = [];
     tsa: TSAInvocation[] = [];

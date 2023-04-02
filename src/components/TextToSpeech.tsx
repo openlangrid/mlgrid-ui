@@ -8,10 +8,8 @@ import "./common.css"
 import "./TextGuidedImageGeneration.css"
 
 export interface Input {
-    language: string;
     text: string;
-    voiceType: string;
-    audioType: string;
+    textLanguage: string;
 }
 
 export interface Result{
@@ -30,7 +28,7 @@ export function TextToSpeech({si, services, invocations}:
         {si: ServiceInvoker; services: Map<string, ServiceCheck[]>; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "text": "今日もいい天気ですね",
-        "language": "ja",
+        "textLanguage": "ja",
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     const scs = services.get("TextToSpeechService") || [];
@@ -51,8 +49,8 @@ export function TextToSpeech({si, services, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div data-id="inputs">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("language")} />
                 <TextField label="text" size="small" type="text" style={{width: "32em"}}  {...register("text")} />
+                <TextField label="textLanguage" size="small" type="text" style={{width: "6em"}} {...register("textLanguage")} />
                 <Button type="submit" variant="contained" >合成</Button>
             </form>
 		</div>
@@ -73,7 +71,7 @@ const TTSInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; in
     return (
         <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
             input:<br/>
-            language: {input.language}, text: {input.text}<br/>
+            text: {input.text}, textLanguage: {input.textLanguage}<br/>
             results:<br/>
             {results.map((r, i)=><TTSInvocationResult key={i} si={si} input={input} result={r} />)}
         </div>
@@ -90,7 +88,7 @@ const TTSInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
         }
         if(res.value.result || res.value.error) return;
         si.textToSpeech(result.serviceId)
-            .speak(input.text, input.language)
+            .speak(input.text, input.textLanguage)
             .then(r =>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
