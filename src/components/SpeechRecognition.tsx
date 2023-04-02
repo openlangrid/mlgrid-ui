@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { SpeechRecognitionResult, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { SpeechRecognitionResult, ServiceInvoker, Error } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -17,8 +17,9 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    result: SpeechRecognitionResult[] | null;
     ellapsedMs: number;
+    result: SpeechRecognitionResult[] | null;
+    error: Error | null;
 }
 export interface Invocation{
     id: number;
@@ -44,8 +45,8 @@ export function SpeechRecognition({si, services, invocations}:
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, result: null,
-                ellapsedMs: 0});
+            inv.results.push({serviceId: sc.serviceId,
+                result: null, error: null, ellapsedMs: 0});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -104,32 +105,30 @@ const SpeechRecognitionInvocationResult = ({si, input, result}: {si: ServiceInvo
             refFirst.current = false;
             return;
         }
-        if(res.value.result != null) return;
+        if(res.value.result || res.value.error) return;
 
         si.speechRecognition(result.serviceId).recognize(input.audio, input.format, input.language)
-            .then(r=>{
-                result.result = r;
+            .then(r=>result.result=r)
+            .catch(e=>result.error=e)
+            .finally(()=>{
                 result.ellapsedMs = si.lastMillis();
                 setRes(res.clone());
-            })
-            .catch(console.error);
+            });
     }, []);
 
-    return <div>{res.value.serviceId}
-        { res.value.result ?
-            <>
-                ({res.value.ellapsedMs}ms): {res.value.result.length} transcripts.<br/>
-                <div>
-                    {res.value.result.map(v =>
-                        <span key={key++}><span>
-                            [{v.startMillis}-{v.endMillis}] {v.transcript}
-                        </span><br/></span>
-                    )}
-                </div>
-                <RawResult result={res.value.result} />
+    const r = res.value;
+    return <div>{r.serviceId}{ r.result || r.error ?
+        <>({r.ellapsedMs}ms): { r.result ?
+            <>{r.result.length} transcripts.<br/>
+                <div>{r.result.map(v =>
+                    <span key={key++}><span>
+                        [{v.startMillis}-{v.endMillis}] {v.transcript}
+                    </span><br/></span>
+                )}</div>
+                <RawResult result={r.result} />
                 <br/>
             </> :
-            <>: processing...<span className="loader" /></>
-        }
-        </div>;
+        <>{JSON.stringify(r.error)}</> }</> :
+        <>: processing...<span className="loader" /></>
+        }</div>;
 };

@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { HumanPoseEstimationResult, Point3d, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, HumanPoseEstimationResult, Point3d, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -17,8 +17,9 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    result: HumanPoseEstimationResult | null;
     ellapsedMs: number;
+    result: HumanPoseEstimationResult | null;
+    error: Error | null;
     scale: number;
 }
 export interface Invocation{
@@ -43,7 +44,8 @@ export function HumanPoseEstimation({si, services, invocations}:
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, result: null,
+            inv.results.push({serviceId: sc.serviceId,
+                result: null, error: null,
                 ellapsedMs: 0, scale: 1});
         }
         invocations.unshift(inv);
@@ -99,16 +101,18 @@ const HumanPoseEstimationInvocationResult = ({si, input, result}: {si: ServiceIn
             refFirst.current = false;
             return;
         }
-        if(res.value.result != null) return;
+        if(res.value.result || res.value.error) return;
 
         si.humanPoseEstimation(result.serviceId).estimate(input.image, input.format)
             .then(r=>{
                 result.result = r;
-                result.ellapsedMs = si.lastMillis();
                 result.scale = calcAspectRatioAwareDownSacle(r.width, r.height, 512, 512);
-                setRes(res.clone());
             })
-            .catch(console.error);
+            .catch(e=> result.error = e)
+            .finally(()=>{
+                result.ellapsedMs = si.lastMillis();
+                setRes(res.clone());
+            });
     }, []);
 
     const Pose = ({className, pose, scale}: {className: string; pose: {[key: string]: Point3d}; scale: number})=>{
@@ -169,21 +173,23 @@ const HumanPoseEstimationInvocationResult = ({si, input, result}: {si: ServiceIn
             </g>;
     };
 
-    return <div>{res.value.serviceId}
-        { res.value.result ?
-            <>
-                ({res.value.ellapsedMs}ms): {res.value.result.poses.length} humans.<br/>
+    const r = res.value;
+    return <div>{r.serviceId}
+        { r.result || r.error ?
+            <>({r.ellapsedMs}ms): { r.result ?
+                <>{r.result.poses.length} humans.<br/>
                 <div style={{position: "relative"}}>
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
-                        {res.value.result.poses.map(v =>
+                        {r.result.poses.map(v =>
                             <Pose key={rectKey++} className="hpe" pose={v} scale={res.value.scale} />)}
                     </svg>
                 </div>
                 <RawResult result={res.value.result} />
                 <br/>
+                </> :
+                <>{JSON.stringify(r.error)}</>}
             </> :
             <>: processing...<span className="loader" /></>
-        }
-        </div>;
+        }</div>;
 };

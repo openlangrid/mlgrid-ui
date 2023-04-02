@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Audio, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Audio, Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -16,8 +16,9 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    result: Audio | null;
     ellapsedMs: number;
+    result: Audio | null;
+    error: Error | null;
 }
 export interface Invocation{
     id: number;
@@ -39,7 +40,8 @@ export function TextToSpeech({si, services, invocations}:
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, result: null, ellapsedMs: 0});
+            inv.results.push({serviceId: sc.serviceId,
+                result: null, error: null, ellapsedMs: 0});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -86,7 +88,7 @@ const TTSInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
             refFirst.current = false;
             return;
         }
-        if(res.value.result != null) return;
+        if(res.value.result || res.value.error) return;
         si.textToSpeech(result.serviceId)
             .speak(input.text, input.language)
             .then(r =>{
@@ -95,12 +97,15 @@ const TTSInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
                 setRes(res.clone());
             });
         });
-    const {value} = res;
-    return <div>{res.value.serviceId}{value.result != null ?
-        <>({value.ellapsedMs.toLocaleString()}ms): done.<br/>
-            <audio controls src={URL.createObjectURL(new Blob([value.result.audio]))} /><br/>
-            <span>format: {value.result.format}</span>
-        </>:
-        <>: <span className="loader" /></>}
-        </div>;
+
+    const r = res.value;
+    return <div>{r.serviceId}{ r.result || r.error ?
+        <>({r.ellapsedMs.toLocaleString()}ms): { r.result ?
+            <>done.<br/>
+                <audio controls src={URL.createObjectURL(new Blob([r.result.audio]))} /><br/>
+                <span>format: {r.result.format}</span>
+            </> :
+            <>{JSON.stringify(r.error)}</>}</> :
+        <>: <span className="loader" /></>
+        }</div>;
 }

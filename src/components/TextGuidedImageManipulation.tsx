@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useState, useRef, MouseEventHandler } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -18,8 +18,9 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    images: Image[];
     ellapsedMs: number;
+    result: Image[] | null;
+    error: Error | null;
 }
 export interface Invocation{
     id: number;
@@ -47,7 +48,8 @@ export function TextGuidedImageManipulation({si, services, invocations}:
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, images: [], ellapsedMs: 0});
+            inv.results.push({serviceId: sc.serviceId,
+                result: null, error: null, ellapsedMs: 0});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -103,20 +105,24 @@ const TGIMInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
             refFirst.current = false;
             return;
         }
-        if(res.value.images.length > 0) return;
+        if(res.value.result || res.value.error) return;
         si.textGuidedImageManipulation(result.serviceId)
             .manipulate(input.image, input.imageFormat, input.prompt, input.language, input.numOfGenerations)
-            .then(r =>{
-            result.images.push(...r);
-            result.ellapsedMs = si.lastMillis();
-            setRes(res.clone());
-        });
+            .then(r=>result.result=r)
+            .catch(e=>result.error=e)
+            .finally(()=>{
+                result.ellapsedMs = si.lastMillis();
+                setRes(res.clone());
+            });
     });
-    return <div>{res.value.serviceId}{res.value.images.length > 0 ?
-        `(${res.value.ellapsedMs.toLocaleString()}ms): done.` :
-        <>: <span className="loader" /></>}<br/>
-            {res.value.images.map((r, i) =>
+
+    const r = res.value;
+    return <div>{r.serviceId}{ r.result || r.error ?
+        <>({r.ellapsedMs.toLocaleString()}ms): { r.result ?
+            <>done. : {r.result.map((r, i) =>
                 <img alt="" className="tgigResultImage" key={i} src={URL.createObjectURL(new Blob([r.image]))}></img>
-            )}
-        </div>;
+            )}</> :
+            <>{JSON.stringify(r.error)}</>}</> :
+        <>: <span className="loader" /></>
+        }</div>;
 }

@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
@@ -11,6 +11,7 @@ export interface Input {
 export interface Result{
     serviceId: string;
     result: any | null;
+    error: Error | null;
     ellapsedMs: number;
 }
 export interface Invocation{
@@ -33,7 +34,7 @@ export function Test({services, si, invocations}:
         };
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, result: null, ellapsedMs: 0});
+            inv.results.push({serviceId: sc.serviceId, result: null, error: null, ellapsedMs: 0});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -44,7 +45,7 @@ export function Test({services, si, invocations}:
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField label="arg" size="small" type="text" style={{width: "24em"}} {...register("arg")} />
-                <Button type="submit" variant="contained" >生成</Button>
+                <Button type="submit" variant="contained" >実行</Button>
             </form>
 		</div>
         <br/>
@@ -83,11 +84,21 @@ const TestResult = ({si, input, result}: {si: ServiceInvoker; input: Input; resu
                 result.ellapsedMs = si.lastMillis();
                 setRes(res.clone());
             })
-            .catch(console.error);
+            .catch(e=>{
+                result.error = e;
+                result.ellapsedMs = si.lastMillis();
+                setRes(res.clone());
+                console.error(e);
+            });
     }, []);
+    const r = res.value;
 
-    return <div>{res.value.serviceId}{res.value.result ?
-        `(${res.value.ellapsedMs}ms): ${res.value.result}.` :
-        <>: <span className="loader" /></>
+    return <div>{r.serviceId}
+        {r.result || r.error ?
+            <>({r.ellapsedMs}ms): { r.result ?
+                <>{r.result}.</> :
+                <>{JSON.stringify(r.error)}.</>
+            }</> :
+            <>: <span className="loader" /></>
         }</div>;
 };

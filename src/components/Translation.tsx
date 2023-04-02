@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
@@ -12,8 +12,9 @@ export interface Input {
 }
 export interface Result{
     serviceId: string;
-    result: string | null;
     ellapsedMs: number;
+    result: string | null;
+    error: Error | null;
 }
 export interface Invocation{
     id: number;
@@ -37,7 +38,8 @@ export function Translation({services, si, invocations}:
         };
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, result: null, ellapsedMs: 0});
+            inv.results.push({serviceId: sc.serviceId,
+                result: null, error: null, ellapsedMs: 0});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -84,19 +86,22 @@ const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; i
             refFirst.current = false;
             return;
         }
-        if(res.value.result != null) return;
+        if(res.value.result || res.value.error) return;
 
         si.translation(result.serviceId).translate(input.source, input.sourceLang, input.targetLang)
-            .then(r=>{
-                result.result = r;
+            .then(r=>result.result=r)
+            .catch(e=>result.error=e)
+            .finally(()=>{
                 result.ellapsedMs = si.lastMillis();
                 setRes(res.clone());
-            })
-            .catch(console.error);
+            });
     }, []);
 
-    return <div>{res.value.serviceId}{res.value.result ?
-        `(${res.value.ellapsedMs}ms): ${res.value.result}.` :
+    const r = res.value;
+    return <div>{r.serviceId}{ r.result || r.error ?
+        <>({r.ellapsedMs}ms): { r.result ?
+            <>{r.result}.</> :
+            <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
         }</div>;
 };

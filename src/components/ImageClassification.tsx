@@ -2,7 +2,7 @@ import { Button, TextField, Input } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { round } from "../mlgrid/formatUtil";
-import { ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ImageDropButton } from "./lib/ImageDropButton";
 import { ServiceCheck, Services } from "./lib/Services";
@@ -15,8 +15,9 @@ export interface Input {
 }
 export interface Result{
     serviceId: string;
-    result: {label: string; accuracy: number}[] | null;
     ellapsedMs: number;
+    result: {label: string; accuracy: number}[] | null;
+    error: Error | null;
 }
 export interface Invocation{
     id: number;
@@ -44,7 +45,7 @@ export function ImageClassification({services, si, invocations}:
         };
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, result: null, ellapsedMs: 0});
+            inv.results.push({serviceId: sc.serviceId, result: null, error: null, ellapsedMs: 0});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -101,7 +102,7 @@ const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceIn
             refFirst.current = false;
             return;
         }
-        if(res.value.result != null) return;
+        if(res.value.result || res.value.error) return;
 
         si.imageClassification(result.serviceId).classify(input.image, input.format, input.labelLang, input.maxResults)
             .then(r=>{
@@ -112,13 +113,13 @@ const ImageClassificationInvocationResult = ({si, input, result}: {si: ServiceIn
             .catch(console.error);
     }, []);
 
-    return <div>{res.value.serviceId}
-        { res.value.result ?
-            <span>
-                <span>({res.value.ellapsedMs.toLocaleString()}ms): </span>
-                <span>{res.value.result.map((v: any, i)=> <span key={i}>{v.label}({round(v.accuracy, 2)})&nbsp; </span>)}</span>
-            </span> :
-            <>: <span className="loader" /></>
-        }
-        </div>;
+    const r = res.value;
+    return <div>{r.serviceId}{ r.result || r.error ?
+        <span>({r.ellapsedMs.toLocaleString()}ms):
+        { r.result ? 
+            r.result.map((v: any, i)=> <span key={i}>{v.label}({round(v.accuracy, 2)})&nbsp; </span>) :
+            JSON.stringify(r.error)}
+        </span> :
+        <>: <span className="loader" /></>
+        }</div>;
 };

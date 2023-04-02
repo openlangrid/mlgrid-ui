@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ObjectSegmentation as Segmentation, ObjectSegmentationResult, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { ObjectSegmentation as Segmentation, ObjectSegmentationResult, ServiceInvoker, Error } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -19,8 +19,9 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    result: ObjectSegmentationResult | null;
     ellapsedMs: number;
+    result: ObjectSegmentationResult | null;
+    error: Error | null;
     scale: number;
 }
 export interface Invocation{
@@ -46,7 +47,8 @@ export function ObjectSegmentation({si, services, invocations}:
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, result: null,
+            inv.results.push({serviceId: sc.serviceId,
+                result: null, error: null,
                 ellapsedMs: 0, scale: 1});
         }
         invocations.unshift(inv);
@@ -102,16 +104,18 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
             refFirst.current = false;
             return;
         }
-        if(res.value.result != null) return;
+        if(res.value.result || res.value.error) return;
 
         si.objectSegmentation(result.serviceId).segment(input.image, input.format, input.labelLang)
             .then(r=>{
                 result.result = r;
-                result.ellapsedMs = si.lastMillis();
                 result.scale = calcAspectRatioAwareDownSacle(r.width, r.height, 512, 512);
-                setRes(res.clone());
             })
-            .catch(console.error);
+            .catch(e=>result.error=e)
+            .finally(()=>{
+                result.ellapsedMs = si.lastMillis();
+                setRes(res.clone());
+            });
     }, []);
 
     const Rect = ({className, result, scale}: {className: string; result: Segmentation; scale: number})=>{
@@ -145,15 +149,15 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
             </image>;
     };
 
-    const s = res.value.scale;
-    return <div>{res.value.serviceId}
-        { res.value.result ?
-            <>
-                ({res.value.ellapsedMs}ms): {res.value.result.segmentations.length} objects.<br/>
+    const r = res.value;
+    const s = r.scale;
+    return <div>{r.serviceId}{ r.result || r.error ?
+        <>({r.ellapsedMs}ms): { r.result ?
+            <>{r.result.segmentations.length} objects.<br/>
                 <div style={{position: "relative"}}>
                     <img style={{maxWidth: 512, maxHeight: 512}} src={URL.createObjectURL(new Blob([input.image]))} />
                     <svg style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%"}}>
-                        {res.value.result.segmentations.map(v =>
+                        {r.result.segmentations.map(v =>
                             <g key={rectKey++}>
                                 <text x={v.box.x * s} y={(v.box.y - 6) * s}
                                     fontSize={10} fill="red">{v.label}({round(v.accuracy, 2)})</text>
@@ -162,10 +166,10 @@ const ObjectSegmentationInvocationResult = ({si, input, result}: {si: ServiceInv
                             </g>)}
                     </svg>
                 </div>
-                <RawResult result={res.value.result} />
-                <br/>
-            </> :
-            <>: processing...<span className="loader" /></>
-        }
-        </div>;
+                <RawResult result={r.result} />
+                <br/></> :
+            <>{JSON.stringify(r.error)}</>
+        }</> :
+        <>: processing...<span className="loader" /></>
+        }</div>;
 };

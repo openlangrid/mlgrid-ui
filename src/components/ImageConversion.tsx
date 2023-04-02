@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { memo, useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -15,8 +15,9 @@ export interface Input {
 
 export interface Result{
     serviceId: string;
-    image: Image | null;
     ellapsedMs: number;
+    result: Image | null;
+    error: Error | null;
 }
 export interface Invocation{
     id: number;
@@ -41,7 +42,8 @@ export function ImageConversion({si, services, invocations}:
         const inv: Invocation = { id: invId++, input: input, results: []};
         for(const sc of scs){
             if(!sc.checked) continue;
-            inv.results.push({serviceId: sc.serviceId, image: null, ellapsedMs: 0});
+            inv.results.push({serviceId: sc.serviceId,
+                result: null, error: null, ellapsedMs: 0});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -91,20 +93,24 @@ const ICInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Inp
             refFirst.current = false;
             return;
         }
-        if(res.value.image != null) return;
+        if(res.value.result || res.value.error) return;
         si.imageConversion(result.serviceId)
             .convert(input.image, input.imageFormat)
-            .then(r =>{
-                result.image = r;
+            .then(r => result.result = r)
+            .catch(e => result.error = e)
+            .finally(()=>{
                 result.ellapsedMs = si.lastMillis();
                 setRes(res.clone());
             });
     });
-    return <div>{res.value.serviceId}{res.value.image != null ?
-        <>
-            ({res.value.ellapsedMs.toLocaleString()}ms): done.<br/>
-            <img alt="" className="tgigResultImage"
-                src={URL.createObjectURL(new Blob([res.value.image!.image]))} />
+ 
+    const r = res.value;
+    return <div>{r.serviceId}{r.result || r.error ?
+        <>({r.ellapsedMs.toLocaleString()}ms): 
+            {r.result ? <>done.<br/>
+                <img alt="" className="tgigResultImage"
+                    src={URL.createObjectURL(new Blob([r.result.image]))} /></>:
+                <span>{JSON.stringify(r.error)}</span>}
         </>:
         <>: <span className="loader" /></>}<br/>
         </div>;

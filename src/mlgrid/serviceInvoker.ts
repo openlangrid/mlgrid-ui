@@ -5,6 +5,11 @@
 import { deserialize, serialize } from "bson";
 import { Buffer } from "buffer";
 
+export interface Error{
+	code: string;
+	message: string;
+}
+
 export interface Box2d{ x: number, y: number, width: number, height: number}
 
 // このクラスと各サービス呼び出し用のクラスを作っている。
@@ -363,8 +368,12 @@ export class WSServiceInvoker extends ServiceInvoker{
 				if(r.result !== null){
 					r.result = this.unboxBuffer(r.result);
 				}
-				resolve(r.result);
 				this.lastResponse_ = r;
+				if(r.result !== null){
+					resolve(r.result);
+				} else if(r.error !== null){
+					reject(r.error);
+				}
 				delete this.handlers[rid];
 			};
 		});
