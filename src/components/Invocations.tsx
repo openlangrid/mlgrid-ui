@@ -1,5 +1,7 @@
 import { Invocation as BSRInvocation } from './BrowserSR';
+import { Invocation as CInvocation } from './Chat';
 import { Invocation as CSRInvocation } from './ContinuousSpeechRecognition';
+import { Invocation as CWTTSInvocation } from './ChatWithTextToSpeech';
 import { Invocation as HPEInvocation } from './HumanPoseEstimation';
 import { Invocation as ICLInvocation } from './ImageClassification';
 import { Invocation as ICOInvocation } from './ImageConversion';
@@ -9,8 +11,6 @@ import { Invocation as OSInvocation } from './ObjectSegmentation';
 import { Invocation as SRInvocation} from './SpeechRecognition';
 import { Invocation as SERInvocation } from './SpeechEmotionRecognition';
 import { Invocation as TestInvocation } from './Test';
-import { Invocation as TGInvocation } from './TextGeneration';
-import { Invocation as TGWTTSInvocation } from './TextGenerationWithTextToSpeech';
 import { Invocation as TGIGInvocation } from './TextGuidedImageGeneration';
 import { Invocation as TGIMInvocation } from './TextGuidedImageManipulation';
 import { Invocation as TSAInvocation } from './TextSentimentAnalysis';
@@ -19,7 +19,9 @@ import { Invocation as TRInvocation } from './Translation';
 
 export class Invocations {
     bsr: BSRInvocation[] = [];
+    c: CInvocation[] = [];
     csr: CSRInvocation[] = [];
+    cwtts: CWTTSInvocation[] = [];
     hpe: HPEInvocation[] = [];
     icl: ICLInvocation[] = [];
     ico: ICOInvocation[] = [];
@@ -29,8 +31,6 @@ export class Invocations {
     ser: SERInvocation[] = [];
     sr: SRInvocation[] = [];
     test: TestInvocation[] = [];
-    tg: TGInvocation[] = [];
-    tgwtts: TGWTTSInvocation[] = [];
     tgig: TGIGInvocation[] = [];
     tgim: TGIMInvocation[] = [];
     tsa: TSAInvocation[] = [];

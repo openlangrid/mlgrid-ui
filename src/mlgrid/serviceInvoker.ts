@@ -24,6 +24,16 @@ export class Service{
 
 // 各サービス呼び出しクラス。サービスの種類毎に用意する。
 // サービス毎にどんなメソッド名があるかを明示するために設けている。
+export class ChatService extends Service{
+    chat(utterance: string, utteranceLanguage: string): Promise<string>{
+        return this.invoke("chat", Array.prototype.slice.call(arguments));
+    }
+}
+export class ChatWithTextToSpeechService extends Service{
+    chat(utterance: string, utteranceLanguage: string): Promise<Audio>{
+        return this.invoke("chat", Array.prototype.slice.call(arguments));
+    }
+}
 export interface ContinuousSpeechRecognitionStartRecognitionConfig{
 	channels: number;
 	sampleSizeInBits: number;
@@ -150,16 +160,6 @@ export class TestService extends Service{
         return this.invoke("test", Array.prototype.slice.call(arguments));
     }
 }
-export class TextGenerationService extends Service{
-    generate(instruction: string, input: string, language: string): Promise<string>{
-        return this.invoke("generate", Array.prototype.slice.call(arguments));
-    }
-}
-export class TextGenerationWithTextToSpeechService extends Service{
-    generate(instruction: string, input: string, language: string): Promise<Audio>{
-        return this.invoke("generate", Array.prototype.slice.call(arguments));
-    }
-}
 export class TextGuidedImageGenerationService extends Service{
     generate(text: string, textLanguage: string): Promise<Image>{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
@@ -249,9 +249,15 @@ export abstract class ServiceInvoker{
 	abstract lastMillis(): number;
 
     /** return {ContinuousSpeechRecognitionService} */
+	chat(serviceId: string){
+		return new ChatService(this, serviceId);
+	}
     continuousSpeechRecognition(serviceId: string){
         return new ContinuousSpeechRecognitionService(this, serviceId);
     }
+	chatWithTextToSpeech(serviceId: string){
+		return new ChatWithTextToSpeechService(this, serviceId);
+	}
 	humanPoseEstimation(serviceId: string){
 		return new HumanPoseEstimationService(this, serviceId);
 	}
@@ -281,12 +287,6 @@ export abstract class ServiceInvoker{
 	}
 	test(serviceId: string){
 		return new TestService(this, serviceId);
-	}
-	textGeneration(serviceId: string){
-		return new TextGenerationService(this, serviceId);
-	}
-	textGenerationWithTextToSpeech(serviceId: string){
-		return new TextGenerationWithTextToSpeechService(this, serviceId);
 	}
 	textGuidedImageGeneration(serviceId: string){
 		return new TextGuidedImageGenerationService(this, serviceId);

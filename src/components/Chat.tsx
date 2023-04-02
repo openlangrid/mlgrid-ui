@@ -6,9 +6,8 @@ import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
 export interface Input {
-    instruction: string;
-    input: string;
-    language: string;
+    utterance: string;
+    utteranceLanguage: string;
 }
 export interface Result{
     serviceId: string;
@@ -22,16 +21,15 @@ export interface Invocation{
     results: Result[];
 }
 let invId = 0;
-export function TextGeneration({services, si, invocations}:
+export function Chat({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
-        "instruction": "",
-        "input": "Tell me about alpacas.",
-        "language": "en"
+        "utterance": "Tell me about alpacas.",
+        "utteranceLanguage": "en"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("TextGenerationService") || [];
+    const scs = services.get("ChatService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
             id: invId++, input: input, results: []
@@ -49,10 +47,9 @@ export function TextGeneration({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="instruction" size="small" type="text" style={{width: "24em"}} {...register("instruction")} />
-                <TextField label="input" size="small" type="text" style={{width: "24em"}} {...register("input")} />
-                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("language")} />
-                <Button type="submit" variant="contained" >生成</Button>
+                <TextField label="utterance" size="small" type="text" style={{width: "24em"}} {...register("utterance")} />
+                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("utteranceLanguage")} />
+                <Button type="submit" variant="contained" >チャット</Button>
             </form>
 		</div>
         <br/>
@@ -61,23 +58,22 @@ export function TextGeneration({services, si, invocations}:
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><TextGenerationInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><ChatInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const TextGenerationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const ChatInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
-    instruction: {input.instruction}<br/>
-    input: {input.input}<br/>
-    language: {input.language}<br/>
+    utterance: {input.utterance}<br/>
+    utteranceLanguage: {input.utteranceLanguage}<br/>
     results:<br/>
-    {results.map((r, i)=><TextGenerationInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><ChatInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+const ChatInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     console.log("InvocationRequest");
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
@@ -88,7 +84,7 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
         }
         if(res.value.result || res.value.error) return;
 
-        si.textGeneration(result.serviceId).generate(input.instruction, input.input, input.language)
+        si.chat(result.serviceId).chat(input.utterance, input.utteranceLanguage)
             .then(r=>result.result=r)
             .catch(e=>result.error=e)
             .finally(()=>{

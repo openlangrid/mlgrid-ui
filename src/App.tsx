@@ -5,6 +5,10 @@ import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { ServiceCheck } from './components/lib/Services';
 import { Invocations } from './components/Invocations';
 
+import { BrowserSR } from './components/BrowserSR';
+import { Chat } from './components/Chat';
+import { ChatWithTextToSpeech } from './components/ChatWithTextToSpeech';
+import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
 import { HumanPoseEstimation } from './components/HumanPoseEstimation';
 import { ImageClassification } from './components/ImageClassification';
 import { ImageConversion } from './components/ImageConversion';
@@ -14,15 +18,11 @@ import { ObjectSegmentation } from './components/ObjectSegmentation';
 import { SpeechRecognition } from './components/SpeechRecognition';
 import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition';
 import { Test } from './components/Test';
-import { TextGeneration } from './components/TextGeneration';
-import { TextGenerationWithTextToSpeech } from './components/TextGenerationWithTextToSpeech';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
-import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
-import { BrowserSR } from './components/BrowserSR';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -97,8 +97,8 @@ function App() {
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
-            <Tab label="テキスト生成" />
-            <Tab label="発話生成" />
+            <Tab label="チャット" />
+            <Tab label="チャット音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
@@ -123,10 +123,10 @@ function App() {
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextGeneration services={services} si={si} invocations={invocations.tg} />
+          <Chat services={services} si={si} invocations={invocations.c} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextGenerationWithTextToSpeech services={services} si={si} invocations={invocations.tgwtts} />
+          <ChatWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextSentimentAnalysis services={services} si={si} invocations={invocations.tsa} />

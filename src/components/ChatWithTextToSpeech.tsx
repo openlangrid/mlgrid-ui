@@ -6,9 +6,8 @@ import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
 export interface Input {
-    instruction: string;
-    input: string;
-    language: string;
+    utterance: string;
+    utteranceLanguage: string;
 }
 export interface Result{
     serviceId: string;
@@ -22,16 +21,15 @@ export interface Invocation{
     results: Result[];
 }
 let invId = 0;
-export function TextGenerationWithTextToSpeech({services, si, invocations}:
+export function ChatWithTextToSpeech({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
-        "instruction": "",
-        "input": "アルパカについて教えてください。",
-        "language": "ja"
+        "utterance": "アルパカについて教えてください。",
+        "utteranceLanguage": "ja"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("TextGenerationWithTextToSpeechService") || [];
+    const scs = services.get("ChatWithTextToSpeechService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
             id: invId++, input: input, results: []
@@ -49,9 +47,8 @@ export function TextGenerationWithTextToSpeech({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="instruction" size="small" type="text" style={{width: "24em"}} {...register("instruction")} />
-                <TextField label="input" size="small" type="text" style={{width: "24em"}} {...register("input")} />
-                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("language")} />
+                <TextField label="utterance" size="small" type="text" style={{width: "24em"}} {...register("utterance")} />
+                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("utteranceLanguage")} />
                 <Button type="submit" variant="contained" >生成</Button>
             </form>
 		</div>
@@ -60,23 +57,22 @@ export function TextGenerationWithTextToSpeech({services, si, invocations}:
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><TextGenerationWithTextToSpeechInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><ChatWithTextToSpeechInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const TextGenerationWithTextToSpeechInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const ChatWithTextToSpeechInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
-    instruction: {input.instruction}<br/>
-    input: {input.input}<br/>
-    language: {input.language}<br/>
+    utterance: {input.utterance}<br/>
+    utteranceLanguage: {input.utteranceLanguage}<br/>
     results:<br/>
-    {results.map((r, i)=><TextGenerationWithTextToSpeechInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><ChatWithTextToSpeechInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const TextGenerationWithTextToSpeechInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+const ChatWithTextToSpeechInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -86,7 +82,7 @@ const TextGenerationWithTextToSpeechInvocationResult = ({si, input, result}: {si
         }
         if(res.value.result || res.value.error) return;
 
-        si.textGenerationWithTextToSpeech(result.serviceId).generate(input.instruction, input.input, input.language)
+        si.chatWithTextToSpeech(result.serviceId).chat(input.utterance, input.utteranceLanguage)
             .then(r=>result.result=r)
             .catch(e=>result.error=e)
             .finally(()=>{
