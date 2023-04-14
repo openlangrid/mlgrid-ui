@@ -47,7 +47,7 @@ export function Chat({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="utterance" size="small" type="text" style={{width: "24em"}} {...register("utterance")} />
+                <TextField label="utterance" multiline size="small" type="text" style={{width: "24em", maxWidth: "120em", resize: "both"}} {...register("utterance")} />
                 <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("utteranceLanguage")} />
                 <Button type="submit" variant="contained" >チャット</Button>
             </form>
@@ -67,7 +67,7 @@ export function Chat({services, si, invocations}:
 const ChatInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
-    utterance: {input.utterance}<br/>
+    utterance: {input.utterance.split("\n").map(s=><>{s}<br/></>)}
     utteranceLanguage: {input.utteranceLanguage}<br/>
     results:<br/>
     {results.map((r, i)=><ChatInvocationResult key={i} input={input} result={r} si={si} />)}
@@ -96,7 +96,7 @@ const ChatInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
     const r = res.value;
     return <div>{r.serviceId}{ r.result || r.error ?
         <>({r.ellapsedMs}ms): { r.result ?
-            <>{r.result}.</> :
+            <>{r.result.split("\n").map(s=><>{s}<br/></>)}</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
         }</div>;
