@@ -24,13 +24,12 @@ import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
 
-interface TabPanelProps {
+interface Props {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
-
-function TabPanel({ children, value, index, ...other }: TabPanelProps) {
+function TabPanel({ children, value, index, ...other }: Props) {
   return (
     <div
       role="tabpanel"

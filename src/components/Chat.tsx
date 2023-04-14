@@ -47,7 +47,7 @@ export function Chat({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="utterance" multiline size="small" type="text" style={{width: "24em", maxWidth: "120em", resize: "both"}} {...register("utterance")} />
+                <TextField label="utterance" multiline size="small" type="text" style={{width: "70%"}} {...register("utterance")} />
                 <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("utteranceLanguage")} />
                 <Button type="submit" variant="contained" >チャット</Button>
             </form>
@@ -94,8 +94,9 @@ const ChatInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
     }, []);
 
     const r = res.value;
-    return <div>{r.serviceId}{ r.result || r.error ?
-        <>({r.ellapsedMs}ms): { r.result ?
+    return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
+        {r.serviceId}{ r.result || r.error ?
+        <>({r.ellapsedMs}ms):<br/> { r.result ?
             <>{r.result.split("\n").map(s=><>{s}<br/></>)}</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
