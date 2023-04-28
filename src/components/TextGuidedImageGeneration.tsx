@@ -107,8 +107,11 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
     return <div>{r.serviceId}{ r.result || r.error ?
         <>({r.ellapsedMs.toLocaleString()}ms): { r.result ?
             <>done.<br/>{ r.result.map((r, i) =>
-                <img key={i} alt="" className="tgigResultImage"
-                    src={URL.createObjectURL(new Blob([r.image]))}></img>
+                <div style={{display: "inline-block", resize: "both", overflow: "hidden", verticalAlign: "top"}}>
+                    <img style={{width: "100%", height: "100%", objectFit: "contain"}}
+                        key={i} alt="" className="tgigResultImage"
+                        src={URL.createObjectURL(new Blob([r.image]))}></img>
+                </div>
             )}</> :
             <>{JSON.stringify(r.error)}</>}</> :
         <>: <span className="loader" /></>
