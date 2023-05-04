@@ -185,6 +185,13 @@ export class TextSentimentAnalysisService extends Service{
 		return this.invoke("analyze", Array.prototype.slice.call(arguments));
 	}
 }
+
+export class TextSimilarityCalculationService extends Service{
+	calculate(text1: string, text1Language: string, text2: string, text2Language: string): Promise<number>{
+		return this.invoke("calculate", Array.prototype.slice.call(arguments));
+	}
+}
+
 export interface Audio {
 	audio: ArrayBuffer;
 	format: string;
@@ -296,6 +303,9 @@ export abstract class ServiceInvoker{
 	}
     textSentimentAnalysis(serviceId: string){
         return new TextSentimentAnalysisService(this, serviceId);
+    }
+    textSimilarityCalculation(serviceId: string){
+        return new TextSimilarityCalculationService(this, serviceId);
     }
 	textToSpeech(serviceId: string){
 		return new TextToSpeechService(this, serviceId);

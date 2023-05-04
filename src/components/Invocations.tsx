@@ -14,6 +14,7 @@ import { Invocation as TestInvocation } from './Test';
 import { Invocation as TGIGInvocation } from './TextGuidedImageGeneration';
 import { Invocation as TGIMInvocation } from './TextGuidedImageManipulation';
 import { Invocation as TSAInvocation } from './TextSentimentAnalysis';
+import { Invocation as TSCInvocation } from './TextSimilarityCalculation';
 import { Invocation as TTSInvocation } from './TextToSpeech';
 import { Invocation as TRInvocation } from './Translation';
 
@@ -34,6 +35,7 @@ export class Invocations {
     tgig: TGIGInvocation[] = [];
     tgim: TGIMInvocation[] = [];
     tsa: TSAInvocation[] = [];
+    tsc: TSCInvocation[] = [];
     tr: TRInvocation[] = [];
     tts: TTSInvocation[] = [];
 }

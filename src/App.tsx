@@ -21,6 +21,7 @@ import { Test } from './components/Test';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
+import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
 
@@ -51,7 +52,7 @@ const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
-  const firstGroupNum = 9;
+  const firstGroupNum = 10;
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -101,6 +102,7 @@ function App() {
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
+            <Tab label="テキスト類似度計算" />
             <Tab label="画像変換" />
             <Tab label="画像テキスト化" />
             <Tab label="テスト" />
@@ -135,6 +137,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGuidedImageManipulation services={services} si={si} invocations={invocations.tgim} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextSimilarityCalculation services={services} si={si} invocations={invocations.tsc} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ImageConversion services={services} si={si} invocations={invocations.ico} />
