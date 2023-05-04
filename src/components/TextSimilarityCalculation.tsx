@@ -30,7 +30,7 @@ export function TextSimilarityCalculation({services, si, invocations}:
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "text1": "今日のお昼はオムライスでした",
         "text1Language": "ja",
-        "text2": "Today's lunch was omurise.",
+        "text2": "Today's lunch was omelet rise.",
         "text2Language": "en"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
@@ -55,8 +55,12 @@ export function TextSimilarityCalculation({services, si, invocations}:
             <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField label="text1" size="small" type="text" style={{width: "32em"}} {...register("text1")} />
                 <TextField label="text1Language" size="small" type="text" style={{width: "6em"}} {...register("text1Language")} />
+                <br/>
+                <br/>
                 <TextField label="text2" size="small" type="text" style={{width: "32em"}} {...register("text2")} />
                 <TextField label="text2Language" size="small" type="text" style={{width: "6em"}} {...register("text2Language")} />
+                <br/>
+                <br/>
                 <Button type="submit" variant="contained" >計算</Button>
             </form>
 		</div>
