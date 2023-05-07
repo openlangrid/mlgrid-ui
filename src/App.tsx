@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { ServiceCheck } from './components/lib/Services';
-import { Invocations } from './components/Invocations';
+import { Invocations } from './Invocations';
 
 import { BrowserSR } from './components/BrowserSR';
 import { Chat } from './components/Chat';
@@ -20,6 +20,7 @@ import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition'
 import { Test } from './components/Test';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
+import { TextInstruction } from './components/TextInstruction';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
@@ -97,7 +98,7 @@ function App() {
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
-            <Tab label="チャット" />
+            <Tab label="インストラクション" />
             <Tab label="チャット音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
@@ -124,7 +125,7 @@ function App() {
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <Chat services={services} si={si} invocations={invocations.c} />
+          <TextInstruction services={services} si={si} invocations={invocations.ti} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ChatWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />

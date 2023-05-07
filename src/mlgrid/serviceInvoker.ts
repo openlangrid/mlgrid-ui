@@ -176,6 +176,11 @@ export class TextGuidedImageManipulationService extends Service{
 		return this.invoke("manipulate", Array.prototype.slice.call(arguments));
 	}
 }
+export class TextInstructionService extends Service{
+	instruct(text: string, textLanguage: string): Promise<string>{
+		return this.invoke("instruct", Array.prototype.slice.call(arguments));
+	}
+}
 export interface TextSentimentAnalysisResult{
 	label: string;
 	accuracy: number;
@@ -301,6 +306,9 @@ export abstract class ServiceInvoker{
 	textGuidedImageManipulation(serviceId: string){
 		return new TextGuidedImageManipulationService(this, serviceId);
 	}
+    textInstruction(serviceId: string){
+        return new TextInstructionService(this, serviceId);
+    }
     textSentimentAnalysis(serviceId: string){
         return new TextSentimentAnalysisService(this, serviceId);
     }
