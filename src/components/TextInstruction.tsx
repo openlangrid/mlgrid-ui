@@ -48,15 +48,17 @@ export function TextInstruction({services, si, invocations}:
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField label="text" multiline size="small" type="text" style={{width: "70%"}} {...register("text")} />
-                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register("textLanguage")} />
+                <TextField label="textLanguage" size="small" type="text" style={{width: "6em"}} {...register("textLanguage")} />
                 <Button type="submit" variant="contained" >送信</Button>
             </form>
 		</div>
         <br/>
 		<Services serviceChecks={scs} />
+        <br/>
         <a href="https://github.com/kunishou/Japanese-Alpaca-LoRA">Japalese Alpaca LoRA</a><br/>
         <a href="https://huggingface.co/cerebras">Cerebras</a><br/>
         <a href="https://huggingface.co/mosaicml/mpt-7b">MosaicML MPT</a><br/>
+        <a href="https://huggingface.co/BlinkDL/rwkv-4-pile-14b">RWKV</a>(+ <a href="https://huggingface.co/shi3z/RWKV-LM-LoRA-Alpaca-Cleaned-Japan">LoRA-Alpaca-Cleaned-Japan</a>)<br/>
         <br/>
         <label>invocation histories:</label>
         <div>
@@ -69,8 +71,8 @@ export function TextInstruction({services, si, invocations}:
 const TextInstructionInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
-    utterance: {input.text.split("\n").map(s=><>{s}<br/></>)}
-    utteranceLanguage: {input.textLanguage}<br/>
+    text: {input.text.split("\n").map(s=><>{s}<br/></>)}
+    textLanguage: {input.textLanguage}<br/>
     results:<br/>
     {results.map((r, i)=><TextInstructionInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
