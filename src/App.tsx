@@ -7,7 +7,7 @@ import { Invocations } from './Invocations';
 
 import { BrowserSR } from './components/BrowserSR';
 import { Chat } from './components/Chat';
-import { ChatWithTextToSpeech } from './components/ChatWithTextToSpeech';
+import { TextInstructionWithTextToSpeech } from './components/TextInstructionWithTextToSpeech';
 import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
 import { HumanPoseEstimation } from './components/HumanPoseEstimation';
 import { ImageClassification } from './components/ImageClassification';
@@ -99,7 +99,7 @@ function App() {
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
             <Tab label="インストラクション" />
-            <Tab label="チャット音声合成" />
+            <Tab label="インストラクション+音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
@@ -128,7 +128,7 @@ function App() {
           <TextInstruction services={services} si={si} invocations={invocations.ti} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <ChatWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
+          <TextInstructionWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextSentimentAnalysis services={services} si={si} invocations={invocations.tsa} />

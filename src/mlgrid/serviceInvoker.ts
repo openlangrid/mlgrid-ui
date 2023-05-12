@@ -29,11 +29,6 @@ export class ChatService extends Service{
         return this.invoke("chat", Array.prototype.slice.call(arguments));
     }
 }
-export class ChatWithTextToSpeechService extends Service{
-    chat(utterance: string, utteranceLanguage: string): Promise<Audio>{
-        return this.invoke("chat", Array.prototype.slice.call(arguments));
-    }
-}
 export interface ContinuousSpeechRecognitionStartRecognitionConfig{
 	channels: number;
 	sampleSizeInBits: number;
@@ -181,6 +176,11 @@ export class TextInstructionService extends Service{
 		return this.invoke("instruct", Array.prototype.slice.call(arguments));
 	}
 }
+export class TextInstructionWithTextToSpeechService extends Service{
+    instruct(text: string, textLanguage: string): Promise<Audio>{
+        return this.invoke("instruct", Array.prototype.slice.call(arguments));
+    }
+}
 export interface TextSentimentAnalysisResult{
 	label: string;
 	accuracy: number;
@@ -267,9 +267,6 @@ export abstract class ServiceInvoker{
     continuousSpeechRecognition(serviceId: string){
         return new ContinuousSpeechRecognitionService(this, serviceId);
     }
-	chatWithTextToSpeech(serviceId: string){
-		return new ChatWithTextToSpeechService(this, serviceId);
-	}
 	humanPoseEstimation(serviceId: string){
 		return new HumanPoseEstimationService(this, serviceId);
 	}
@@ -309,6 +306,9 @@ export abstract class ServiceInvoker{
     textInstruction(serviceId: string){
         return new TextInstructionService(this, serviceId);
     }
+	textInstructionWithTextToSpeech(serviceId: string){
+		return new TextInstructionWithTextToSpeechService(this, serviceId);
+	}
     textSentimentAnalysis(serviceId: string){
         return new TextSentimentAnalysisService(this, serviceId);
     }

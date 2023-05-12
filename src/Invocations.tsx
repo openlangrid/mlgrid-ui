@@ -1,7 +1,7 @@
 import { Invocation as BSRInvocation } from './components/BrowserSR';
 import { Invocation as CInvocation } from './components/Chat';
 import { Invocation as CSRInvocation } from './components/ContinuousSpeechRecognition';
-import { Invocation as CWTTSInvocation } from './components/ChatWithTextToSpeech';
+import { Invocation as CWTTSInvocation } from './components/TextInstructionWithTextToSpeech';
 import { Invocation as HPEInvocation } from './components/HumanPoseEstimation';
 import { Invocation as ICLInvocation } from './components/ImageClassification';
 import { Invocation as ICOInvocation } from './components/ImageConversion';
