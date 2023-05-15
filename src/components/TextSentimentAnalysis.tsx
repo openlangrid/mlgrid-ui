@@ -58,6 +58,8 @@ export function TextSentimentAnalysis({services, si, invocations}:
 		<Services serviceChecks={scs} />
         <br/>
         <a href="https://github.com/cl-tohoku/bert-japanese/tree/v1.0">BERT Models for Japanese NLP</a>&nbsp;
+        <a href="https://huggingface.co/daigo/bert-base-japanese-sentiment">daigo/bert-base-japanese-sentiment</a>&nbsp;
+        <a href="https://huggingface.co/koheiduck/bert-japanese-finetuned-sentiment">koheiduck/bert-japanese-finetuned-sentiment</a>&nbsp;
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
