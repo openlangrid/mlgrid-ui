@@ -171,14 +171,14 @@ export class TextGuidedImageManipulationService extends Service{
 		return this.invoke("manipulate", Array.prototype.slice.call(arguments));
 	}
 }
-export class TextInstructionService extends Service{
-	instruct(text: string, textLanguage: string): Promise<string>{
-		return this.invoke("instruct", Array.prototype.slice.call(arguments));
+export class TextGenerationService extends Service{
+	generate(text: string, textLanguage: string): Promise<string>{
+		return this.invoke("generate", Array.prototype.slice.call(arguments));
 	}
 }
-export class TextInstructionWithTextToSpeechService extends Service{
-    instruct(text: string, textLanguage: string): Promise<Audio>{
-        return this.invoke("instruct", Array.prototype.slice.call(arguments));
+export class TextGenerationWithTextToSpeechService extends Service{
+    generate(text: string, textLanguage: string): Promise<Audio>{
+        return this.invoke("generate", Array.prototype.slice.call(arguments));
     }
 }
 export interface TextSentimentAnalysisResult{
@@ -303,11 +303,11 @@ export abstract class ServiceInvoker{
 	textGuidedImageManipulation(serviceId: string){
 		return new TextGuidedImageManipulationService(this, serviceId);
 	}
-    textInstruction(serviceId: string){
-        return new TextInstructionService(this, serviceId);
+    textGeneration(serviceId: string){
+        return new TextGenerationService(this, serviceId);
     }
-	textInstructionWithTextToSpeech(serviceId: string){
-		return new TextInstructionWithTextToSpeechService(this, serviceId);
+	textGenerationWithTextToSpeech(serviceId: string){
+		return new TextGenerationWithTextToSpeechService(this, serviceId);
 	}
     textSentimentAnalysis(serviceId: string){
         return new TextSentimentAnalysisService(this, serviceId);

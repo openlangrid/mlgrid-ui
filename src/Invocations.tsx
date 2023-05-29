@@ -1,7 +1,7 @@
 import { Invocation as BSRInvocation } from './components/BrowserSR';
 import { Invocation as CInvocation } from './components/Chat';
 import { Invocation as CSRInvocation } from './components/ContinuousSpeechRecognition';
-import { Invocation as CWTTSInvocation } from './components/TextInstructionWithTextToSpeech';
+import { Invocation as CWTTSInvocation } from './components/TextGenerationWithTextToSpeech';
 import { Invocation as HPEInvocation } from './components/HumanPoseEstimation';
 import { Invocation as ICLInvocation } from './components/ImageClassification';
 import { Invocation as ICOInvocation } from './components/ImageConversion';
@@ -13,7 +13,7 @@ import { Invocation as SERInvocation } from './components/SpeechEmotionRecogniti
 import { Invocation as TestInvocation } from './components/Test';
 import { Invocation as TGIGInvocation } from './components/TextGuidedImageGeneration';
 import { Invocation as TGIMInvocation } from './components/TextGuidedImageManipulation';
-import { Invocation as TIInvocation } from './components/TextInstruction';
+import { Invocation as TIInvocation } from './components/TextGeneration';
 import { Invocation as TSAInvocation } from './components/TextSentimentAnalysis';
 import { Invocation as TSCInvocation } from './components/TextSimilarityCalculation';
 import { Invocation as TTSInvocation } from './components/TextToSpeech';

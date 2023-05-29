@@ -21,7 +21,7 @@ export interface Invocation{
     results: Result[];
 }
 let invId = 0;
-export function TextInstructionWithTextToSpeech({services, si, invocations}:
+export function TextGenerationWithTextToSpeech({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
         "text": "アルパカについて教えてください。",
@@ -29,7 +29,7 @@ export function TextInstructionWithTextToSpeech({services, si, invocations}:
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("TextInstructionWithTextToSpeechService") || [];
+    const scs = services.get("TextGenerationWithTextToSpeechService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
             id: invId++, input: input, results: []
@@ -57,22 +57,22 @@ export function TextInstructionWithTextToSpeech({services, si, invocations}:
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><TextInstructionWithTextToSpeechInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><TextGenerationWithTextToSpeechInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const TextInstructionWithTextToSpeechInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const TextGenerationWithTextToSpeechInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
     utterance: {input.text}<br/>
     utteranceLanguage: {input.textLanguage}<br/>
     results:<br/>
-    {results.map((r, i)=><TextInstructionWithTextToSpeechInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><TextGenerationWithTextToSpeechInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const TextInstructionWithTextToSpeechInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+const TextGenerationWithTextToSpeechInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -82,7 +82,7 @@ const TextInstructionWithTextToSpeechInvocationResult = ({si, input, result}: {s
         }
         if(res.value.result || res.value.error) return;
 
-        si.textInstructionWithTextToSpeech(result.serviceId).instruct(input.text, input.textLanguage)
+        si.textGenerationWithTextToSpeech(result.serviceId).generate(input.text, input.textLanguage)
             .then(r=>result.result=r)
             .catch(e=>result.error=e)
             .finally(()=>{

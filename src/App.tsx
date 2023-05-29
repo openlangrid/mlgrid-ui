@@ -7,7 +7,7 @@ import { Invocations } from './Invocations';
 
 import { BrowserSR } from './components/BrowserSR';
 import { Chat } from './components/Chat';
-import { TextInstructionWithTextToSpeech } from './components/TextInstructionWithTextToSpeech';
+import { TextGenerationWithTextToSpeech } from './components/TextGenerationWithTextToSpeech';
 import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
 import { HumanPoseEstimation } from './components/HumanPoseEstimation';
 import { ImageClassification } from './components/ImageClassification';
@@ -20,7 +20,7 @@ import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition'
 import { Test } from './components/Test';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
-import { TextInstruction } from './components/TextInstruction';
+import { TextGeneration } from './components/TextGeneration';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
@@ -98,8 +98,8 @@ function App() {
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
             <Tab label="翻訳" />
-            <Tab label="インストラクション" />
-            <Tab label="インストラクション+音声合成" />
+            <Tab label="テキスト生成" />
+            <Tab label="テキスト生成+音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
@@ -125,10 +125,10 @@ function App() {
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextInstruction services={services} si={si} invocations={invocations.ti} />
+          <TextGeneration services={services} si={si} invocations={invocations.ti} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextInstructionWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
+          <TextGenerationWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextSentimentAnalysis services={services} si={si} invocations={invocations.tsa} />
