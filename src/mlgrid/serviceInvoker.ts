@@ -331,9 +331,19 @@ export class WSServiceInvoker extends ServiceInvoker{
     private rid = 0;
     private handlers: {[key: number]: (r: any)=>void} = {};
 	private lastResponse_: Response | null = null;
+	private url: string;
 
-    constructor(private url: string){
+    constructor(url: string | undefined){
         super();
+		if(url){
+			this.url = url;
+		} else{
+			const l = document.location;
+			const p = l.pathname.lastIndexOf("/");
+			const path = p == -1 ? l.pathname : l.pathname.substring(0, p + 1);
+			this.url = `wss://${l.hostname}${l.port ? ":" + l.port : ""}${path}ws`;
+			console.log(this.url);
+		}
 	}
 
 	lastResponse(): Response | null {

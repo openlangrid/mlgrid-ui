@@ -49,6 +49,11 @@ function TabPanel({ children, value, index, ...other }: Props) {
   );
 }
 
+interface Window{
+  mlgrid_url: string
+}
+declare var window: Window
+
 const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
@@ -61,7 +66,7 @@ function App() {
     setValue(newValue + firstGroupNum);
   };
 
-  const si = new WSServiceInvoker("wss://fungo.kcg.edu/mlgrid-services/ws");
+  const si = new WSServiceInvoker(window.mlgrid_url);
   const refFirst = React.useRef(true);
   useEffect(()=>{
     if (process.env.NODE_ENV === "development" && refFirst.current) {

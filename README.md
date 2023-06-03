@@ -27,6 +27,8 @@ bash ./yarn_build.sh
 ```
 
 mlgrid-uiがビルドされ、buildディレクトリにビルド結果が生成されます。
+mlgrid-servicesの src/main/resources/static/ ディレクトリ以下に生成された内容をコピーし、mlgrid-servicesをビルドし起動すると、mlgrid-services内のWebサーバを通じて簡易UIが利用できます。詳しくはmlgrid-servicesのドキュメントを参照してください。
+
 
 
 ## Acknowledgements
