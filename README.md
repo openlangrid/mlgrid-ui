@@ -1,8 +1,32 @@
-# mlgrid-ui
+# 機械学習サービス基盤用簡易UI - mlgrid-ui
 
 [mlgrid-services](https://github.com/openlangrid/mlgrid-services)で提供されるサービスを利用するための簡易UIです。
 TypeScriptおよびReactで開発されています。
 
+# ビルド方法
+
+## 必要なソフトウェア
+
+* Docker 20.10
+
+mlgrid-uiは、ビルドにnodejsとyarnを利用しています。ただしDockerを用いてビルド環境を作成するため、Dockerのみインストールされていれば、他のソフトウェアは必要ありません。
+
+## ビルド
+
+初めてビルドを行う際には、次のコマンドを実行してください。
+
+```bash
+bash ./yarn_install.sh
+```
+
+yarnを用いてライブラリがダウンロードされ、node_modulesディレクトリが作成されます。
+次に、以下のコマンドを実行してください。
+
+```bash
+bash ./yarn_build.sh
+```
+
+mlgrid-uiがビルドされ、buildディレクトリにビルド結果が生成されます。
 
 
 ## Acknowledgements
