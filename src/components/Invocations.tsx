@@ -11,6 +11,7 @@ import { Invocation as OSInvocation } from './ObjectSegmentation';
 import { Invocation as SRInvocation} from './SpeechRecognition';
 import { Invocation as SERInvocation } from './SpeechEmotionRecognition';
 import { Invocation as TestInvocation } from './Test';
+import { Invocation as TGWTInvocation } from './experiments/Composite';
 import { Invocation as TGIGInvocation } from './TextGuidedImageGeneration';
 import { Invocation as TGIMInvocation } from './TextGuidedImageManipulation';
 import { Invocation as TSAInvocation } from './TextSentimentAnalysis';
@@ -33,6 +34,7 @@ export class Invocations {
     test: TestInvocation[] = [];
     tgig: TGIGInvocation[] = [];
     tgim: TGIMInvocation[] = [];
+    tgwt: TGWTInvocation[] = [];
     tsa: TSAInvocation[] = [];
     tr: TRInvocation[] = [];
     tts: TTSInvocation[] = [];

@@ -7,6 +7,7 @@ import { Invocations } from './components/Invocations';
 
 import { BrowserSR } from './components/BrowserSR';
 import { Chat } from './components/Chat';
+import { TextGenerationWithTranslation } from './components/experiments/Composite';
 import { ChatWithTextToSpeech } from './components/ChatWithTextToSpeech';
 import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
 import { HumanPoseEstimation } from './components/HumanPoseEstimation';
@@ -51,7 +52,7 @@ const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
-  const firstGroupNum = 9;
+  const firstGroupNum = 10;
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -95,6 +96,7 @@ function App() {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
               variant="scrollable" scrollButtons="auto">
+            <Tab label="複合サービス" />
             <Tab label="翻訳" />
             <Tab label="チャット" />
             <Tab label="チャット音声合成" />
@@ -118,6 +120,9 @@ function App() {
             <Tab label="音声合成" />
           </Tabs>
         </Box>
+        <TabPanel value={value} index={index++}>
+          <TextGenerationWithTranslation services={services} si={si} invocations={invocations.tgwt} />
+        </TabPanel>
         <TabPanel value={value} index={index++}>
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
