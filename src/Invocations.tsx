@@ -1,0 +1,45 @@
+import { Invocation as BSRInvocation } from './components/BrowserSR';
+import { Invocation as CInvocation } from './components/Chat';
+import { Invocation as CSRInvocation } from './components/ContinuousSpeechRecognition';
+import { Invocation as CWTTSInvocation } from './components/TextGenerationWithTextToSpeech';
+import { Invocation as HPEInvocation } from './components/HumanPoseEstimation';
+import { Invocation as ICLInvocation } from './components/ImageClassification';
+import { Invocation as ICOInvocation } from './components/ImageConversion';
+import { Invocation as ITTCInvocation } from './components/ImageToTextConversion';
+import { Invocation as ODInvocation } from './components/ObjectDetection';
+import { Invocation as OSInvocation } from './components/ObjectSegmentation';
+import { Invocation as SRInvocation} from './components/SpeechRecognition';
+import { Invocation as SERInvocation } from './components/SpeechEmotionRecognition';
+import { Invocation as TestInvocation } from './components/Test';
+import { Invocation as TGIGInvocation } from './components/TextGuidedImageGeneration';
+import { Invocation as TGIMInvocation } from './components/TextGuidedImageManipulation';
+import { Invocation as TGWTInvocation } from './components/experiments/Composite';
+import { Invocation as TIInvocation } from './components/TextGeneration';
+import { Invocation as TSAInvocation } from './components/TextSentimentAnalysis';
+import { Invocation as TSCInvocation } from './components/TextSimilarityCalculation';
+import { Invocation as TTSInvocation } from './components/TextToSpeech';
+import { Invocation as TRInvocation } from './components/Translation';
+
+export class Invocations {
+    bsr: BSRInvocation[] = [];
+    c: CInvocation[] = [];
+    csr: CSRInvocation[] = [];
+    cwtts: CWTTSInvocation[] = [];
+    hpe: HPEInvocation[] = [];
+    icl: ICLInvocation[] = [];
+    ico: ICOInvocation[] = [];
+    ittc: ITTCInvocation[] = [];
+    od: ODInvocation[] = [];
+    os: OSInvocation[] = [];
+    ser: SERInvocation[] = [];
+    sr: SRInvocation[] = [];
+    test: TestInvocation[] = [];
+    tgig: TGIGInvocation[] = [];
+    tgim: TGIMInvocation[] = [];
+    tgwt: TGWTInvocation[] = [];
+    ti: TIInvocation[] = [];
+    tsa: TSAInvocation[] = [];
+    tsc: TSCInvocation[] = [];
+    tr: TRInvocation[] = [];
+    tts: TTSInvocation[] = [];
+}

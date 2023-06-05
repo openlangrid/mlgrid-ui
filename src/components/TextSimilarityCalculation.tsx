@@ -7,13 +7,15 @@ import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
 export interface Input {
-    text: string;
-    textLanguage: string;
+    text1: string;
+    text1Language: string;
+    text2: string;
+    text2Language: string;
 }
 export interface Result{
     serviceId: string;
     ellapsedMs: number;
-    result: TextSentimentAnalysisResult | null;
+    result: number | null;
     error: Error | null;
 }
 export interface Invocation{
@@ -23,15 +25,17 @@ export interface Invocation{
 }
 
 let invId = 0;
-export function TextSentimentAnalysis({services, si, invocations}:
+export function TextSimilarityCalculation({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
-        "text": "昨日の大雨が嘘のような快晴だ",
-        "textLanguage": "ja"
+        "text1": "今日のお昼はオムライスでした",
+        "text1Language": "ja",
+        "text2": "Today's lunch was omelet rise.",
+        "text2Language": "en"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("TextSentimentAnalysisService") || [];
+    const scs = services.get("TextSimilarityCalculationService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
             id: invId++, input: input, results: []
@@ -49,36 +53,40 @@ export function TextSentimentAnalysis({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="text" size="small" type="text" style={{width: "32em"}} {...register("text")} />
-                <TextField label="textLanguage" size="small" type="text" style={{width: "6em"}} {...register("textLanguage")} />
-                <Button type="submit" variant="contained" >推定</Button>
+                <TextField label="text1" size="small" type="text" style={{width: "32em"}} {...register("text1")} />
+                <TextField label="text1Language" size="small" type="text" style={{width: "6em"}} {...register("text1Language")} />
+                <br/>
+                <br/>
+                <TextField label="text2" size="small" type="text" style={{width: "32em"}} {...register("text2")} />
+                <TextField label="text2Language" size="small" type="text" style={{width: "6em"}} {...register("text2Language")} />
+                <br/>
+                <br/>
+                <Button type="submit" variant="contained" >計算</Button>
             </form>
 		</div>
         <br/>
 		<Services serviceChecks={scs} />
         <br/>
-        <a href="https://github.com/cl-tohoku/bert-japanese/tree/v1.0">BERT Models for Japanese NLP</a>&nbsp;
-        <a href="https://huggingface.co/daigo/bert-base-japanese-sentiment">daigo/bert-base-japanese-sentiment</a>&nbsp;
-        <a href="https://huggingface.co/koheiduck/bert-japanese-finetuned-sentiment">koheiduck/bert-japanese-finetuned-sentiment</a>&nbsp;
+        <a href="https://tfhub.dev/google/universal-sentence-encoder-multilingual/3">Universal Sentence Encoder</a>&nbsp;
         <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><TSAInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><TSCInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const TSAInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const TSCInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
-    text: {input.text}, language: {input.textLanguage}<br/>
+    text1: {input.text1}, language: {input.text1Language}<br/>
+    text2: {input.text2}, language: {input.text2Language}<br/>
     results:<br/>
-    {results.map((r, i)=><TSAInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><TSCInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const TSAInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
-    console.log("InvocationRequest");
+const TSCInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -88,7 +96,8 @@ const TSAInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
         }
         if(res.value.result || res.value.error) return;
 
-        si.textSentimentAnalysis(result.serviceId).analyze(input.text, input.textLanguage)
+        si.textSimilarityCalculation(result.serviceId).calculate(
+                input.text1, input.text1Language, input.text2, input.text2Language)
             .then(r=>{
                 result.result = r;
                 result.ellapsedMs = si.lastMillis();
@@ -100,7 +109,7 @@ const TSAInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: In
     const r = res.value;
     return <div>{r.serviceId}{r.result || r.error ?
         <>({r.ellapsedMs}ms): { r.result ?
-            <>{r.result.label}({round(r.result.accuracy, 2)}).</> :
+            <>{round(r.result, 2)}.</> :
             <>{JSON.stringify(r.error)}</>}</> :
         <>: <span className="loader" /></>
         }</div>;

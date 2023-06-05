@@ -3,12 +3,12 @@ import React, { useEffect } from 'react';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { ServiceCheck } from './components/lib/Services';
-import { Invocations } from './components/Invocations';
+import { Invocations } from './Invocations';
 
 import { BrowserSR } from './components/BrowserSR';
 import { Chat } from './components/Chat';
 import { TextGenerationWithTranslation } from './components/experiments/Composite';
-import { ChatWithTextToSpeech } from './components/ChatWithTextToSpeech';
+import { TextGenerationWithTextToSpeech } from './components/TextGenerationWithTextToSpeech';
 import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
 import { HumanPoseEstimation } from './components/HumanPoseEstimation';
 import { ImageClassification } from './components/ImageClassification';
@@ -21,7 +21,9 @@ import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition'
 import { Test } from './components/Test';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
+import { TextGeneration } from './components/TextGeneration';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
+import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
 
@@ -48,6 +50,11 @@ function TabPanel({ children, value, index, ...other }: Props) {
   );
 }
 
+interface Window{
+  mlgrid_url: string
+}
+declare var window: Window
+
 const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
@@ -60,7 +67,7 @@ function App() {
     setValue(newValue + firstGroupNum);
   };
 
-  const si = new WSServiceInvoker("wss://fungo.kcg.edu/mlgrid-services/ws");
+  const si = new WSServiceInvoker(window.mlgrid_url);
   const refFirst = React.useRef(true);
   useEffect(()=>{
     if (process.env.NODE_ENV === "development" && refFirst.current) {
@@ -98,11 +105,12 @@ function App() {
               variant="scrollable" scrollButtons="auto">
             <Tab label="複合サービス" />
             <Tab label="翻訳" />
-            <Tab label="チャット" />
-            <Tab label="チャット音声合成" />
+            <Tab label="テキスト生成" />
+            <Tab label="テキスト生成+音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
             <Tab label="テキスト画像編集" />
+            <Tab label="テキスト類似度計算" />
             <Tab label="画像変換" />
             <Tab label="画像テキスト化" />
             <Tab label="テスト" />
@@ -127,10 +135,10 @@ function App() {
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <Chat services={services} si={si} invocations={invocations.c} />
+          <TextGeneration services={services} si={si} invocations={invocations.ti} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <ChatWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
+          <TextGenerationWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextSentimentAnalysis services={services} si={si} invocations={invocations.tsa} />
@@ -140,6 +148,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGuidedImageManipulation services={services} si={si} invocations={invocations.tgim} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextSimilarityCalculation services={services} si={si} invocations={invocations.tsc} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ImageConversion services={services} si={si} invocations={invocations.ico} />

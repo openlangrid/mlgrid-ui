@@ -34,11 +34,6 @@ export class ChatService extends Service{
         return this.invoke("chat", Array.prototype.slice.call(arguments));
     }
 }
-export class ChatWithTextToSpeechService extends Service{
-    chat(utterance: string, utteranceLanguage: string): Promise<Audio>{
-        return this.invoke("chat", Array.prototype.slice.call(arguments));
-    }
-}
 export interface ContinuousSpeechRecognitionStartRecognitionConfig{
 	channels: number;
 	sampleSizeInBits: number;
@@ -181,6 +176,16 @@ export class TextGuidedImageManipulationService extends Service{
 		return this.invoke("manipulate", Array.prototype.slice.call(arguments));
 	}
 }
+export class TextGenerationService extends Service{
+	generate(text: string, textLanguage: string): Promise<string>{
+		return this.invoke("generate", Array.prototype.slice.call(arguments));
+	}
+}
+export class TextGenerationWithTextToSpeechService extends Service{
+    generate(text: string, textLanguage: string): Promise<Audio>{
+        return this.invoke("generate", Array.prototype.slice.call(arguments));
+    }
+}
 export interface TextSentimentAnalysisResult{
 	label: string;
 	accuracy: number;
@@ -190,6 +195,13 @@ export class TextSentimentAnalysisService extends Service{
 		return this.invoke("analyze", Array.prototype.slice.call(arguments));
 	}
 }
+
+export class TextSimilarityCalculationService extends Service{
+	calculate(text1: string, text1Language: string, text2: string, text2Language: string): Promise<number>{
+		return this.invoke("calculate", Array.prototype.slice.call(arguments));
+	}
+}
+
 export interface Audio {
 	audio: ArrayBuffer;
 	format: string;
@@ -266,9 +278,6 @@ export abstract class ServiceInvoker{
     continuousSpeechRecognition(serviceId: string){
         return new ContinuousSpeechRecognitionService(this, serviceId);
     }
-	chatWithTextToSpeech(serviceId: string){
-		return new ChatWithTextToSpeechService(this, serviceId);
-	}
 	humanPoseEstimation(serviceId: string){
 		return new HumanPoseEstimationService(this, serviceId);
 	}
@@ -308,8 +317,17 @@ export abstract class ServiceInvoker{
 	textGuidedImageManipulation(serviceId: string){
 		return new TextGuidedImageManipulationService(this, serviceId);
 	}
+    textGeneration(serviceId: string){
+        return new TextGenerationService(this, serviceId);
+    }
+	textGenerationWithTextToSpeech(serviceId: string){
+		return new TextGenerationWithTextToSpeechService(this, serviceId);
+	}
     textSentimentAnalysis(serviceId: string){
         return new TextSentimentAnalysisService(this, serviceId);
+    }
+    textSimilarityCalculation(serviceId: string){
+        return new TextSimilarityCalculationService(this, serviceId);
     }
 	textToSpeech(serviceId: string){
 		return new TextToSpeechService(this, serviceId);
@@ -327,9 +345,19 @@ export class WSServiceInvoker extends ServiceInvoker{
     private rid = 0;
     private handlers: {[key: number]: (r: any)=>void} = {};
 	private lastResponse_: Response | null = null;
+	private url: string;
 
-    constructor(private url: string){
+    constructor(url: string | undefined){
         super();
+		if(url){
+			this.url = url;
+		} else{
+			const l = document.location;
+			const p = l.pathname.lastIndexOf("/");
+			const path = p == -1 ? l.pathname : l.pathname.substring(0, p + 1);
+			this.url = `wss://${l.hostname}${l.port ? ":" + l.port : ""}${path}ws`;
+			console.log(this.url);
+		}
 	}
 
 	lastResponse(): Response | null {
