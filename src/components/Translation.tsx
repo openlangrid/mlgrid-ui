@@ -98,8 +98,8 @@ const TranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; i
     }, []);
 
     const r = res.value;
-    return <div>{r.serviceId}{ r.result || r.error ?
-        <>({r.ellapsedMs}ms): { r.result ?
+    return <div>{r.serviceId}{ (r.result != null) || r.error ?
+        <>({r.ellapsedMs}ms): { (r.result != null) ?
             <>{r.result}.</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
