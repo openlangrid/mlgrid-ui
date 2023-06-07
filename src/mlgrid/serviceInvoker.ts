@@ -14,11 +14,16 @@ export interface Box2d{ x: number, y: number, width: number, height: number}
 
 // このクラスと各サービス呼び出し用のクラスを作っている。
 export class Service{
+	private bindings = {};
     constructor(private serviceInvoker: ServiceInvoker, private serviceId: string){
     }
-    invoke(methodName: string, args: any[]): any{
+	setBindings(bindings: {}){
+		this.bindings = bindings;
+		return this;
+	}
+    protected invoke(methodName: string, args: any[]): any{
         return this.serviceInvoker.invoke(
-            this.serviceId, methodName, args);
+            this.serviceId, methodName, args, this.bindings);
     }
 }
 
@@ -221,6 +226,11 @@ export class TranslationService extends Service{
         return this.invoke("translate", Array.prototype.slice.call(arguments));
     }
 }
+export class TextGenerationWithTranslationService extends Service{
+	generate(text: string, textLanguage: string, generationLanguage: string): Promise<string>{
+        return this.invoke("generate", Array.prototype.slice.call(arguments));
+	}
+}
 
 export interface MatchingCondition{
     fieldName: string;
@@ -236,6 +246,7 @@ export interface SearchServicesResult{
 	entries: {
         serviceId: string;
         serviceType: string;
+		compositionType: "ATOMIC" | "COMPOSITE";
     }[];
 	totalCount: number;
 	totalCountFixed: boolean;
@@ -256,7 +267,7 @@ export interface Response{
 // Service呼び出しに使用するクラスのベースクラス。派生クラスで実装するinvokeメソッドと、
 // 各サービスクラスを返すメソッドだけを用意する。
 export abstract class ServiceInvoker{
-    abstract invoke(serviceId: string, methodName: string, args: any[]): Promise<any>;
+    abstract invoke(serviceId: string, methodName: string, args: any[], bindings: {}): Promise<any>;
 	abstract lastResponse(): Response | null;
 	abstract lastMillis(): number;
 
@@ -297,6 +308,9 @@ export abstract class ServiceInvoker{
 	test(serviceId: string){
 		return new TestService(this, serviceId);
 	}
+	textGenerationWithTranslation(serviceId: string){
+		return new TextGenerationWithTranslationService(this, serviceId);
+	}
 	textGuidedImageGeneration(serviceId: string){
 		return new TextGuidedImageGenerationService(this, serviceId);
 	}
@@ -331,9 +345,19 @@ export class WSServiceInvoker extends ServiceInvoker{
     private rid = 0;
     private handlers: {[key: number]: (r: any)=>void} = {};
 	private lastResponse_: Response | null = null;
+	private url: string;
 
-    constructor(private url: string){
+    constructor(url: string | undefined){
         super();
+		if(url){
+			this.url = url;
+		} else{
+			const l = document.location;
+			const p = l.pathname.lastIndexOf("/");
+			const path = p == -1 ? l.pathname : l.pathname.substring(0, p + 1);
+			this.url = `wss://${l.hostname}${l.port ? ":" + l.port : ""}${path}ws`;
+			console.log(this.url);
+		}
 	}
 
 	lastResponse(): Response | null {
@@ -376,12 +400,13 @@ export class WSServiceInvoker extends ServiceInvoker{
 		return value;
 	}
 
-	invoke(serviceId: string, method: string, args: any[]){
+	invoke(serviceId: string, method: string, args: any[], bindings: {} = {}){
 		this.lastResponse_ = null;
 		return new Promise((resolve, reject)=>{
 			const rid = this.rid++;
 			const msg = {
 				reqId: rid, serviceId: serviceId,
+				headers: {bindings: bindings},
 				method: method, args: args
 			};
 			console.debug("req:", msg);

@@ -13,6 +13,7 @@ import { Invocation as SERInvocation } from './components/SpeechEmotionRecogniti
 import { Invocation as TestInvocation } from './components/Test';
 import { Invocation as TGIGInvocation } from './components/TextGuidedImageGeneration';
 import { Invocation as TGIMInvocation } from './components/TextGuidedImageManipulation';
+import { Invocation as TGWTInvocation } from './components/experiments/Composite';
 import { Invocation as TIInvocation } from './components/TextGeneration';
 import { Invocation as TSAInvocation } from './components/TextSentimentAnalysis';
 import { Invocation as TSCInvocation } from './components/TextSimilarityCalculation';
@@ -35,6 +36,7 @@ export class Invocations {
     test: TestInvocation[] = [];
     tgig: TGIGInvocation[] = [];
     tgim: TGIMInvocation[] = [];
+    tgwt: TGWTInvocation[] = [];
     ti: TIInvocation[] = [];
     tsa: TSAInvocation[] = [];
     tsc: TSCInvocation[] = [];

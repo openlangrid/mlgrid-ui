@@ -1,13 +1,15 @@
-import { Button, TextField } from "@mui/material";
-import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
-import { Holder } from "../util/Holder";
-import { ServiceCheck, Services } from "./lib/Services";
+import { ServiceInvoker } from "../../mlgrid/serviceInvoker";
+import { ServiceCheck, Services } from "../lib/Services";
+import { memo, useEffect, useRef, useState } from "react";
+import { Holder } from "../../util/Holder";
+import { Button, TextField } from "@mui/material";
+
 
 export interface Input {
     text: string;
     textLanguage: string;
+    generationLanguage: string;
 }
 export interface Result{
     serviceId: string;
@@ -21,15 +23,16 @@ export interface Invocation{
     results: Result[];
 }
 let invId = 0;
-export function TextGeneration({services, si, invocations}:
+export function TextGenerationWithTranslation({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit } = useForm<Input>({defaultValues: {
-        "text": "Tell me about alpacas.",
-        "textLanguage": "en"
+        "text": "アルパカについて教えてください。",
+        "textLanguage": "ja",
+        "generationLanguage": "en"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("TextGenerationService") || [];
+    const scs = services.get("TextGenerationWithTranslation") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
             id: invId++, input: input, results: []
@@ -47,37 +50,33 @@ export function TextGeneration({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField label="text" multiline size="small" type="text" style={{width: "70%"}} {...register("text")} />
+                <TextField label="text" size="small" type="text" style={{width: "24em"}} {...register("text")} />
                 <TextField label="textLanguage" size="small" type="text" style={{width: "6em"}} {...register("textLanguage")} />
-                <Button type="submit" variant="contained" >送信</Button>
+                <TextField label="generateLanguage" size="small" type="text" style={{width: "6em"}} {...register("generationLanguage")} />
+                <Button type="submit" variant="contained" >生成</Button>
             </form>
 		</div>
         <br/>
 		<Services serviceChecks={scs} />
-        <br/>
-        <a href="https://github.com/kunishou/Japanese-Alpaca-LoRA">Japalese Alpaca LoRA</a><br/>
-        <a href="https://huggingface.co/cerebras">Cerebras</a><br/>
-        <a href="https://huggingface.co/mosaicml/mpt-7b">MosaicML MPT</a><br/>
-        <a href="https://huggingface.co/BlinkDL/rwkv-4-pile-14b">RWKV</a>(+ <a href="https://huggingface.co/shi3z/RWKV-LM-LoRA-Alpaca-Cleaned-Japan">LoRA-Alpaca-Cleaned-Japan</a>)<br/>
-        <br/>
+        <br/> <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><TextGenerationInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><TextGenerationWithTranslationInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const TextGenerationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const TextGenerationWithTranslationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
-    text: {input.text.split("\n").map(s=><>{s}<br/></>)}
+    text: {input.text}<br/>
     textLanguage: {input.textLanguage}<br/>
     results:<br/>
-    {results.map((r, i)=><TextGenerationInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><TextGenerationWithTranslationInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+const TextGenerationWithTranslationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -87,7 +86,15 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
         }
         if(res.value.result || res.value.error) return;
 
-        si.textGeneration(result.serviceId).generate(input.text, input.textLanguage)
+        si.textGenerationWithTranslation(result.serviceId)
+            .setBindings({
+                "Preranslation": {
+                    "ServiceId": "FuguMT",
+                    "bindings": {}
+                },
+                "TextGeneration": "OpenCalmLarge",
+                "Posttranslation": "FuguMT"})
+            .generate(input.text, input.textLanguage, input.generationLanguage)
             .then(r=>result.result=r)
             .catch(e=>result.error=e)
             .finally(()=>{
@@ -99,7 +106,7 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
     const r = res.value;
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         {r.serviceId}{ r.result || r.error ?
-        <>({r.ellapsedMs}ms):<br/> { r.result != null ?
+        <>({r.ellapsedMs}ms):<br/> { r.result ?
             <>{r.result.split("\n").map(s=><>{s}<br/></>)}</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
