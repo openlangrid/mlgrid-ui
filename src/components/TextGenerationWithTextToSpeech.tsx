@@ -93,7 +93,7 @@ const TextGenerationWithTextToSpeechInvocationResult = ({si, input, result}: {si
 
     const r = res.value;
     return <div>{r.serviceId}{ r.result || r.error ?
-        <>({r.ellapsedMs}ms): { r.result ?
+        <>({r.ellapsedMs}ms): { r.result != null ?
             <>done.<br/>
                 <audio controls src={URL.createObjectURL(new Blob([r.result.audio]))} /><br/>
                 <span>format: {r.result.format}</span>
