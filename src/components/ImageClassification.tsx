@@ -8,8 +8,8 @@ import { ImageDropButton } from "./lib/ImageDropButton";
 import { ServiceCheck, Services } from "./lib/Services";
 
 export interface Input {
-    format: string;
     image: ArrayBuffer;
+    format: string;
     labelLang: string;
     maxResults: number;
 }
