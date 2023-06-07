@@ -70,7 +70,7 @@ export class SpeechRecognition extends Service{
 	}
 }
 export class ImageClassificationService extends Service{
-    classify(image: ArrayBufferLike, imageFormat: string, labelLang: string, maxResults: number):
+    classify(image: ArrayBuffer, imageFormat: string, labelLang: string, maxResults: number):
 		Promise<{label: string; accuracy: number}[]>{
 		return this.invoke("classify", Array.prototype.slice.call(arguments));
 	}
