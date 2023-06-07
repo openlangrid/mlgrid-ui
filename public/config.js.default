@@ -1,0 +1,2 @@
+// mlgrid-servicesの呼び出しURLを指定する。指定しない場合、相対パス ws が使用される
+// window.mlgrid_url = "wss://fungo.kcg.edu/mlgrid-services/ws";
