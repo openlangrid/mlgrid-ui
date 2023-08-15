@@ -346,6 +346,7 @@ export class WSServiceInvoker extends ServiceInvoker{
     private handlers: {[key: number]: (r: any)=>void} = {};
 	private lastResponse_: Response | null = null;
 	private url: string;
+	private keepAliveTimer = -1;
 
     constructor(url: string | undefined){
         super();
@@ -447,6 +448,17 @@ export class WSServiceInvoker extends ServiceInvoker{
 		this.ws.binaryType = "arraybuffer";
 		this.ws.addEventListener('open', e=>{
 			console.debug("websocket connection opened.");
+			this.keepAliveTimer = window.setInterval(()=>{
+				console.log("send ping.");
+				const rid = this.rid++;
+				const msg = {
+					reqId: rid, serviceId: "__PingService",
+					headers: {},
+					method: "ping", args: []
+				};
+				this.handlers[rid] = ()=>{};
+				this.ws?.send(JSON.stringify(msg));
+			}, 30 * 1000);
 			for(let b of this.sendbuf){
 				this.ws!.send(b);
 			}
@@ -457,21 +469,23 @@ export class WSServiceInvoker extends ServiceInvoker{
 			this.ws = null;
 			this.rid = 0;
 			this.handlers = {};
+			if(this.keepAliveTimer != -1){
+				window.clearInterval(this.keepAliveTimer);
+				this.keepAliveTimer = -1;
+			}
 		});
 		this.ws.addEventListener("message", e=>{
+			let r: any = null;
 			if(e.data instanceof ArrayBuffer) {
 				// binary
-//				console.debug("res:", e.data);
-				const r = deserialize(e.data);
-				console.debug("res(decoded):", r);
-				this.handlers[r.reqId](r);
+				r = deserialize(e.data);
 			} else {
 				// text
-//				console.debug("res:", e.data);
-				const r = JSON.parse(e.data);
-				console.debug("res(decoded):", r);
-				this.handlers[r.reqId](r);
+				r = JSON.parse(e.data);
 			}
+			console.debug("res(decoded):", r);
+			this.handlers[r.reqId](r);
+			delete this.handlers[r.reqId];
 		});
 	}
 }
