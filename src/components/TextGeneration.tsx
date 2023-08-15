@@ -55,10 +55,19 @@ export function TextGeneration({services, si, invocations}:
         <br/>
 		<Services serviceChecks={scs} />
         <br/>
-        <a href="https://github.com/kunishou/Japanese-Alpaca-LoRA">Japalese Alpaca LoRA</a><br/>
         <a href="https://huggingface.co/cerebras">Cerebras</a><br/>
+        <a href="https://huggingface.co/cyberagent/open-calm-small">CyberAgent OpenCalm</a><br/>
+        <a href="https://github.com/kunishou/Japanese-Alpaca-LoRA">Japalese Alpaca LoRA</a><br/>
+        <a href="https://huggingface.co/lightblue/japanese-mpt-7b">Lightblue Japanese MPT</a><br/>
+        <a href="https://huggingface.co/line-corporation/japanese-large-lm-1.7b">LINE Japanese Large LM</a><br/>
+        <a href="https://huggingface.co/meta-llama/Llama-2-7b">Meta Llama2</a><br/>
         <a href="https://huggingface.co/mosaicml/mpt-7b">MosaicML MPT</a><br/>
+        <a href="https://huggingface.co/rinna/bilingual-gpt-neox-4b">Rinna GPT Neox</a><br/>
         <a href="https://huggingface.co/BlinkDL/rwkv-4-pile-14b">RWKV</a>(+ <a href="https://huggingface.co/shi3z/RWKV-LM-LoRA-Alpaca-Cleaned-Japan">LoRA-Alpaca-Cleaned-Japan</a>)<br/>
+        <a href="https://huggingface.co/stabilityai/japanese-stablelm-base-alpha-7b">StabilityAI Japanese StableLM Alpha</a><br/>
+        <a href="https://huggingface.co/stockmark/gpt-neox-japanese-1.4b">Stockmark GPT-NeoX Japanese</a><br/>
+
+
         <br/>
         <label>invocation histories:</label>
         <div>
