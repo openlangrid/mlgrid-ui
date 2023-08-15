@@ -60,6 +60,7 @@ export function TextGeneration({services, si, invocations}:
         <a href="https://github.com/kunishou/Japanese-Alpaca-LoRA">Japalese Alpaca LoRA</a><br/>
         <a href="https://huggingface.co/lightblue/japanese-mpt-7b">Lightblue Japanese MPT</a><br/>
         <a href="https://huggingface.co/line-corporation/japanese-large-lm-1.7b">LINE Japanese Large LM</a><br/>
+        <a href="https://huggingface.co/lmsys/vicuna-7b-v1.5">LMSYS Vicuna</a><br/>
         <a href="https://huggingface.co/meta-llama/Llama-2-7b">Meta Llama2</a><br/>
         <a href="https://huggingface.co/mosaicml/mpt-7b">MosaicML MPT</a><br/>
         <a href="https://huggingface.co/rinna/bilingual-gpt-neox-4b">Rinna GPT Neox</a><br/>
