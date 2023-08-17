@@ -16,14 +16,14 @@ mlgrid-uiは、ビルドにnodejsとyarnを利用しています。ただしDock
 初めてビルドを行う際には、次のコマンドを実行してください。
 
 ```bash
-bash ./yarn_install.sh
+bash yarn_install.sh
 ```
 
 yarnを用いてライブラリがダウンロードされ、node_modulesディレクトリが作成されます。
 次に、以下のコマンドを実行してください。
 
 ```bash
-bash ./yarn_build.sh
+bash yarn_build.sh
 ```
 
 mlgrid-uiがビルドされ、buildディレクトリにビルド結果が生成されます。
