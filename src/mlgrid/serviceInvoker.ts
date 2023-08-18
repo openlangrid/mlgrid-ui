@@ -538,12 +538,10 @@ function wrapBuffer(arg: any): any{
 		return arg.map(v=>wrapBuffer(v))
 	}
 	if(arg instanceof ArrayBuffer){
-		console.log("convert ArrayBuffer to Buffer")
 		return Buffer.from(arg);
 	}
 	if(typeof arg === 'object') {
-		for(const k in Object.keys(arg)){
-			console.log(`convert key: ${k}`)
+		for(const k of Object.keys(arg)){
 			arg[k] = wrapBuffer(arg[k])
 		}
 		return arg;
