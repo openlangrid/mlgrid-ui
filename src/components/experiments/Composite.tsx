@@ -32,7 +32,7 @@ export function TextGenerationWithTranslation({services, si, invocations}:
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("TextGenerationWithTranslation") || [];
+    const scs = services.get("TextGenerationWithTranslationService") || [];
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
             id: invId++, input: input, results: []
@@ -88,11 +88,11 @@ const TextGenerationWithTranslationInvocationResult = ({si, input, result}: {si:
 
         si.textGenerationWithTranslation(result.serviceId)
             .setBindings({
-                "Preranslation": {
-                    "ServiceId": "FuguMT",
+                "Pretranslation": {
+                    "serviceId": "FuguMT",
                     "bindings": {}
                 },
-                "TextGeneration": "OpenCalmLarge",
+                "TextGeneration": "Cerebras-GPT2.7B",
                 "Posttranslation": "FuguMT"})
             .generate(input.text, input.textLanguage, input.generationLanguage)
             .then(r=>result.result=r)
