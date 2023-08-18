@@ -9,8 +9,7 @@ import { ImageDropButton } from "./lib/ImageDropButton";
 export interface Input {
     text: string;
     textLanguage: string;
-    file: ArrayBuffer;
-    format: string;
+    files: {content: ArrayBuffer, format: string}[];
 }
 export interface Result{
     serviceId: string;
@@ -34,7 +33,7 @@ export function MultimodalTextGeneration({services, si, invocations}:
     if(services.size === 0) return (<div />);
     const scs = services.get("MultimodalTextGenerationService") || [];
     const onImage: (data: ArrayBuffer)=>void = data=>{
-        setValue("file", data);
+        setValue("files", [{content: data, format: ""}]);
     };
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
@@ -69,22 +68,24 @@ export function MultimodalTextGeneration({services, si, invocations}:
         <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><TextGenerationInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><MultimodalTextGenerationInvocation key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const TextGenerationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const MultimodalTextGenerationInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
     text: {input.text.split("\n").map(s=><>{s}<br/></>)}
     textLanguage: {input.textLanguage}<br/>
+    image: <img alt="" style={{"maxWidth": "256px", "maxHeight": "256px"}}
+        src={URL.createObjectURL(new Blob([input.files[0].content]))} /><br/>
     results:<br/>
-    {results.map((r, i)=><TextGenerationInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><MultimodalTextGenerationInvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+const MultimodalTextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -94,7 +95,8 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
         }
         if(res.value.result || res.value.error) return;
 
-        si.textGeneration(result.serviceId).generate(input.text, input.textLanguage)
+        si.multimodalTextGeneration(result.serviceId).generate(
+                input.text, input.textLanguage, [{content: input.files[0].content, format: "image/jpeg"}])
             .then(r=>result.result=r)
             .catch(e=>result.error=e)
             .finally(()=>{

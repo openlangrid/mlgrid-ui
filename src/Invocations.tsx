@@ -30,6 +30,7 @@ export class Invocations {
     icl: ICLInvocation[] = [];
     ico: ICOInvocation[] = [];
     ittc: ITTCInvocation[] = [];
+    mmti: MMTIInvocation[] = [];
     od: ODInvocation[] = [];
     os: OSInvocation[] = [];
     ser: SERInvocation[] = [];

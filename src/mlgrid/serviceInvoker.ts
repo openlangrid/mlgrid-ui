@@ -181,6 +181,12 @@ export class TextGenerationService extends Service{
 		return this.invoke("generate", Array.prototype.slice.call(arguments));
 	}
 }
+export class MultimodalTextGenerationService extends Service{
+	generate(text: string, textLanguage: string,
+			files: {content: ArrayBuffer, format: string}[]): Promise<string>{
+		return this.invoke("generate", Array.prototype.slice.call(arguments));
+	}
+}
 export class TextGenerationWithTextToSpeechService extends Service{
     generate(text: string, textLanguage: string): Promise<Audio>{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
@@ -290,6 +296,9 @@ export abstract class ServiceInvoker{
 	imageToTextConversion(serviceId: string){
 		return new ImageToTextConversionService(this, serviceId);
 	}
+	multimodalTextGeneration(serviceId: string){
+		return new MultimodalTextGenerationService(this, serviceId);
+	}
     objectDetection(serviceId: string){
         return new ObjectDetectionService(this, serviceId);
     }
@@ -355,7 +364,7 @@ export class WSServiceInvoker extends ServiceInvoker{
 		} else{
 			const l = document.location;
 			const p = l.pathname.lastIndexOf("/");
-			const path = p == -1 ? l.pathname : l.pathname.substring(0, p + 1);
+			const path = p === -1 ? l.pathname : l.pathname.substring(0, p + 1);
 			this.url = `wss://${l.hostname}${l.port ? ":" + l.port : ""}${path}ws`;
 			console.log(this.url);
 		}
@@ -410,10 +419,8 @@ export class WSServiceInvoker extends ServiceInvoker{
 				headers: {bindings: bindings},
 				method: method, args: args
 			};
+			msg.args = wrapBuffer(msg.args);
 			console.debug("req:", msg);
-			msg.args = msg.args.map(v=>
-				v instanceof ArrayBuffer ? Buffer.from(v) : v
-			);
 			const data = serialize(msg);
 			this.send(data);
 			this.handlers[rid] = r=>{
@@ -469,7 +476,7 @@ export class WSServiceInvoker extends ServiceInvoker{
 			this.ws = null;
 			this.rid = 0;
 			this.handlers = {};
-			if(this.keepAliveTimer != -1){
+			if(this.keepAliveTimer !== -1){
 				window.clearInterval(this.keepAliveTimer);
 				this.keepAliveTimer = -1;
 			}
@@ -524,4 +531,22 @@ export class HTTPServiceInvoker extends ServiceInvoker{
 			.catch(e=>reject(e));
 		});
 	}	
+}
+
+function wrapBuffer(arg: any): any{
+	if(Array.isArray(arg)){
+		return arg.map(v=>wrapBuffer(v))
+	}
+	if(arg instanceof ArrayBuffer){
+		console.log("convert ArrayBuffer to Buffer")
+		return Buffer.from(arg);
+	}
+	if(typeof arg === 'object') {
+		for(const k in Object.keys(arg)){
+			console.log(`convert key: ${k}`)
+			arg[k] = wrapBuffer(arg[k])
+		}
+		return arg;
+	}
+	return arg;
 }
