@@ -26,6 +26,7 @@ import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
+import { MultimodalTextGeneration } from './components/MultimodalTextGeneration';
 
 interface Props {
   children?: React.ReactNode;
@@ -59,12 +60,8 @@ const invocations: Invocations = new Invocations();
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
-  const firstGroupNum = 10;
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-  };
-  const handleChange2 = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue + firstGroupNum);
   };
 
   const si = new WSServiceInvoker(window.mlgrid_url);
@@ -102,10 +99,17 @@ function App() {
       <main>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="サービス種別"
-              variant="scrollable" scrollButtons="auto">
+              variant="scrollable" scrollButtons="auto"
+              TabIndicatorProps={{ sx: { display: 'none' } }}
+              sx={{
+                '& .MuiTabs-flexContainer': {
+                  flexWrap: 'wrap',
+                },
+              }}>
             <Tab label="複合サービス" />
             <Tab label="翻訳" />
             <Tab label="テキスト生成" />
+            <Tab label="画像からテキスト生成" />
             <Tab label="テキスト生成+音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
@@ -114,9 +118,6 @@ function App() {
             <Tab label="画像変換" />
             <Tab label="画像テキスト化" />
             <Tab label="テスト" />
-          </Tabs>
-          <Tabs value={value - firstGroupNum} onChange={handleChange2} aria-label="サービス種別"
-              variant="scrollable" scrollButtons="auto">
             <Tab label="画像分類" />
             <Tab label="物体検出" />
             <Tab label="セグメンテーション" />
@@ -136,6 +137,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGeneration services={services} si={si} invocations={invocations.ti} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <MultimodalTextGeneration services={services} si={si} invocations={invocations.mmti} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGenerationWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
