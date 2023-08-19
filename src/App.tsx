@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-//import './App.css';
+import './App.css';
 import { Alert, Box, Tab, Tabs } from '@mui/material';
 import { WSServiceInvoker } from './mlgrid/serviceInvoker';
 import { ServiceCheck } from './components/lib/Services';
