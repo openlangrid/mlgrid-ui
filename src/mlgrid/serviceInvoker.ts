@@ -12,12 +12,17 @@ export interface Error{
 
 export interface Box2d{ x: number, y: number, width: number, height: number}
 
+
+export interface ServiceBindings{
+    [key: string]: string | {serviceId: string; bindings: ServiceBindings}
+}
+
 // このクラスと各サービス呼び出し用のクラスを作っている。
 export class Service{
 	private bindings = {};
     constructor(private serviceInvoker: ServiceInvoker, private serviceId: string){
     }
-	setBindings(bindings: {}){
+	setBindings(bindings: ServiceBindings){
 		this.bindings = bindings;
 		return this;
 	}
@@ -257,12 +262,20 @@ export interface SearchServicesResult{
 	totalCount: number;
 	totalCountFixed: boolean;
 }
+export interface ServiceInvocation{
+	invocationName: string;
+	serviceType: string;
+}
 export class ServiceManagementService extends Service{
 	searchServices(
 		startIndex: number, maxCount: number,
 		conditions: MatchingCondition[], orders: Order[]): Promise<SearchServicesResult>{
             return this.invoke("searchServices", Array.prototype.slice.call(arguments));
     }
+	getServiceInvocations(
+		serviceId: string): Promise<ServiceInvocation[]>{
+			return this.invoke("getServiceInvocations", Array.prototype.slice.call(arguments));
+	}
 }
 
 export interface Response{
@@ -456,7 +469,6 @@ export class WSServiceInvoker extends ServiceInvoker{
 		this.ws.addEventListener('open', e=>{
 			console.debug("websocket connection opened.");
 			this.keepAliveTimer = window.setInterval(()=>{
-				console.log("send ping.");
 				const rid = this.rid++;
 				const msg = {
 					reqId: rid, serviceId: "__PingService",

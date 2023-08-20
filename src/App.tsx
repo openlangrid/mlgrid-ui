@@ -56,15 +56,27 @@ interface Window{
 }
 declare var window: Window
 
-const invocations: Invocations = new Invocations();
+class AppState{
+  invocations: Invocations = new Invocations();
+  serviceInvoker = new WSServiceInvoker(window.mlgrid_url);
+  static get(){
+    if(AppState.instance == null) AppState.instance = new AppState();
+    return AppState.instance;
+  }
+  private static instance: AppState | null = null;
+}
+
 function App() {
   const [value, setValue] = React.useState(0);
   const [services, setServices] = React.useState(new Map<string, ServiceCheck[]>());
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  
+  const appState = AppState.get();
+  const si = appState.serviceInvoker;
+  const invocations = appState.invocations;
 
-  const si = new WSServiceInvoker(window.mlgrid_url);
   const refFirst = React.useRef(true);
   useEffect(()=>{
     if (process.env.NODE_ENV === "development" && refFirst.current) {
