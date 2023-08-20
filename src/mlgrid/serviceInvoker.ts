@@ -389,16 +389,10 @@ export class WSServiceInvoker extends ServiceInvoker{
 
 	lastMillis(): number {
 		const hs = this.lastResponse()?.headers;
-		if(hs && "timer" in hs){
-			const t = hs["timer"];
-			if("children" in t){
-				const cn = t["children"];
-				if(cn.length > 0){
-					const c = cn[0];
-					if("millis" in c){
-						return c["millis"];
-					}
-				}
+		if(hs && "trace" in hs){
+			const t = hs["trace"];
+			if("ellapsedMillis" in t){
+				return t["ellapsedMillis"];
 			}
 		}
 		return 0;
