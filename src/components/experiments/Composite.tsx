@@ -178,7 +178,7 @@ const TextGenerationWithTranslationInvocationResult = (
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         {r.serviceId}{ r.result || r.error ?
         <>({r.ellapsedMs}ms):<br/> { r.result ?
-            <>{r.result.split("\n").map(s=><>{s}<br/></>)}</> :
+            <>{r.result.split("\n").map((s, i)=><span key={i}>{s}<br/></span>)}</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
         }</div>;

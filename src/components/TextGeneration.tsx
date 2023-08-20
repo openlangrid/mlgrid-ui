@@ -110,7 +110,7 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         {r.serviceId}{ (r.result != null) || r.error ?
         <>({r.ellapsedMs}ms):<br/> { r.result != null ?
-            <>{r.result.split("\n").map(s=><>{s}<br/></>)}</> :
+            <>{r.result.split("\n").map((s, i)=><span key={i}>{s}<br/></span>)}</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
         }</div>;
