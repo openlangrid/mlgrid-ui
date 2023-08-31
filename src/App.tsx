@@ -89,7 +89,11 @@ function App() {
         for(const e of r.entries){
           const st = e.serviceType;
           if(!s.has(st)) s.set(st, []);
-          s.get(st)!.push({serviceId: e.serviceId, checked: true});
+          s.get(st)!.push({
+            serviceId: e.serviceId, checked: true,
+            description: e.description, license: e.license,
+            url: e.url
+          });
         }
         setServices(s);
       }).catch(e =>{

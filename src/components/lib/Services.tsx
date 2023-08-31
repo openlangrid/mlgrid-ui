@@ -4,6 +4,9 @@ import { Holder } from "../../util/Holder";
 export interface ServiceCheck{
     serviceId: string;
     checked: boolean;
+    description: string | null;
+    license: string | null;
+    url: string | null;
 }
 
 export function Services({serviceChecks}: {serviceChecks: ServiceCheck[]}){
@@ -27,6 +30,9 @@ export function Services({serviceChecks}: {serviceChecks: ServiceCheck[]}){
                 &nbsp;<label><input onChange={handleChange}
                     type="checkbox" checked={sc.checked} />&nbsp;
                 <span>{sc.serviceId}</span></label>
+                {/* sc.description ? <small>&nbsp;({sc.description})</small> : "" */}
+                {sc.license ? <small>&nbsp;license: {sc.license}</small> : ""}
+                {sc.url ? <small><a href={sc.url}>URL</a> </small>: ""}
                 </div>;})}
         </div>;
 };

@@ -258,6 +258,9 @@ export interface SearchServicesResult{
         serviceId: string;
         serviceType: string;
 		compositionType: "ATOMIC" | "COMPOSITE";
+		description: string | null;
+		license: string | null;
+		url: string | null;
     }[];
 	totalCount: number;
 	totalCountFixed: boolean;
