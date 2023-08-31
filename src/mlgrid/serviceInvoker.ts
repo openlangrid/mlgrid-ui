@@ -411,7 +411,8 @@ export class WSServiceInvoker extends ServiceInvoker{
 				return obj.buffer;
 			}
 			for(let key of Object.keys(obj)){
-				obj[key] = this.unboxBuffer(obj[key]);
+				if(obj[key] != null)
+					obj[key] = this.unboxBuffer(obj[key]);
 			}
 		}
 		return value;
