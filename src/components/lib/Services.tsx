@@ -31,8 +31,8 @@ export function Services({serviceChecks}: {serviceChecks: ServiceCheck[]}){
                     type="checkbox" checked={sc.checked} />&nbsp;
                 <span>{sc.serviceId}</span></label>
                 {/* sc.description ? <small>&nbsp;({sc.description})</small> : "" */}
-                {sc.license ? <small>&nbsp;license: {sc.license}</small> : ""}
-                {sc.url ? <small><a href={sc.url}>URL</a> </small>: ""}
+                {sc.license ? <small>&nbsp;(license: {sc.license})</small> : ""}
+                {sc.url ? <small>&nbsp;<a href={sc.url}>URL</a> </small>: ""}
                 </div>;})}
         </div>;
 };
