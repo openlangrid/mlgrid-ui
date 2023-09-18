@@ -510,8 +510,10 @@ export class WSServiceInvoker extends ServiceInvoker{
 				r = JSON.parse(e.data);
 			}
 			console.debug("res(decoded):", r);
-			this.handlers[r.reqId](r);
-			delete this.handlers[r.reqId];
+			if(r.reqId in this.handlers){
+				this.handlers[r.reqId](r);
+				delete this.handlers[r.reqId];
+			}
 		});
 	}
 }
