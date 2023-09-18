@@ -6,7 +6,7 @@ import { Invocation as HPEInvocation } from './components/HumanPoseEstimation';
 import { Invocation as ICLInvocation } from './components/ImageClassification';
 import { Invocation as ICOInvocation } from './components/ImageConversion';
 import { Invocation as ITTCInvocation } from './components/ImageToTextConversion';
-import { Invocation as MMTIInvocation } from './components/MultimodalTextGeneration';
+import { Invocation as IWIInvocation } from './components/InstructionWithImage';
 import { Invocation as ODInvocation } from './components/ObjectDetection';
 import { Invocation as OSInvocation } from './components/ObjectSegmentation';
 import { Invocation as SRInvocation} from './components/SpeechRecognition';
@@ -30,7 +30,7 @@ export class Invocations {
     icl: ICLInvocation[] = [];
     ico: ICOInvocation[] = [];
     ittc: ITTCInvocation[] = [];
-    mmti: MMTIInvocation[] = [];
+    iwi: IWIInvocation[] = [];
     od: ODInvocation[] = [];
     os: OSInvocation[] = [];
     ser: SERInvocation[] = [];

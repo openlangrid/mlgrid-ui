@@ -146,6 +146,12 @@ export class ImageToTextConversionService extends Service{
 		return this.invoke("convert", Array.prototype.slice.call(arguments));
 	}
 }
+export class InstructionWithImageService extends Service{
+	instruct(text: string, textLanguage: string,
+			image: ArrayBuffer, imageFormat: string): Promise<string>{
+		return this.invoke("instruct", Array.prototype.slice.call(arguments));
+	}
+}
 export interface SpeechEmotionRecognitionResult{
 	label: string;
 	degree: number;
@@ -311,6 +317,9 @@ export abstract class ServiceInvoker{
 	}
 	imageToTextConversion(serviceId: string){
 		return new ImageToTextConversionService(this, serviceId);
+	}
+	instructionWithImage(serviceId: string){
+		return new InstructionWithImageService(this, serviceId);
 	}
 	multimodalTextGeneration(serviceId: string){
 		return new MultimodalTextGenerationService(this, serviceId);

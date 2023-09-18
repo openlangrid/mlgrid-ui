@@ -26,7 +26,7 @@ import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
-import { MultimodalTextGeneration } from './components/MultimodalTextGeneration';
+import { InstructionWithImage } from './components/InstructionWithImage';
 
 interface Props {
   children?: React.ReactNode;
@@ -155,7 +155,7 @@ function App() {
           <TextGeneration services={services} si={si} invocations={invocations.ti} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <MultimodalTextGeneration services={services} si={si} invocations={invocations.mmti} />
+          <InstructionWithImage services={services} si={si} invocations={invocations.iwi} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGenerationWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />
