@@ -23,15 +23,15 @@ export interface Invocation{
     results: Result[];
 }
 let invId = 0;
-export function InstructionWithImage({services, si, invocations}:
+export function VisualQuestionAnswering({services, si, invocations}:
     {services: Map<string, ServiceCheck[]>; si: ServiceInvoker; invocations: Invocation[]}){
     const { register, handleSubmit, setValue } = useForm<Input>({defaultValues: {
         "text": "これは何をしているところですか？",
-        "textLanguage": "en"
+        "textLanguage": "ja"
     }});
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
-    const scs = services.get("InstructionWithImageService") || [];
+    const scs = services.get("VisualQuestionAnsweringService") || [];
     const onImage: (data: ArrayBuffer)=>void = data=>{
         setValue("files", [{content: data, format: ""}]);
     };
@@ -68,13 +68,13 @@ export function InstructionWithImage({services, si, invocations}:
         <br/>
         <label>invocation histories:</label>
         <div>
-        {invState.value.map(inv=><InstructionWithImageInvocation key={inv.id} si={si} inv={inv} />)}
+        {invState.value.map(inv=><InvocationLog key={inv.id} si={si} inv={inv} />)}
         </div>
     </div>
     );
 }
 
-const InstructionWithImageInvocation = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
+const InvocationLog = memo(({si, inv: {input, results}}: {si: ServiceInvoker; inv: Invocation})=>
     <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
     input:<br/>
     text: {input.text.split("\n").map(s=><>{s}<br/></>)}
@@ -82,10 +82,10 @@ const InstructionWithImageInvocation = memo(({si, inv: {input, results}}: {si: S
     image: <img alt="" style={{"maxWidth": "256px", "maxHeight": "256px"}}
         src={URL.createObjectURL(new Blob([input.files[0].content]))} /><br/>
     results:<br/>
-    {results.map((r, i)=><InstructionWithImageInvocationResult key={i} input={input} result={r} si={si} />)}
+    {results.map((r, i)=><InvocationResult key={i} input={input} result={r} si={si} />)}
     </div>);
 
-const InstructionWithImageInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
+const InvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input; result: Result})=>{
     const [res, setRes] = useState(new Holder(result));
     const refFirst = useRef(true);
     useEffect(()=>{
@@ -95,7 +95,7 @@ const InstructionWithImageInvocationResult = ({si, input, result}: {si: ServiceI
         }
         if(res.value.result || res.value.error) return;
 
-        si.instructionWithImage(result.serviceId).instruct(
+        si.visualQuestionAnswering(result.serviceId).generate(
                 input.text, input.textLanguage, input.files[0].content, "image/jpeg")
             .then(r=>result.result=r)
             .catch(e=>result.error=e)

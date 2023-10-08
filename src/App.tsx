@@ -22,11 +22,12 @@ import { Test } from './components/Test';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
 import { TextGeneration } from './components/TextGeneration';
+import { TextInstruction } from './components/TextInstruction';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
-import { InstructionWithImage } from './components/InstructionWithImage';
+import { VisualQuestionAnswering } from './components/VisualQuestionAnswering';
 
 interface Props {
   children?: React.ReactNode;
@@ -125,7 +126,8 @@ function App() {
             <Tab label="複合サービス" />
             <Tab label="翻訳" />
             <Tab label="テキスト生成" />
-            <Tab label="画像からテキスト生成" />
+            <Tab label="テキスト指示" />
+            <Tab label="画像QA" />
             <Tab label="テキスト生成+音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
@@ -152,10 +154,13 @@ function App() {
           <Translation services={services} si={si} invocations={invocations.tr} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <TextGeneration services={services} si={si} invocations={invocations.ti} />
+          <TextGeneration services={services} si={si} invocations={invocations.tg} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
-          <InstructionWithImage services={services} si={si} invocations={invocations.iwi} />
+          <TextInstruction services={services} si={si} invocations={invocations.ti} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <VisualQuestionAnswering services={services} si={si} invocations={invocations.iwi} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGenerationWithTextToSpeech services={services} si={si} invocations={invocations.cwtts} />

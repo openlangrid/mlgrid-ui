@@ -146,12 +146,6 @@ export class ImageToTextConversionService extends Service{
 		return this.invoke("convert", Array.prototype.slice.call(arguments));
 	}
 }
-export class InstructionWithImageService extends Service{
-	instruct(text: string, textLanguage: string,
-			image: ArrayBuffer, imageFormat: string): Promise<string>{
-		return this.invoke("instruct", Array.prototype.slice.call(arguments));
-	}
-}
 export interface SpeechEmotionRecognitionResult{
 	label: string;
 	degree: number;
@@ -189,6 +183,11 @@ export class TextGuidedImageManipulationService extends Service{
 }
 export class TextGenerationService extends Service{
 	generate(text: string, textLanguage: string): Promise<string>{
+		return this.invoke("generate", Array.prototype.slice.call(arguments));
+	}
+}
+export class TextInstructionService extends Service{
+	generate(systemPrompt: string, userPrompt: string, promptLanguage: string): Promise<string>{
 		return this.invoke("generate", Array.prototype.slice.call(arguments));
 	}
 }
@@ -248,6 +247,13 @@ export class TextGenerationWithTranslationService extends Service{
         return this.invoke("generate", Array.prototype.slice.call(arguments));
 	}
 }
+export class VisualQuestionAnsweringService extends Service{
+	generate(prompt: string, promptLanguage: string,
+			image: ArrayBuffer, imageFormat: string): Promise<string>{
+		return this.invoke("generate", Array.prototype.slice.call(arguments));
+	}
+}
+
 
 export interface MatchingCondition{
     fieldName: string;
@@ -318,9 +324,6 @@ export abstract class ServiceInvoker{
 	imageToTextConversion(serviceId: string){
 		return new ImageToTextConversionService(this, serviceId);
 	}
-	instructionWithImage(serviceId: string){
-		return new InstructionWithImageService(this, serviceId);
-	}
 	multimodalTextGeneration(serviceId: string){
 		return new MultimodalTextGenerationService(this, serviceId);
 	}
@@ -357,6 +360,9 @@ export abstract class ServiceInvoker{
 	textGenerationWithTextToSpeech(serviceId: string){
 		return new TextGenerationWithTextToSpeechService(this, serviceId);
 	}
+    textInstruction(serviceId: string){
+        return new TextInstructionService(this, serviceId);
+    }
     textSentimentAnalysis(serviceId: string){
         return new TextSentimentAnalysisService(this, serviceId);
     }
@@ -365,6 +371,9 @@ export abstract class ServiceInvoker{
     }
 	textToSpeech(serviceId: string){
 		return new TextToSpeechService(this, serviceId);
+	}
+	visualQuestionAnswering(serviceId: string){
+		return new VisualQuestionAnsweringService(this, serviceId);
 	}
 
 	serviceManagement(){
