@@ -298,6 +298,9 @@ export interface Response{
 	result: any;
 	error: {code: number; message: string};
 }
+export interface WSResponse extends Response{
+	reqId: number;
+}
 // Service呼び出しに使用するクラスのベースクラス。派生クラスで実装するinvokeメソッドと、
 // 各サービスクラスを返すメソッドだけを用意する。
 export abstract class ServiceInvoker{
@@ -387,7 +390,7 @@ export class WSServiceInvoker extends ServiceInvoker{
     private sendbuf: (string | ArrayBufferLike | Blob | ArrayBufferView)[] = [];
     private rid = 0;
     private handlers: {[key: number]: (r: any)=>void} = {};
-	private lastResponse_: Response | null = null;
+	private lastResponse_: WSResponse | null = null;
 	private url: string;
 	private keepAliveTimer = -1;
 
@@ -404,7 +407,11 @@ export class WSServiceInvoker extends ServiceInvoker{
 		}
 	}
 
-	lastResponse(): Response | null {
+	nextRequestId(){
+		return this.rid;
+	}
+
+	lastResponse(): WSResponse | null {
 		return this.lastResponse_;
 	}
 
@@ -513,7 +520,7 @@ export class WSServiceInvoker extends ServiceInvoker{
 			let r: any = null;
 			if(e.data instanceof ArrayBuffer) {
 				// binary
-				r = deserialize(e.data);
+				r = deserialize(new Uint8Array(e.data));
 			} else {
 				// text
 				r = JSON.parse(e.data);
