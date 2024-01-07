@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Error, Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, GpuInfo, Image, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"
@@ -16,6 +16,7 @@ export interface Input {
 export interface Result{
     serviceId: string;
     ellapsedMs: number;
+    gpuInfos: GpuInfo[];
     result: Image[] | null;
     error: Error | null;
 }
@@ -41,7 +42,7 @@ export function TextGuidedImageGeneration({si, services, invocations}:
         for(const sc of scs){
             if(!sc.checked) continue;
             inv.results.push({serviceId: sc.serviceId,
-                result: null, error: null, ellapsedMs: 0});
+                result: null, error: null, ellapsedMs: 0, gpuInfos: []});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -105,7 +106,11 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
 
     const r = res.value;
     return <div>{r.serviceId}{ r.result || r.error ?
-        <>({r.ellapsedMs.toLocaleString()}ms): { r.result ?
+        <>({r.ellapsedMs.toLocaleString()}ms{
+            r.gpuInfos.length > 0 ?
+                `, gpu: ${r.gpuInfos.map(i=>`${i.usedMemoryMegas.toLocaleString()}MB/${i.totalMemoryMegas.toLocaleString()}MB`)}` :
+                ""
+            }):<br/> { r.result != null ?
             <>done.<br/>{ r.result.map((r, i) =>
                 <div style={{display: "inline-block", resize: "both", overflow: "hidden", verticalAlign: "top"}}>
                     <img style={{width: "100%", height: "100%", objectFit: "contain"}}
