@@ -20,7 +20,7 @@ export function Services({serviceChecks}: {serviceChecks: ServiceCheck[]}){
 //    services.value.forEach(s=>console.log(`${s.serviceId}: ${s.checked}`));
 
     return <div>
-        <label><input type="checkbox" onClick={toggleAllCheck} defaultChecked={true}></input>&nbsp; services:</label>
+        <label><input type="checkbox" onClick={toggleAllCheck}></input>&nbsp; services:</label>
         {services.value.map((sc, i) => {
             const handleChange: ChangeEventHandler<HTMLInputElement> = e=>{
                 sc.checked = e.target.checked;

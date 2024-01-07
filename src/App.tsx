@@ -91,7 +91,7 @@ function App() {
           const st = e.serviceType;
           if(!s.has(st)) s.set(st, []);
           s.get(st)!.push({
-            serviceId: e.serviceId, checked: true,
+            serviceId: e.serviceId, checked: false,
             description: e.description, license: e.license,
             url: e.url
           });
