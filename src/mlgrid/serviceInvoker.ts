@@ -293,8 +293,22 @@ export class ServiceManagementService extends Service{
 	}
 }
 
+export interface GpuInfo{
+	timestamp: string;
+	gpuName: string;
+	index: number;
+	totalMemoryMegas: number;
+	usedMemoryMegas: number;
+	freeMemoryMegas: number;
+	gpuUtilizationPercentage: number;
+	memoryUtilizationPercentage: number;
+}
 export interface Response{
-	headers: {[key: string]: any};
+	headers: {
+		trace: {ellapsedMillis: number | undefined} | undefined;
+		gpuInfos: GpuInfo[] | undefined;
+		[key: string]: any;
+	};
 	result: any;
 	error: {code: number; message: string};
 }
@@ -307,6 +321,7 @@ export abstract class ServiceInvoker{
     abstract invoke(serviceId: string, methodName: string, args: any[], bindings: {}): Promise<any>;
 	abstract lastResponse(): Response | null;
 	abstract lastMillis(): number;
+	abstract lastUsedGpuMegas(): number[];
 
     /** return {ContinuousSpeechRecognitionService} */
 	chat(serviceId: string){
@@ -416,14 +431,11 @@ export class WSServiceInvoker extends ServiceInvoker{
 	}
 
 	lastMillis(): number {
-		const hs = this.lastResponse()?.headers;
-		if(hs && "trace" in hs){
-			const t = hs["trace"];
-			if("ellapsedMillis" in t){
-				return t["ellapsedMillis"];
-			}
-		}
-		return 0;
+		return this.lastResponse()?.headers?.trace?.ellapsedMillis || 0;
+	}
+
+	lastUsedGpuMegas(): number[]{
+		return this.lastResponse()?.headers?.gpuInfos?.map(gi => gi.usedMemoryMegas) || [];
 	}
 
 	private unboxBuffer<T>(value: T): T{
@@ -545,6 +557,10 @@ export class HTTPServiceInvoker extends ServiceInvoker{
 
 	lastMillis(): number {
 		return -1;
+	}
+
+	lastUsedGpuMegas(): number[] {
+		return [];
 	}
 
 	invoke(serviceId: string, method: string, args: any[]){
