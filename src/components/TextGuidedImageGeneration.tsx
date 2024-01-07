@@ -108,7 +108,7 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
     return <div>{r.serviceId}{ r.result || r.error ?
         <>({r.ellapsedMs.toLocaleString()}ms{
             r.gpuInfos.length > 0 ?
-                `, gpu: ${r.gpuInfos.map(i=>`${i.usedMemoryMegas.toLocaleString()}MB/${i.totalMemoryMegas.toLocaleString()}MB`)}` :
+                `, gpu: ${r.gpuInfos.map(i=>`${i.usedMemoryMB.toLocaleString()}MB/${i.totalMemoryMB.toLocaleString()}MB`)}` :
                 ""
             }):<br/> { r.result != null ?
             <>done.<br/>{ r.result.map((r, i) =>

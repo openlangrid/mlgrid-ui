@@ -297,9 +297,9 @@ export interface GpuInfo{
 	timestamp: string;
 	gpuName: string;
 	index: number;
-	totalMemoryMegas: number;
-	usedMemoryMegas: number;
-	freeMemoryMegas: number;
+	totalMemoryMB: number;
+	usedMemoryMB: number;
+	freeMemoryMB: number;
 	gpuUtilizationPercentage: number;
 	memoryUtilizationPercentage: number;
 }

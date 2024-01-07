@@ -113,7 +113,7 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
         {r.serviceId}{ (r.result != null) || r.error ?
         <>({r.ellapsedMs.toLocaleString()}ms{
             r.gpuInfos.length > 0 ?
-                `, gpu: ${r.gpuInfos.map(i=>`${i.usedMemoryMegas.toLocaleString()}MB/${i.totalMemoryMegas.toLocaleString()}MB`)}` :
+                `, gpu: ${r.gpuInfos.map(i=>`${i.usedMemoryMB.toLocaleString()}MB/${i.totalMemoryMB.toLocaleString()}MB`)}` :
                 ""
             }):<br/> { r.result != null ?
             <>{r.result.split("\n").map((s, i)=><span key={i}>{s}<br/></span>)}</> :
