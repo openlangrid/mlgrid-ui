@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, GpuInfo, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
@@ -13,6 +13,7 @@ export interface Input {
 export interface Result{
     serviceId: string;
     ellapsedMs: number;
+    gpuInfos: GpuInfo[];
     result: string | null;
     error: Error | null;
 }
@@ -39,7 +40,7 @@ export function TextInstruction({services, si, invocations}:
         for(const sc of scs){
             if(!sc.checked) continue;
             inv.results.push({serviceId: sc.serviceId,
-                result: null, error: null, ellapsedMs: 0});
+                result: null, error: null, ellapsedMs: 0, gpuInfos: []});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -102,7 +103,11 @@ const InvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input
     const r = res.value;
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         {r.serviceId}{ (r.result != null) || r.error ?
-        <>({r.ellapsedMs}ms):<br/> { r.result != null ?
+        <>({r.ellapsedMs.toLocaleString()}ms{
+            r.gpuInfos.length > 0 ?
+                `, gpu: ${r.gpuInfos.map(i=>`${i.usedMemoryMegas.toLocaleString()}MB/${i.totalMemoryMegas.toLocaleString()}MB`)}` :
+                ""
+            }):<br/> { r.result != null ?
             <>{r.result.split("\n").map((s, i)=><span key={i}>{s}<br/></span>)}</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>
