@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { memo, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, GpuInfo, ServiceInvoker } from "../mlgrid/serviceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 
@@ -12,7 +12,7 @@ export interface Input {
 export interface Result{
     serviceId: string;
     ellapsedMs: number;
-    usedGpuMegas: number[];
+    gpuInfos: GpuInfo[];
     result: string | null;
     error: Error | null;
 }
@@ -38,7 +38,7 @@ export function TextGeneration({services, si, invocations}:
         for(const sc of scs){
             if(!sc.checked) continue;
             inv.results.push({serviceId: sc.serviceId,
-                result: null, error: null, ellapsedMs: 0, usedGpuMegas: []});
+                result: null, error: null, ellapsedMs: 0, gpuInfos: []});
         }
         invocations.unshift(inv);
         setInvState(invState.clone());
@@ -103,7 +103,7 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
             .catch(e=>result.error=e)
             .finally(()=>{
                 result.ellapsedMs = si.lastMillis();
-                result.usedGpuMegas = si.lastUsedGpuMegas();
+                result.gpuInfos = si.lastGpuInfos();
                 setRes(res.clone());
             });
     }, []);
@@ -111,7 +111,11 @@ const TextGenerationInvocationResult = ({si, input, result}: {si: ServiceInvoker
     const r = res.value;
     return <div style={{border: "1px solid", borderRadius: "4px", padding: "4px"}}>
         {r.serviceId}{ (r.result != null) || r.error ?
-        <>({r.ellapsedMs.toLocaleString()}ms{r.usedGpuMegas.length > 0 ? `, gpu: ${r.usedGpuMegas.map(v=>v.toLocaleString() + "MB")}`: ""}):<br/> { r.result != null ?
+        <>({r.ellapsedMs.toLocaleString()}ms{
+            r.gpuInfos.length > 0 ?
+                `, gpu: ${r.gpuInfos.map(i=>`${i.usedMemoryMegas.toLocaleString()}MB/${i.totalMemoryMegas.toLocaleString()}MB`)}` :
+                ""
+            }):<br/> { r.result != null ?
             <>{r.result.split("\n").map((s, i)=><span key={i}>{s}<br/></span>)}</> :
             <>{JSON.stringify(r.error)}</> }</> :
         <>: <span className="loader" /></>

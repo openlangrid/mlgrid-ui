@@ -321,7 +321,7 @@ export abstract class ServiceInvoker{
     abstract invoke(serviceId: string, methodName: string, args: any[], bindings: {}): Promise<any>;
 	abstract lastResponse(): Response | null;
 	abstract lastMillis(): number;
-	abstract lastUsedGpuMegas(): number[];
+	abstract lastGpuInfos(): GpuInfo[];
 
     /** return {ContinuousSpeechRecognitionService} */
 	chat(serviceId: string){
@@ -434,8 +434,8 @@ export class WSServiceInvoker extends ServiceInvoker{
 		return this.lastResponse()?.headers?.trace?.ellapsedMillis || 0;
 	}
 
-	lastUsedGpuMegas(): number[]{
-		return this.lastResponse()?.headers?.gpuInfos?.map(gi => gi.usedMemoryMegas) || [];
+	lastGpuInfos(): GpuInfo[]{
+		return this.lastResponse()?.headers?.gpuInfos || [];
 	}
 
 	private unboxBuffer<T>(value: T): T{
@@ -555,11 +555,11 @@ export class HTTPServiceInvoker extends ServiceInvoker{
 		return null;
 	}
 
-	lastMillis(): number {
+	lastMillis() {
 		return -1;
 	}
 
-	lastUsedGpuMegas(): number[] {
+	lastGpuInfos() {
 		return [];
 	}
 
