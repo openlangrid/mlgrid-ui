@@ -100,11 +100,13 @@ const TGIGInvocationResult = ({si, input, result}: {si: ServiceInvoker; input: I
             .catch(e=>result.error=e)
             .finally(()=>{
                 result.ellapsedMs = si.lastMillis();
+                result.gpuInfos = si.lastGpuInfos();
                 setRes(res.clone());
             });
     });
 
     const r = res.value;
+    console.log(r.gpuInfos);
     return <div>{r.serviceId}{ r.result || r.error ?
         <>({r.ellapsedMs.toLocaleString()}ms{
             r.gpuInfos.length > 0 ?
