@@ -86,9 +86,13 @@ export class ImageClassificationService extends Service{
 	}
 }
 
+export interface Morpheme{
+	word: string;
+	lemma: string;
+	partOfSpeech: string;
+}
 export class MorphologicalAnalysisService extends Service{
-	analyze(language: string, text: string):
-		Promise<{word: string; lemma: string; pos: string}[]>{
+	analyze(language: string, text: string): Promise<Morpheme[]>{
 		return this.invoke("analyze", Array.prototype.slice.call(arguments));
 	}
 }
