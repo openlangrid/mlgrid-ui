@@ -1,4 +1,4 @@
-import { Box2d } from "./serviceInvoker";
+import { Box2d } from "./ServiceInvoker";
 
 export function round(v: number, n: number){
 	const s = Math.pow(10, n);
