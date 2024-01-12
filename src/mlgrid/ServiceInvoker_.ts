@@ -86,6 +86,12 @@ export class ImageClassificationService extends Service{
 	}
 }
 
+export class MorphologicalAnalysisService extends Service{
+	analyze(language: string, text: string):
+		Promise<{word: string; lemma: string; pos: string}[]>{
+		return this.invoke("analyze", Array.prototype.slice.call(arguments));
+	}
+}
 export interface ObjectDetection{
 	label: string;
 	accuracy: number;
@@ -342,6 +348,9 @@ export abstract class ServiceInvoker{
 	imageToTextConversion(serviceId: string){
 		return new ImageToTextConversionService(this, serviceId);
 	}
+	morphologicalAnalysis(serviceId: string){
+		return new MorphologicalAnalysisService(this, serviceId);
+	}
 	multimodalTextGeneration(serviceId: string){
 		return new MultimodalTextGenerationService(this, serviceId);
 	}
@@ -440,7 +449,7 @@ export class WSServiceInvoker extends ServiceInvoker{
 
 	private unboxBuffer<T>(value: T): T{
 		if(Array.isArray(value)){
-			let array = value as [];
+			let array = value as T[];
 			for(let i = 0; i < array.length; i++){
 				array[i] = this.unboxBuffer(array[i]);
 			}
