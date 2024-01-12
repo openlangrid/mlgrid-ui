@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ServiceBindings, ServiceInvocation, ServiceInvoker } from "../../mlgrid/serviceInvoker";
+import { ServiceBindings, ServiceInvocation, ServiceInvoker } from "../../mlgrid/ServiceInvoker";
 import { ServiceCheck, Services } from "../lib/Services";
 import { ChangeEvent, ChangeEventHandler, ReactNode, memo, useEffect, useRef, useState } from "react";
 import { Holder } from "../../util/Holder";

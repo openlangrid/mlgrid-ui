@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ObjectDetection as Detection, Error, ObjectDetectionResult, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { ObjectDetection as Detection, Error, ObjectDetectionResult, ServiceInvoker } from "../mlgrid/ServiceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
 import "./common.css"

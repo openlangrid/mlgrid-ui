@@ -2,7 +2,7 @@ import { Button, TextField, Input } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { round } from "../mlgrid/formatUtil";
-import { Error, ServiceInvoker } from "../mlgrid/serviceInvoker";
+import { Error, ServiceInvoker } from "../mlgrid/ServiceInvoker";
 import { Holder } from "../util/Holder";
 import { ImageDropButton } from "./lib/ImageDropButton";
 import { ServiceCheck, Services } from "./lib/Services";
