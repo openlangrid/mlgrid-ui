@@ -14,6 +14,7 @@ import { HumanPoseEstimation } from './components/HumanPoseEstimation';
 import { ImageClassification } from './components/ImageClassification';
 import { ImageConversion } from './components/ImageConversion';
 import { ImageToTextConversion } from './components/ImageToTextConversion';
+import { MorphologicalAnalysis } from './components/MorphologicalAnalysis';
 import { ObjectDetection } from './components/ObjectDetection';
 import { ObjectSegmentation } from './components/ObjectSegmentation';
 import { SpeechRecognition } from './components/SpeechRecognition';
@@ -145,6 +146,7 @@ function App() {
             <Tab label="ブラウザ音声認識" />
             <Tab label="音声感情認識" />
             <Tab label="音声合成" />
+            <Tab label="形態素解析" />
           </Tabs>
         </Box>
         <TabPanel value={value} index={index++}>
@@ -212,6 +214,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextToSpeech services={services} si={si} invocations={invocations.tts} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <MorphologicalAnalysis services={services} si={si} invocations={invocations.ma} />
         </TabPanel>
       </main>
       <footer>

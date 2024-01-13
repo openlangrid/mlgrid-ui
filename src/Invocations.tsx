@@ -7,6 +7,7 @@ import { Invocation as ICLInvocation } from './components/ImageClassification';
 import { Invocation as ICOInvocation } from './components/ImageConversion';
 import { Invocation as ITTCInvocation } from './components/ImageToTextConversion';
 import { Invocation as IWIInvocation } from './components/VisualQuestionAnswering';
+import { Invocation as MAInvocation } from './components/MorphologicalAnalysis';
 import { Invocation as ODInvocation } from './components/ObjectDetection';
 import { Invocation as OSInvocation } from './components/ObjectSegmentation';
 import { Invocation as SRInvocation} from './components/SpeechRecognition';
@@ -46,4 +47,5 @@ export class Invocations {
     tsc: TSCInvocation[] = [];
     tr: TRInvocation[] = [];
     tts: TTSInvocation[] = [];
+    ma: MAInvocation[] = [];
 }
