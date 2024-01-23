@@ -96,6 +96,7 @@ const InvocationResult = ({si, input, result}: {si: ServiceInvoker; input: Input
             .catch(e=>result.error=e)
             .finally(()=>{
                 result.ellapsedMs = si.lastMillis();
+                result.gpuInfos = si.lastGpuInfos();
                 setRes(res.clone());
             });
     }, []);
