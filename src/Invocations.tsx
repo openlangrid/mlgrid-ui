@@ -1,5 +1,6 @@
 import { Invocation as BSRInvocation } from './components/BrowserSR';
 import { Invocation as CInvocation } from './components/Chat';
+import { Invocation as CQAInvocation } from './components/ContexturalQuetionAnswering';
 import { Invocation as CSRInvocation } from './components/ContinuousSpeechRecognition';
 import { Invocation as CWTTSInvocation } from './components/TextGenerationWithTextToSpeech';
 import { Invocation as HPEInvocation } from './components/HumanPoseEstimation';
@@ -26,6 +27,7 @@ import { Invocation as TRInvocation } from './components/Translation';
 export class Invocations {
     bsr: BSRInvocation[] = [];
     c: CInvocation[] = [];
+    cqa: CQAInvocation[] = [];
     csr: CSRInvocation[] = [];
     cwtts: CWTTSInvocation[] = [];
     hpe: HPEInvocation[] = [];

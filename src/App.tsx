@@ -7,8 +7,7 @@ import { Invocations } from './Invocations';
 
 import { BrowserSR } from './components/BrowserSR';
 import { Chat } from './components/Chat';
-import { TextGenerationWithTranslation } from './components/experiments/Composite';
-import { TextGenerationWithTextToSpeech } from './components/TextGenerationWithTextToSpeech';
+import { ContextualQuestionAnswering } from './components/ContexturalQuetionAnswering';
 import { ContinuousSpeechRecognition } from './components/ContinuousSpeechRecognition';
 import { HumanPoseEstimation } from './components/HumanPoseEstimation';
 import { ImageClassification } from './components/ImageClassification';
@@ -20,6 +19,8 @@ import { ObjectSegmentation } from './components/ObjectSegmentation';
 import { SpeechRecognition } from './components/SpeechRecognition';
 import { SpeechEmotionRecognition } from './components/SpeechEmotionRecognition';
 import { Test } from './components/Test';
+import { TextGenerationWithTextToSpeech } from './components/TextGenerationWithTextToSpeech';
+import { TextGenerationWithTranslation } from './components/experiments/Composite';
 import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneration';
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
 import { TextGeneration } from './components/TextGeneration';
@@ -128,6 +129,7 @@ function App() {
             <Tab label="翻訳" />
             <Tab label="テキスト生成" />
             <Tab label="テキスト指示" />
+            <Tab label="テキストQA" />
             <Tab label="画像QA" />
             <Tab label="テキスト生成+音声合成" />
             <Tab label="テキスト感情分析" />
@@ -160,6 +162,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextInstruction services={services} si={si} invocations={invocations.ti} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <ContextualQuestionAnswering services={services} si={si} invocations={invocations.cqa} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <VisualQuestionAnswering services={services} si={si} invocations={invocations.iwi} />

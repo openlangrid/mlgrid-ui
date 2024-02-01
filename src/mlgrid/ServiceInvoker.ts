@@ -39,6 +39,11 @@ export class ChatService extends Service{
         return this.invoke("chat", Array.prototype.slice.call(arguments));
     }
 }
+export class ContextualQuestionAnsweringService extends Service{
+	ask(context: string, question: string, language: string): Promise<string>{
+		return this.invoke("ask", Array.prototype.slice.call(arguments));
+	}
+}
 export interface ContinuousSpeechRecognitionStartRecognitionConfig{
 	channels: number;
 	sampleSizeInBits: number;
@@ -336,6 +341,9 @@ export abstract class ServiceInvoker{
     /** return {ContinuousSpeechRecognitionService} */
 	chat(serviceId: string){
 		return new ChatService(this, serviceId);
+	}
+	contextualQuestionAnswering(serviceId: string){
+		return new ContextualQuestionAnsweringService(this, serviceId);
 	}
     continuousSpeechRecognition(serviceId: string){
         return new ContinuousSpeechRecognitionService(this, serviceId);
