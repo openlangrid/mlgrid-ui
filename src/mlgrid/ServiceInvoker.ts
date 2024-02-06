@@ -34,9 +34,14 @@ export class Service{
 
 // 各サービス呼び出しクラス。サービスの種類毎に用意する。
 // サービス毎にどんなメソッド名があるかを明示するために設けている。
+export interface ChatMessage{
+	role: string;
+	content: string;
+	contentLanguage: string;
+}
 export class ChatService extends Service{
-    chat(utterance: string, utteranceLanguage: string): Promise<string>{
-        return this.invoke("chat", Array.prototype.slice.call(arguments));
+    generate(messages: ChatMessage[]): Promise<string>{
+        return this.invoke("generate", Array.prototype.slice.call(arguments));
     }
 }
 export class ContextualQuestionAnsweringService extends Service{

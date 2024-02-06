@@ -130,6 +130,7 @@ function App() {
             <Tab label="テキスト生成" />
             <Tab label="テキスト指示" />
             <Tab label="テキストQA" />
+            <Tab label="チャット" />
             <Tab label="画像QA" />
             <Tab label="テキスト生成+音声合成" />
             <Tab label="テキスト感情分析" />
@@ -165,6 +166,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ContextualQuestionAnswering services={services} si={si} invocations={invocations.cqa} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <Chat services={services} si={si} invocations={invocations.c} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <VisualQuestionAnswering services={services} si={si} invocations={invocations.iwi} />
