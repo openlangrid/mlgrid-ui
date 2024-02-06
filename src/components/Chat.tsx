@@ -51,14 +51,18 @@ export function Chat({services, si, invocations}:
 		<label>inputs:</label><br/><br/>
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                {fields.map((m, index)=><>
+                {fields.map((m, index)=><div key={index}>
                 <FormControl>
                     <InputLabel htmlFor="">role</InputLabel>
                     <Controller
                         control={control}
                         name={`messages.${index}.role`}
-                        render={()=>
-                            <Select size="small" style={{width: "8em"}}>
+                        render={(field)=>
+                            <Select size="small" defaultValue={"user"} style={{width: "8em"}}
+                              onChange={(newValue) => {
+                                field.field.onChange(newValue);
+                              }}
+                            >
                                 <MenuItem value="system">system</MenuItem>
                                 <MenuItem value="user">user</MenuItem>
                                 <MenuItem value="assistant">assistant</MenuItem>
@@ -69,9 +73,9 @@ export function Chat({services, si, invocations}:
                 <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register(`messages.${index}.contentLanguage`)} />
                 <Button type="button" onClick={() => remove(index)}>削除</Button>
                 <br/>
-                </>)}
+                </div>)}
                 <br/>
-                <Button type="button" onClick={() => append({ role: "", content: "", contentLanguage: "en" })}>追加</Button><br/>
+                <Button type="button" onClick={() => append({ role: "user", content: "", contentLanguage: "en" })}>追加</Button><br/>
                 <Button type="submit" variant="contained" >チャット</Button>
             </form>
 		</div>
