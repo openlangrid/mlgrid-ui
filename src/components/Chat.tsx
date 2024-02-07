@@ -52,27 +52,27 @@ export function Chat({services, si, invocations}:
 		<div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 {fields.map((m, index)=><div key={index}>
-                <FormControl>
-                    <InputLabel htmlFor="">role</InputLabel>
-                    <Controller
-                        control={control}
-                        name={`messages.${index}.role`}
-                        render={(field)=>
-                            <Select size="small" defaultValue={"user"} style={{width: "8em"}}
-                              onChange={(newValue) => {
-                                field.field.onChange(newValue);
-                              }}
-                            >
-                                <MenuItem value="system">system</MenuItem>
-                                <MenuItem value="user">user</MenuItem>
-                                <MenuItem value="assistant">assistant</MenuItem>
-                            </Select>
-                        } />
-                </FormControl>
-                <TextField label="content" size="small" type="text" style={{width: "70%"}} {...register(`messages.${index}.content`)} />
-                <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register(`messages.${index}.contentLanguage`)} />
-                <Button type="button" onClick={() => remove(index)}>削除</Button>
-                <br/>
+                    <FormControl>
+                        <InputLabel htmlFor="">role</InputLabel>
+                        <Controller
+                            {...register(`messages.${index}.role`)}
+                            control={control}
+                            render={(field)=>
+                                <Select size="small" defaultValue={"user"} style={{width: "8em"}}
+                                onChange={(newValue) => {
+                                    field.field.onChange(newValue);
+                                }}
+                                >
+                                    <MenuItem value="system">system</MenuItem>
+                                    <MenuItem value="user">user</MenuItem>
+                                    <MenuItem value="assistant">assistant</MenuItem>
+                                </Select>
+                            } />
+                    </FormControl>
+                    <TextField label="content" multiline size="small" type="text" style={{width: "70%"}} {...register(`messages.${index}.content`)} />
+                    <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register(`messages.${index}.contentLanguage`)} />
+                    <Button type="button" onClick={() => remove(index)}>削除</Button>
+                    <br/>
                 </div>)}
                 <br/>
                 <Button type="button" onClick={() => append({ role: "user", content: "", contentLanguage: "en" })}>追加</Button><br/>
