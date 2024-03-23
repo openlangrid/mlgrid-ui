@@ -30,6 +30,7 @@ import { TextSimilarityCalculation } from './components/TextSimilarityCalculatio
 import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
 import { VisualQuestionAnswering } from './components/VisualQuestionAnswering';
+import { TextGuidedVideoGeneration } from './components/TextGuidedVideoGeneration';
 
 interface Props {
   children?: React.ReactNode;
@@ -135,6 +136,7 @@ function App() {
             <Tab label="テキスト生成+音声合成" />
             <Tab label="テキスト感情分析" />
             <Tab label="画像生成" />
+            <Tab label="動画生成" />
             <Tab label="テキスト画像編集" />
             <Tab label="テキスト類似度計算" />
             <Tab label="画像変換" />
@@ -181,6 +183,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGuidedImageGeneration services={services} si={si} invocations={invocations.tgig} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextGuidedVideoGeneration services={services} si={si} invocations={invocations.tgvg} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextGuidedImageManipulation services={services} si={si} invocations={invocations.tgim} />

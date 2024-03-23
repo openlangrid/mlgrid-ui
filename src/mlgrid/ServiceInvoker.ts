@@ -180,6 +180,10 @@ export interface Image{
 	image: ArrayBuffer;
 	format: string;
 }
+export interface Video{
+	video: ArrayBuffer;
+	format: string;
+}
 export class TestService extends Service{
     test(arg: any): Promise<any>{
         return this.invoke("test", Array.prototype.slice.call(arguments));
@@ -200,6 +204,11 @@ export class TextGuidedImageManipulationService extends Service{
 		numOfTimes: number): Promise<Image[]>{
 		return this.invoke("manipulate", Array.prototype.slice.call(arguments));
 	}
+}
+export class TextGuidedVideoGenerationService extends Service{
+    generate(text: string, textLanguage: string): Promise<Video>{
+        return this.invoke("generate", Array.prototype.slice.call(arguments));
+    }
 }
 export class TextGenerationService extends Service{
 	generate(text: string, textLanguage: string): Promise<string>{
@@ -397,6 +406,9 @@ export abstract class ServiceInvoker{
 	}
 	textGuidedImageManipulation(serviceId: string){
 		return new TextGuidedImageManipulationService(this, serviceId);
+	}
+	textGuidedVideoGeneration(serviceId: string){
+		return new TextGuidedVideoGenerationService(this, serviceId);
 	}
     textGeneration(serviceId: string){
         return new TextGenerationService(this, serviceId);
