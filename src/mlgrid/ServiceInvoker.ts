@@ -35,7 +35,7 @@ export class Service{
 // 各サービス呼び出しクラス。サービスの種類毎に用意する。
 // サービス毎にどんなメソッド名があるかを明示するために設けている。
 export interface ChatMessage{
-	role: string;
+	role: "system" | "assistant" | "user" | string;
 	content: string;
 	contentLanguage: string;
 }
