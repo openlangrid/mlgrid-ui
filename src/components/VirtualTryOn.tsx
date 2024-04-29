@@ -70,13 +70,13 @@ export function VirtualTryOn({services, si, invocations}:
                 <br/><br/>
                 <TextField label="garmentPrompt" size="small" type="text" style={{width: "70%"}} {...register("garmentPrompt")} />
                 <br/><br/>
-                <FormControl>
-                    <InputLabel id="garmentCategoryLabel">garmentCategory</InputLabel>
                     <Controller
                         {...register("garmentCategory")}
                         control={control}
                         render={(field)=>
-                            <Select labelId="garmentCategoryLabel" size="small" defaultValue={"UPPER_BODY"} style={{width: "8em"}}
+                            <FormControl>
+                            <InputLabel id="garmentCategoryLabel">garmentCategory</InputLabel>
+                                <Select labelId="garmentCategoryLabel" label="garmentCategory" size="small" defaultValue={"UPPER_BODY"} style={{width: "8em"}}
                                 onChange={(newValue) => {
                                     field.field.onChange(newValue);
                                 }}>
@@ -84,8 +84,8 @@ export function VirtualTryOn({services, si, invocations}:
                                 <MenuItem value="LOWER_BODY">lower body</MenuItem>
                                 <MenuItem value="DRESSES">dresses</MenuItem>
                             </Select>
+                            </FormControl>
                         } />
-                </FormControl>
                 <br/><br/>
                 <TextField label="promptLanguage" size="small" type="text" style={{width: "6em"}} {...register("promptLanguage")} />
                 <Button type="submit" variant="contained" >送信</Button>
