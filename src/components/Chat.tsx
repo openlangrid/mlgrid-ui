@@ -58,7 +58,7 @@ export function Chat({services, si, invocations}:
                             {...register(`messages.${index}.role`)}
                             control={control}
                             render={(field)=>
-                                <Select size="small" defaultValue={"user"} style={{width: "8em"}}
+                                <Select label="role" size="small" defaultValue={"user"} style={{width: "8em"}}
                                 onChange={(newValue) => {
                                     field.field.onChange(newValue);
                                 }}
@@ -72,7 +72,7 @@ export function Chat({services, si, invocations}:
                     <TextField label="content" multiline size="small" type="text" style={{width: "70%"}} {...register(`messages.${index}.content`)} />
                     <TextField label="language" size="small" type="text" style={{width: "6em"}} {...register(`messages.${index}.contentLanguage`)} />
                     <Button type="button" onClick={() => remove(index)}>削除</Button>
-                    <br/>
+                    <br/><br/>
                 </div>)}
                 <br/>
                 <Button type="button" onClick={() => append({ role: "user", content: "", contentLanguage: "en" })}>追加</Button><br/>
