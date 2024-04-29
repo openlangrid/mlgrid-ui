@@ -4,6 +4,7 @@
 
 import { deserialize, serialize } from "bson";
 import { Buffer } from "buffer";
+import { VirtualTryOn } from "../components/VirtualTryOn";
 
 export interface Error{
 	code: string;
@@ -282,7 +283,13 @@ export class VisualQuestionAnsweringService extends Service{
 		return this.invoke("generate", Array.prototype.slice.call(arguments));
 	}
 }
-
+export class VirtualTryOnService extends Service{
+	tryOn(humanImage: ArrayBuffer, humanImageFormat: string, humanPrompt: string,
+		garmentImage: ArrayBuffer, garmentImageFormat: string, garmentPrompt: string,
+		garmentCategory: string, promptLanguage: string): Promise<Image>{
+		return this.invoke("tryOn", Array.prototype.slice.call(arguments));
+	}
+}
 
 export interface MatchingCondition{
     fieldName: string;
@@ -427,6 +434,9 @@ export abstract class ServiceInvoker{
     }
 	textToSpeech(serviceId: string){
 		return new TextToSpeechService(this, serviceId);
+	}
+	virtualTryOn(serviceId: string){
+		return new VirtualTryOnService(this, serviceId);
 	}
 	visualQuestionAnswering(serviceId: string){
 		return new VisualQuestionAnsweringService(this, serviceId);
@@ -580,6 +590,10 @@ export class WSServiceInvoker extends ServiceInvoker{
 				this.handlers[r.reqId](r);
 				delete this.handlers[r.reqId];
 			}
+		});
+		this.ws.addEventListener("error", e=>{
+			alert("WebSocket通信に失敗しました。")
+			console.log(e);
 		});
 	}
 }

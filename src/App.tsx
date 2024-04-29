@@ -31,6 +31,7 @@ import { TextToSpeech } from './components/TextToSpeech';
 import { Translation } from './components/Translation';
 import { VisualQuestionAnswering } from './components/VisualQuestionAnswering';
 import { TextGuidedVideoGeneration } from './components/TextGuidedVideoGeneration';
+import { VirtualTryOn } from './components/VirtualTryOn';
 
 interface Props {
   children?: React.ReactNode;
@@ -62,7 +63,10 @@ declare var window: Window
 
 class AppState{
   invocations: Invocations = new Invocations();
-  serviceInvoker = new WSServiceInvoker(window.mlgrid_url);
+  serviceInvoker: WSServiceInvoker;
+  constructor(){
+    this.serviceInvoker = new WSServiceInvoker(window.mlgrid_url);
+  }
   static get(){
     if(AppState.instance == null) AppState.instance = new AppState();
     return AppState.instance;
@@ -140,6 +144,7 @@ function App() {
             <Tab label="テキスト画像編集" />
             <Tab label="テキスト類似度計算" />
             <Tab label="画像変換" />
+            <Tab label="仮想試着" />
             <Tab label="画像テキスト化" />
             <Tab label="テスト" />
             <Tab label="画像分類" />
@@ -195,6 +200,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ImageConversion services={services} si={si} invocations={invocations.ico} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <VirtualTryOn services={services} si={si} invocations={invocations.vton} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ImageToTextConversion services={services} si={si} invocations={invocations.ittc} />

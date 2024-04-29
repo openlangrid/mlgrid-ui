@@ -24,6 +24,7 @@ import { Invocation as TSAInvocation } from './components/TextSentimentAnalysis'
 import { Invocation as TSCInvocation } from './components/TextSimilarityCalculation';
 import { Invocation as TTSInvocation } from './components/TextToSpeech';
 import { Invocation as TRInvocation } from './components/Translation';
+import { Invocation as VTONInvocation } from './components/VirtualTryOn';
 
 export class Invocations {
     bsr: BSRInvocation[] = [];
@@ -36,6 +37,7 @@ export class Invocations {
     ico: ICOInvocation[] = [];
     ittc: ITTCInvocation[] = [];
     iwi: IWIInvocation[] = [];
+    ma: MAInvocation[] = [];
     od: ODInvocation[] = [];
     os: OSInvocation[] = [];
     ser: SERInvocation[] = [];
@@ -51,5 +53,5 @@ export class Invocations {
     tsc: TSCInvocation[] = [];
     tr: TRInvocation[] = [];
     tts: TTSInvocation[] = [];
-    ma: MAInvocation[] = [];
+    vton: VTONInvocation[] = [];
 }
