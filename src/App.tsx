@@ -25,6 +25,7 @@ import { TextGuidedImageGeneration } from './components/TextGuidedImageGeneratio
 import { TextGuidedImageManipulation } from './components/TextGuidedImageManipulation';
 import { TextGeneration } from './components/TextGeneration';
 import { TextInstruction } from './components/TextInstruction';
+import { TextInstructionWithImage } from './components/TextInstructionWithImage';
 import { TextSentimentAnalysis } from './components/TextSentimentAnalysis';
 import { TextSimilarityCalculation } from './components/TextSimilarityCalculation';
 import { TextToSpeech } from './components/TextToSpeech';
@@ -134,6 +135,7 @@ function App() {
             <Tab label="翻訳" />
             <Tab label="テキスト生成" />
             <Tab label="テキスト指示" />
+            <Tab label="VLM" />
             <Tab label="テキストQA" />
             <Tab label="チャット" />
             <Tab label="画像QA" />
@@ -170,6 +172,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <TextInstruction services={services} si={si} invocations={invocations.ti} />
+        </TabPanel>
+        <TabPanel value={value} index={index++}>
+          <TextInstructionWithImage services={services} si={si} invocations={invocations.twi} />
         </TabPanel>
         <TabPanel value={value} index={index++}>
           <ContextualQuestionAnswering services={services} si={si} invocations={invocations.cqa} />

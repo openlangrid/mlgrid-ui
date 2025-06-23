@@ -4,7 +4,6 @@
 
 import { deserialize, serialize } from "bson";
 import { Buffer } from "buffer";
-import { VirtualTryOn } from "../components/VirtualTryOn";
 
 export interface Error{
 	code: string;
@@ -221,6 +220,14 @@ export class TextInstructionService extends Service{
 		return this.invoke("generate", Array.prototype.slice.call(arguments));
 	}
 }
+export class TextInstructionWithImageService extends Service{
+	generate(systemPrompt: string, systemPromptLanguage: string,
+			userPrompt: string, promptLanguage: string,
+			image: ArrayBuffer, imageFormat: string
+		): Promise<string>{
+		return this.invoke("generate", Array.prototype.slice.call(arguments));
+	}
+}
 export class MultimodalTextGenerationService extends Service{
 	generate(text: string, textLanguage: string,
 			files: {content: ArrayBuffer, format: string}[]): Promise<string>{
@@ -426,6 +433,9 @@ export abstract class ServiceInvoker{
     textInstruction(serviceId: string){
         return new TextInstructionService(this, serviceId);
     }
+	textInstructionWithImage(serviceId: string){
+		return new TextInstructionWithImageService(this, serviceId);
+	}
     textSentimentAnalysis(serviceId: string){
         return new TextSentimentAnalysisService(this, serviceId);
     }

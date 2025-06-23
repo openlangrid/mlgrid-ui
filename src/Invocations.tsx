@@ -20,6 +20,7 @@ import { Invocation as TGVGInvocation } from './components/TextGuidedVideoGenera
 import { Invocation as TGWTInvocation } from './components/experiments/Composite';
 import { Invocation as TGInvocation } from './components/TextGeneration';
 import { Invocation as TIInvocation } from './components/TextInstruction';
+import { Invocation as TWIInvocation } from './components/TextInstructionWithImage';
 import { Invocation as TSAInvocation } from './components/TextSentimentAnalysis';
 import { Invocation as TSCInvocation } from './components/TextSimilarityCalculation';
 import { Invocation as TTSInvocation } from './components/TextToSpeech';
@@ -49,6 +50,7 @@ export class Invocations {
     tgwt: TGWTInvocation[] = [];
     tg: TGInvocation[] = [];
     ti: TIInvocation[] = [];
+    twi: TWIInvocation[] = [];
     tsa: TSAInvocation[] = [];
     tsc: TSCInvocation[] = [];
     tr: TRInvocation[] = [];
