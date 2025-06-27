@@ -222,7 +222,7 @@ export class TextInstructionService extends Service{
 }
 export class TextInstructionWithImageService extends Service{
 	generate(systemPrompt: string, systemPromptLanguage: string,
-			userPrompt: string, promptLanguage: string,
+			userPrompt: string, userPromptLanguage: string,
 			image: ArrayBuffer, imageFormat: string
 		): Promise<string>{
 		return this.invoke("generate", Array.prototype.slice.call(arguments));
