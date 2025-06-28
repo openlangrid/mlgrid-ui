@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Error, ServiceInvoker } from "../mlgrid/ServiceInvoker";
 import { Holder } from "../util/Holder";
 import { ServiceCheck, Services } from "./lib/Services";
-import { ImageDropButton } from "./lib/ImageDropButton";
+import { CanvasButton } from "./lib/CanvasButton";
 
 export interface Input {
     systemPrompt: string;
@@ -36,8 +36,8 @@ export function TextInstructionWithImage({services, si, invocations}:
     const [invState, setInvState] = useState(new Holder(invocations));
     if(services.size === 0) return (<div />);
     const scs = services.get("TextInstructionWithImageService") || [];
-    const onImage: (data: ArrayBuffer)=>void = data=>{
-        setValue("files", [{content: data, format: ""}]);
+    const onImageUpdated: (data: ArrayBuffer)=>void = data=>{
+        setValue("files", [{content: data, format: "image/png"}]);
     };
     const onSubmit: SubmitHandler<Input> = (input)=>{
         const inv: Invocation = {
@@ -60,7 +60,7 @@ export function TextInstructionWithImage({services, si, invocations}:
                 <TextField label="systemPromptLanguage" size="small" type="text" style={{width: "6em"}} {...register("systemPromptLanguage")} />
                 <TextField label="userPrompt" multiline size="small" type="text" style={{width: "70%"}} {...register("userPrompt")} />
                 <TextField label="userPromptLanguage" size="small" type="text" style={{width: "6em"}} {...register("userPromptLanguage")} />
-                <ImageDropButton onImage={onImage} />
+                <CanvasButton onImageUpdated={onImageUpdated} />
                 <Button type="submit" variant="contained" >送信</Button>
             </form>
 		</div>
